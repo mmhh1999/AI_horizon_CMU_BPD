@@ -24,7 +24,7 @@ export function renderParcelCard(el, parcel, frame) {
   const wm = Math.max(1, Math.round(walkMinutes(parcel)));
   const vacant = /VACANT/.test(parcel.u || "");
   el.innerHTML = `
-    <div class="eyebrow">Step 1 · The lot</div>
+    <div class="eyebrow">The lot</div>
     <div class="pc-title">${icon("map-pin")}<div><b>${esc(title(parcel.a) || parcel.id)}</b><span>Parcel ${parcel.id}</span></div>${src("PARCEL")}</div>
     <div class="pc-chips">
       <span>${icon(vacant ? "square-dashed" : "house")}${vacant ? "Vacant lot" : esc(title(parcel.u))}</span>
@@ -137,7 +137,7 @@ export function renderDetail(el, f, parcel, ctx, state) {
 
 // ---------- right panel: Why / Why not
 export function renderWhy(el, f, parcel, state) {
-  if (!f) { el.innerHTML = `<div class="empty">${icon("message-circle-question", "xl")}<h3>Why / Why not</h3><p>Pick a lot to see what could be built there, what stands in the way, and what would unlock it.</p></div>`; return; }
+  if (!f) { el.innerHTML = `<div class="empty">${icon("message-circle-question", "xl")}<h3>Why / Why not</h3><p>Start from a neighborhood's needs, pick an opportunity lot, and see what could be built there, what stands in the way, and what would unlock it.</p></div>`; return; }
   const cs = sortedConstraints(f);
   const changes = activeChanges(state.assumptions);
   const chips = [];
@@ -167,7 +167,7 @@ export function renderWhy(el, f, parcel, state) {
     </section>` : "";
 
   el.innerHTML = `
-    <div class="eyebrow">Step 3 · Why / why not</div>
+    <div class="eyebrow">Step 4 · Why / why not</div>
     <div class="why-head">${icon(f.icon, "tico")}<div><h2>${esc(f.name)}</h2>${statusChip(f.status, true)}</div></div>
     <section class="wsum">
       <h4>${icon("thumbs-up")} Why it can work</h4>

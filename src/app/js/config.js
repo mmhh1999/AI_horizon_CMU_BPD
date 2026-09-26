@@ -78,22 +78,28 @@ export const EXISTING_UNITS = {
 
 export const CLIMATE_CONTEXT = { hotThen: "11", hotNow: "21–28", rainThen: "5–6", rainNow: "6–8" };
 
+// Demo path: Larimer (community-first story), plus one Bloomfield / Garfield-edge lot from the first prototype.
 export const EXAMPLES = [
-  { id: "0049S00106000000", why: "Example 1 of 3 · Vacant lot on Liberty Ave, next to a busy bus corridor" },
-  { id: "0051C00145000000", why: "Example 2 of 3 · Vacant lot zoned for up to three homes" },
-  { id: "0050F00033000000", why: "Example 3 of 3 · Vacant lot zoned for single-family only" },
+  { slug: "larimer", id: "0124K00080000000", why: "Larimer 1 of 3 · City-owned vacant lot on Larimer Ave, zoned multi-unit, listed for sale" },
+  { slug: "larimer", id: "0125F00313000000", why: "Larimer 2 of 3 · City-owned vacant lot on the Frankstown Ave corridor, frequent transit" },
+  { slug: "larimer", id: "0124J00186000000", why: "Larimer 3 of 3 · Deep single-family lot with a garage out back (ADU candidate)" },
+  { slug: "bloomfield", id: "0049S00106000000", why: "Bloomfield · Vacant lot on Liberty Ave, next to a busy bus corridor" },
 ];
 
 export const SUN = { year: 2026, month: 11, day: 21, hours: [9, 10, 11, 12, 13, 14, 15] };
 
 export const SOURCES = {
-  PARCEL: { label: "PARCEL · Allegheny County", text: "Allegheny County parcel boundaries (OPENDATA/Parcels REST) and WPRDC Property Assessments (use, class, lot area, stories; no owner fields). Retrieved 2026-09-25. Lot dimensions are approximated from the polygon." },
+  PARCEL: { label: "PARCEL · Allegheny County", text: "Allegheny County parcel boundaries (September 2026 release) and WPRDC Property Assessments (use, class, lot area, stories, year built, condition). Retrieved 2026-09-26. Lot width, depth and front edge are derived from the polygon. Owner mailing addresses are used only inside the data pipeline for an aggregate ownership signal and are never exported." },
+  COMMUNITY: { label: "COMMUNITY · ACS 2019–2023", text: "American Community Survey 5-year estimates by Pittsburgh neighborhood (UCSUR neighborhood profiles via WPRDC; 2013 for change). Some neighborhoods are published as a combined area. Needs flags use published thresholds relative to the City; they suggest emphasis and never set priorities on their own." },
+  OPPORTUNITY: { label: "OPPORTUNITY · County + City records", text: "Tags derived from County assessments, the City-owned property inventory, the condemned / dead-end property list, PLI code violations (last 3 years), City and County tax delinquency, County building footprints and PRT GTFS. Rules are published in each neighborhood file. The ownership signal is a prompt to look closer, not a finding about any owner." },
+  SAFETY: { label: "SAFETY · Pittsburgh Bureau of Police", text: "Monthly criminal activity 2024–2026 (NIBRS Group A: person, property, society), counted by neighborhood. Shown as context next to design questions; never scored, ranked or mapped as a choropleth." },
+  GREEN: { label: "GREEN · City + County parks", text: "City parks, County parks and City greenways (WPRDC). Straight-line distance from the lot. The WHO suggests green space within about 300 m (≈1,000 ft); the advisors suggested 100–500 ft for children and seniors." },
   ZONING: { label: "ZONING · City of Pittsburgh", text: "District from City of Pittsburgh zoning map (PGHWebZoning). Dimensional and use rules in this prototype are DRAFT placeholders pending verification against the codified Pittsburgh Code (eCode360, Ch. 903/904/911). Confirm with City Planning." },
-  TRANSIT: { label: "TRANSIT · PRT", text: "PRT transit stops with weekday trips (WPRDC; GTFS feed version 2606). Walk time = straight-line distance × 1.3 at 3 mph. Scheduled service is not realized reliability." },
-  HAZARD: { label: "HAZARD · City GIS / FEMA", text: "25%+ slope, undermined areas, landslide-prone areas (City of Pittsburgh GIS via WPRDC); FEMA NFHL flood zones. Screening layers only, not a site survey or geotechnical assessment." },
+  TRANSIT: { label: "TRANSIT · PRT", text: "PRT GTFS feed 2606 (WPRDC archive, retrieved 2026-09-26): weekday trips per stop; T and busway stops marked as rapid. Walk time = straight-line distance × 1.3 at 3 mph. Scheduled service is not realized reliability." },
+  HAZARD: { label: "HAZARD · City GIS / FEMA", text: "25%+ slope, undermined areas, landslide-prone areas (City of Pittsburgh GIS via WPRDC); FEMA NFHL flood hazard areas (retrieved 2026-09-26, generalized to about 1 m). Screening layers only, not a site survey or geotechnical assessment." },
   SOLAR: { label: "SOLAR · NLR PVWatts v8", text: "Specific yield for central Pittsburgh from the NLR PVWatts v8 API (NSRDB TMY): 1,141 kWh/kW·yr at 10° tilt, 1,205 at 25°. Usable roof share and module density are assumptions." },
   CLIMATE: { label: "CLIMATE · Open-Meteo CMIP6", text: "Days ≥ 90°F and ≥ 1 in rain per year, 1991–2010 vs 2031–2050, two CMIP6 HighResMIP models downscaled to 10 km (Open-Meteo Climate API, CC BY 4.0). City-level context, not a parcel forecast." },
   TYPOLOGY: { label: "TYPOLOGY · MMH refs (draft)", text: "Building templates are DRAFT placeholders to be replaced with dimensions from Parolek (2020) Missing Middle Housing and missingmiddlehousing.com." },
-  CONTEXT: { label: "CONTEXT · OpenStreetMap", text: "Neighbor buildings © OpenStreetMap contributors (ODbL). Heights estimated from assessment stories × 11 ft + 4 ft, or 28 ft when unknown." },
+  CONTEXT: { label: "CONTEXT · County footprints", text: "Neighbor buildings from Allegheny County building footprints (WPRDC). Heights estimated from assessment stories × 11 ft + 4 ft, 28 ft when unknown, 12 ft for small accessory buildings." },
   POLICY: { label: "POLICY · Bill 2025-1545", text: "Pittsburgh Council Bill 2025-1545 (ADUs, affordable housing bonus, parking minimums), as proposed. Public hearing 2026-09-23; vote pending. Not law." },
 };

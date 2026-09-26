@@ -1,35 +1,80 @@
-// App state and wiring.
+// App state and wiring: County > City > neighborhood (needs + opportunities) > parcel (futures, why / why not).
 import { EXAMPLES, SCENARIO_SETS, districtRules } from "./config.js";
 import { makeFrame, bbox } from "./geo.js";
 import { buildScenario, effectiveRules, defaultAssumptions, applyChip, removeChange } from "./scenarios.js";
-import { createSiteMap, showParcel, setOverlay, OVERLAYS } from "./map.js";
+import { createMap, setLevel, setClasses, setHood, setOpportunities, setContext, showParcel, fitTo, ringsOf, CONTEXT } from "./map.js";
 import { renderParcelCard, renderFutures, renderDetail, renderWhy, renderSetSelect, renderSources } from "./ui.js";
 import { sunAt, shadowST } from "./sun.js";
 import { answer } from "./answers.js";
+import { loadCounty, loadCity, loadHood, HOOD_INDICATORS, COUNTY_INDICATORS, TAGS, TAG_ORDER, RAMP, classify } from "./data.js";
+import { renderCountyPanel, renderCityPanel, renderNeeds, renderNeedsCompact, parcelOpportunityHTML } from "./needs.js";
 
 const $ = (s) => document.querySelector(s);
 const state = {
-  parcelId: null, setKey: "default", selected: "smallmf", whyOpen: false,
+  level: "county", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
+  parcelId: null, setKey: "default", selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
   assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", exampleIdx: -1,
 };
-let area, map, byId, frame, ctx, futures = [];
+let county, city, hood, area, map, byId, frame, ctx, futures = [];
+let mapReady = false;
 
 async function init() {
-  area = await (await fetch("./data/area.json")).json();
-  byId = new Map(area.parcels.map((p) => [p.id, p]));
+  [county, city] = await Promise.all([loadCounty(), loadCity()]);
+  $("#hoodList").innerHTML = city.hoods.map((h) => `<option value="${h.name}"></option>`).join("");
   renderSetSelect($("#setSelect"), state.setKey);
-  renderOverlayButtons();
+  renderLayerButtons();
   bindEvents();
-  renderParcelCard($("#parcelCard"), null);
-  renderWhy($("#why"), null);
-  icons();
-  map = createSiteMap("map", area, selectParcel, () => {});
+  map = createMap("map", { county, city }, {
+    muni: onMuni, hood: (slug) => goHood(slug), parcel: (id) => selectParcel(id),
+    ready: () => { mapReady = true; applyChoropleths(); setLevel(map, state.level); render(); },
+  });
+  render();
+}
+
+// ------------------------------------------------------------------ levels
+function onMuni(m) {
+  if (m.city) return goCity();
+  state.muni = m;
+  render();
+}
+
+function goCounty() {
+  Object.assign(state, { level: "county", slug: null, parcelId: null, exampleIdx: -1 });
+  if (mapReady) { setLevel(map, "county"); fitTo(map, county.munis.flatMap((m) => ringsOf(m.g)), 16); }
+  render();
+}
+
+function goCity() {
+  Object.assign(state, { level: "city", slug: null, parcelId: null, muni: null, exampleIdx: -1 });
+  if (mapReady) { setLevel(map, "city"); fitTo(map, county.munis.find((m) => m.city).g, 16); }
+  render();
+}
+
+async function goHood(slug, parcelId = null) {
+  if (state.slug === slug && hood && !parcelId) {
+    if (state.level === "parcel") { state.level = "nbhd"; state.parcelId = null; setLevel(map, "nbhd"); render(); }
+    return;
+  }
+  const meta = city.hoods.find((h) => h.slug === slug);
+  if (!meta) return;
+  document.body.classList.add("loading");
+  try {
+    const data = await loadHood(slug);
+    hood = meta; area = data; byId = new Map(data.parcels.map((p) => [p.id, p]));
+    Object.assign(state, { level: "nbhd", slug, parcelId: null, needsOpen: false, layersOpen: true });
+    setLevel(map, "nbhd");
+    setHood(map, data, slug, state.opp);
+    setContext(map, state.overlay);
+    if (!parcelId) fitTo(map, meta.g, 20);
+  } finally { document.body.classList.remove("loading"); }
+  if (parcelId) selectParcel(parcelId); else render();
 }
 
 function selectParcel(id, fly = true) {
-  const p = byId.get(id);
+  const p = byId?.get(id);
   if (!p) return;
-  setNav("explore");
+  if (state.level !== "parcel") state.layersOpen = false;
+  state.level = "parcel";
   state.parcelId = id;
   state.assumptions = defaultAssumptions();
   state.transitions = {};
@@ -37,6 +82,7 @@ function selectParcel(id, fly = true) {
   state.answer = "";
   frame = makeFrame(p.c, p.fe);
   ctx = buildContext(p);
+  setLevel(map, "parcel");
   showParcel(map, p, fly);
   recompute(null);
   const firstConditional = futures.find((f) => f.status === "conditional");
@@ -44,6 +90,18 @@ function selectParcel(id, fly = true) {
   render();
 }
 
+function applyChoropleths() {
+  const cI = COUNTY_INDICATORS[state.countyIndicator];
+  const cc = classify(county.munis.map(cI.get));
+  setClasses(map, "munis", county.munis.map((m) => cc.cls(cI.get(m))));
+  const hI = HOOD_INDICATORS[state.indicator];
+  const hc = classify(city.hoods.map(hI.get));
+  setClasses(map, "hoods", city.hoods.map((h) => hc.cls(hI.get(h))));
+  state.legendCounty = { ind: cI, c: cc };
+  state.legendHood = { ind: hI, c: hc };
+}
+
+// ------------------------------------------------------------------ parcel engine (unchanged logic)
 function buildContext(p) {
   const toST = (ll) => frame.toST(frame.toXY(ll));
   const lotST = p.c.map(toST);
@@ -97,14 +155,42 @@ function updateShadows() {
 
 const icons = () => { if (window.lucide) window.lucide.createIcons({ attrs: { "stroke-width": 1.9 } }); };
 
+// ------------------------------------------------------------------ render
 function render() {
+  renderCrumbs();
+  const local = state.level === "nbhd" || state.level === "parcel";
+  const ws = document.querySelector(".ws");
+  const wide = state.level !== "parcel";
+  if (ws.classList.contains("wide-map") !== wide) { ws.classList.toggle("wide-map", wide); requestAnimationFrame(() => map.resize()); }
+  $("#layerToggle").hidden = !local;
+  $("#layerToggle").setAttribute("aria-expanded", String(state.layersOpen));
+  $("#layerBar").hidden = !local || !state.layersOpen;
+  $("#futuresBlock").hidden = state.level !== "parcel";
+  renderLegend();
+
+  if (state.level === "county") renderCountyPanel($("#parcelCard"), county, city, state.countyIndicator, state.muni);
+  else if (state.level === "city") renderCityPanel($("#parcelCard"), city, state.indicator);
+
+  if (state.level === "nbhd") renderNeeds($("#needs"), hood, city);
+  else if (state.level === "parcel") renderNeedsCompact($("#needs"), hood, city, state.needsOpen);
+  else $("#needs").innerHTML = state.level === "county" ? intro("county") : intro("city");
+
+  if (state.level === "nbhd") {
+    $("#parcelCard").innerHTML = `<div class="eyebrow">${hood.name}</div><div class="hint"><i data-lucide="mouse-pointer-click" class="ic"></i> Click a colored lot to see what could be built there. Colors follow the Opportunities toggles on the map.</div>`;
+    renderWhy($("#why"), null);
+  }
+  if (state.level === "county" || state.level === "city") renderWhy($("#why"), null);
+  document.querySelectorAll("#oppLayers button").forEach((b) => b.classList.toggle("on", state.opp.has(b.dataset.tag)));
+  document.querySelectorAll(".opp[data-tag]").forEach((b) => b.classList.toggle("on", state.opp.has(b.dataset.tag)));
+
+  if (state.level !== "parcel") { $("#exampleNote").textContent = ""; icons(); return; }
   const p = byId.get(state.parcelId);
   renderParcelCard($("#parcelCard"), p, frame);
-  if (!p) { icons(); return; }
+  $("#parcelCard").insertAdjacentHTML("beforeend", parcelOpportunityHTML(p, hood));
   const rules0 = districtRules(p.z);
   if (!rules0) {
-    $("#futures").innerHTML = `<div class="oos">Zoning <b>${p.z || "unknown"}</b> is outside this prototype's draft rule set (residential and neighborhood-commercial districts only). Try another parcel.</div>`;
-    $("#detail").innerHTML = ""; renderWhy($("#why"), null); icons(); return;
+    $("#futures").innerHTML = `<div class="oos">Zoning <b>${p.z || "unknown"}</b> is outside this prototype's draft rule set (residential and neighborhood-commercial districts only). Try another lot.</div>`;
+    $("#detail").innerHTML = ""; renderWhy($("#why"), null); $("#exampleNote").textContent = ""; icons(); return;
   }
   state.lotST = ctx.lotST;
   renderFutures($("#futures"), futures, state);
@@ -115,15 +201,43 @@ function render() {
   icons();
 }
 
-function renderOverlayButtons() {
-  $("#overlays").innerHTML = Object.entries(OVERLAYS).map(([k, o]) => `<button data-ov="${k}"><i data-lucide="${o.icon}" class="ic"></i>${o.label}</button>`).join("");
+function intro(level) {
+  const lead = level === "county"
+    ? "Start with the county: how do municipalities differ in vacant land, owner-occupancy, building condition and tax delinquency? Then open the City of Pittsburgh."
+    : "Each of Pittsburgh's 90 neighborhoods has a community profile, published “needs” flags, and opportunity lots. Color the map by an indicator, then click a neighborhood.";
+  return `<div class="needs-card intro"><div class="eyebrow">How it works</div><h2>Community first, then the lot</h2><p>${lead}</p>
+    <ol class="flow"><li><b>Community</b> What does the neighborhood need?</li><li><b>Opportunities</b> Vacant lots and buildings, public land, deep lots, garages, transit nodes</li>
+    <li><b>Housing futures</b> What could a lot become?</li><li><b>Performance and constraints</b> Sun, compactness, transit, green space; zoning and site</li>
+    <li><b>Priorities and why not</b> What matters most, and what would have to change</li></ol></div>`;
 }
+
+function renderCrumbs() {
+  const parts = [`<button data-crumb="county" class="${state.level === "county" ? "on" : ""}">Allegheny County</button>`];
+  if (state.level !== "county") parts.push(`<button data-crumb="city" class="${state.level === "city" ? "on" : ""}">Pittsburgh</button>`);
+  if (hood && (state.level === "nbhd" || state.level === "parcel")) parts.push(`<button data-crumb="hood" class="${state.level === "nbhd" ? "on" : ""}">${hood.name}</button>`);
+  if (state.level === "parcel") parts.push(`<button class="on">Lot</button>`);
+  $("#crumbs").innerHTML = parts.join(`<i data-lucide="chevron-right" class="ic"></i>`);
+}
+
+function renderLayerButtons() {
+  $("#oppLayers").innerHTML = TAG_ORDER.map((k) => `<button data-tag="${k}" title="${TAGS[k].why}"><i class="sw" style="background:${TAGS[k].color}"></i>${TAGS[k].short}</button>`).join("");
+  $("#overlays").innerHTML = Object.entries(CONTEXT).map(([k, o]) => `<button data-ov="${k}"><i data-lucide="${o.icon}" class="ic"></i>${o.label}</button>`).join("");
+}
+
 function renderLegend() {
-  const o = OVERLAYS[state.overlay];
-  $("#legend").innerHTML = o ? o.legend.map(([l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join("") : "";
-  $("#legend").hidden = !o;
+  let items = null, head = "";
+  if (state.level === "county" && state.legendCounty) ({ items, head } = choroLegend(state.legendCounty));
+  else if (state.level === "city" && state.legendHood) ({ items, head } = choroLegend(state.legendHood));
+  else if (CONTEXT[state.overlay]) { items = CONTEXT[state.overlay].legend; }
+  $("#legend").innerHTML = items ? `${head}${items.map(([l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join("")}` : "";
+  $("#legend").hidden = !items;
   document.querySelectorAll("#overlays button").forEach((b) => b.classList.toggle("on", b.dataset.ov === state.overlay));
-  icons();
+}
+
+function choroLegend({ ind, c }) {
+  if (!c.breaks.length) return { items: null, head: "" };
+  const edges = [c.min, ...c.breaks, c.max];
+  return { head: `<b class="lg-head">${ind.label}</b>`, items: RAMP.map((col, i) => [`${ind.fmt(edges[i])}–${ind.fmt(edges[i + 1])}`, col]) };
 }
 
 function setNav(key) { document.querySelectorAll(".rail .nav").forEach((b) => b.classList.toggle("on", b.dataset.nav === key)); }
@@ -136,26 +250,65 @@ function bindEvents() {
     if (k === "sources") { renderSources($("#sources")); $("#sources").hidden = false; icons(); return; }
     setNav(k);
     if (k === "explore") $("#sec-explore").scrollIntoView({ behavior: "smooth", block: "start" });
-    if (k === "futures") { $("#sec-futures").scrollTo({ top: 0, behavior: "smooth" }); $("#sec-futures").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (k === "needs") { if (state.level === "parcel") { state.needsOpen = true; render(); } $("#needs").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (k === "futures") $("#futuresBlock").scrollIntoView({ behavior: "smooth", block: "start" });
     if (k === "why") { if (state.parcelId) { state.whyOpen = true; render(); } $("#why").scrollIntoView({ behavior: "smooth", block: "start" }); }
   });
   $("#tryExample").addEventListener("click", () => {
     state.exampleIdx = (state.exampleIdx + 1) % EXAMPLES.length;
-    selectParcel(EXAMPLES[state.exampleIdx].id);
+    const ex = EXAMPLES[state.exampleIdx];
+    const idx = state.exampleIdx;
+    goHood(ex.slug, ex.id).then(() => { state.exampleIdx = idx; render(); });
   });
   $("#searchForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    const q = $("#search").value.trim().toUpperCase();
+    const raw = $("#search").value.trim();
+    const q = raw.toUpperCase();
     if (!q) return;
-    const hit = area.parcels.find((p) => p.id === q) || area.parcels.find((p) => (p.a || "").toUpperCase().includes(q));
-    if (hit) { state.exampleIdx = -1; selectParcel(hit.id); } else $("#search").setCustomValidity("No parcel found in the demo area"), $("#search").reportValidity(), setTimeout(() => $("#search").setCustomValidity(""), 1500);
+    const h = city.hoods.find((x) => x.name.toUpperCase() === q) || city.hoods.find((x) => x.name.toUpperCase().startsWith(q));
+    if (h) { state.exampleIdx = -1; goHood(h.slug); return; }
+    const hit = area && (area.parcels.find((p) => p.id === q) || area.parcels.find((p) => (p.a || "").toUpperCase().includes(q)));
+    if (hit) { state.exampleIdx = -1; selectParcel(hit.id); return; }
+    $("#search").setCustomValidity(area ? `Not found in ${hood.name}. Try a neighborhood name.` : "Type a neighborhood name, e.g. Larimer");
+    $("#search").reportValidity();
+    setTimeout(() => $("#search").setCustomValidity(""), 1500);
   });
+  $("#crumbs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-crumb]");
+    if (!b) return;
+    if (b.dataset.crumb === "county") goCounty();
+    else if (b.dataset.crumb === "city") goCity();
+    else if (b.dataset.crumb === "hood" && state.level === "parcel") { state.level = "nbhd"; state.parcelId = null; state.exampleIdx = -1; setLevel(map, "nbhd"); fitTo(map, hood.g, 20); render(); }
+  });
+  document.addEventListener("change", (e) => {
+    if (e.target.id === "countyInd") { state.countyIndicator = e.target.value; applyChoropleths(); render(); }
+    if (e.target.id === "hoodInd") { state.indicator = e.target.value; applyChoropleths(); render(); }
+  });
+  const toggleTag = (t) => {
+    state.opp.has(t) ? state.opp.delete(t) : state.opp.add(t);
+    setOpportunities(map, state.opp);
+    render();
+  };
+  $("#oppLayers").addEventListener("click", (e) => { const b = e.target.closest("[data-tag]"); if (b) toggleTag(b.dataset.tag); });
+  $("#needs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-tag]");
+    if (b) toggleTag(b.dataset.tag);
+    if (e.target.closest("[data-needs-toggle]")) { state.needsOpen = !state.needsOpen; render(); }
+  });
+  $("#parcelCard").addEventListener("click", (e) => {
+    const g = e.target.closest("[data-go]");
+    const h = e.target.closest("[data-hood]");
+    if (g && g.dataset.go === "city") goCity();
+    if (h) goHood(h.dataset.hood);
+  });
+  $("#layerToggle").addEventListener("click", () => { state.layersOpen = !state.layersOpen; render(); });
   $("#overlays").addEventListener("click", (e) => {
     const b = e.target.closest("[data-ov]");
     if (!b) return;
     state.overlay = state.overlay === b.dataset.ov ? null : b.dataset.ov;
-    setOverlay(map, state.overlay);
+    setContext(map, state.overlay);
     renderLegend();
+    icons();
   });
   $("#setSelect").addEventListener("change", (e) => {
     state.setKey = e.target.value;
