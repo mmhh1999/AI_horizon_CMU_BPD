@@ -1,0 +1,242 @@
+{
+  "assessments.csv": {
+    "title": "Allegheny County Property Assessments",
+    "steward": "Allegheny County Office of Property Assessments / WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/property-assessments",
+    "url": "https://data.wprdc.org/dataset/2b3df818-601e-4f06-b150-643557229491/resource/9a1c60bd-f9f7-4aba-aeb7-af8c3aaa44e5/download/assessments.csv",
+    "retrieved_utc": "2026-09-26T15:41:53+00:00",
+    "bytes": 435301146,
+    "sha256": "41a59d479e4fe45a8499a10f2747c5d1e70032646fe71ebd27b8159a7b492e28"
+  },
+  "parcels.zip": {
+    "title": "Allegheny County Parcel Boundaries (2026-09 release)",
+    "steward": "Allegheny County GIS / WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/allegheny-county-parcel-boundaries1",
+    "url": "https://data.wprdc.org/dataset/709e4e52-6f82-4cd0-a848-f3e2b3f5d22b/resource/be216088-d51c-41ce-aa4a-2c315c2c7725/download/alleghenycounty_parcels202609.zip",
+    "retrieved_utc": "2026-09-26T15:41:57+00:00",
+    "bytes": 115363069,
+    "sha256": "f3ae319b0ca6a5fa8b9708e1c354155b152ee68482553678ff45b32c3af66b0e"
+  },
+  "parcel_centroids.csv": {
+    "title": "Parcel Centroids with Geographic Identifiers (2025-03)",
+    "steward": "WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/parcel-centroids-in-allegheny-county-with-geographic-identifiers",
+    "url": "https://data.wprdc.org/dataset/2536e5e2-253b-4c58-969d-687828bb94c6/resource/3fab7152-3f11-4788-8372-4c33f86ea813/download/parcel_centroids_2025_march.csv",
+    "retrieved_utc": "2026-09-26T15:42:00+00:00",
+    "bytes": 111769627,
+    "sha256": "ed1ff0344cc18b9285d1540003e4b85fd92a54cd6095ae548a35d44b81c8b5d5"
+  },
+  "buildings.zip": {
+    "title": "Allegheny County Building Footprints",
+    "steward": "Allegheny County GIS / WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/allegheny-county-building-footprint-locations",
+    "url": "https://data.wprdc.org/dataset/926d9afe-ea94-4211-9623-d9ad52fd0778/resource/b2bfaae8-2ef7-4386-87c7-b5106e6120c5/download/alcogisallegheny-county-building-footprint-locations.zip",
+    "retrieved_utc": "2026-09-26T15:42:02+00:00",
+    "bytes": 88665556,
+    "sha256": "4569cd1d2887849ebe7f26de8a279bd3fb402544190c5c07781a438ad453f887"
+  },
+  "municipalities.geojson": {
+    "title": "Allegheny County Municipal Boundaries",
+    "steward": "Allegheny County GIS / WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/allegheny-county-municipal-boundaries",
+    "url": "https://data.wprdc.org/dataset/2fa577d6-1a6b-46a8-8165-27fecac1dee5/resource/b0cb0249-d1ba-45b7-9918-dc86fa8af04c/download/muni_boundaries.geojson",
+    "retrieved_utc": "2026-09-26T15:42:03+00:00",
+    "bytes": 2462183,
+    "sha256": "e05159c820907434abd9bd2fedee42d95eba5c674b4338dec0a5b503c583472a"
+  },
+  "county_delinquency.csv": {
+    "title": "Allegheny County Delinquent Real Estate Taxes (cumulative)",
+    "steward": "Allegheny County Treasurer / WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/delinquent-real-estate-taxes",
+    "url": "https://data.wprdc.org/datastore/dump/96e9d6b2-3e1a-4a0c-8ef6-23a049c263d8",
+    "retrieved_utc": "2026-09-26T15:42:07+00:00",
+    "bytes": 65569411,
+    "sha256": "0fdf5f6fd3b88517a17bba0dcfc32e3f2d38adb50b7452437ce2591151686d86"
+  },
+  "foreclosures.csv": {
+    "title": "Allegheny County Mortgage Foreclosure Filings",
+    "steward": "Allegheny County / WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/allegheny-county-mortgage-foreclosure-records",
+    "url": "https://data.wprdc.org/datastore/dump/859bccfd-0e12-4161-a348-313d734f25fd",
+    "retrieved_utc": "2026-09-26T15:42:07+00:00",
+    "bytes": 5088368,
+    "sha256": "9f0f593981b73ee0171508f3e7a11fc8a84c2d88a58e580ba93d209e344046b4"
+  },
+  "county_parks.geojson": {
+    "title": "Allegheny County Parks Outlines",
+    "steward": "Allegheny County GIS / WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/allegheny-county-parks-outlines",
+    "url": "https://data.wprdc.org/dataset/a696c68a-7233-4415-84c9-5d641e37f3bc/resource/69b65369-05f5-44b1-a6c4-2a16e109d1f6/download/park_outlines.geojson",
+    "retrieved_utc": "2026-09-26T15:42:07+00:00",
+    "bytes": 241208,
+    "sha256": "77cc5963b3c16fbadf6d7a4c9d8821513abf5d18a69140046390e4324c80417d"
+  },
+  "gtfs.zip": {
+    "title": "Pittsburgh Regional Transit GTFS (latest archived feed)",
+    "steward": "Pittsburgh Regional Transit / WPRDC",
+    "scope": "county",
+    "page": "https://data.wprdc.org/dataset/gtfs-archive",
+    "url": "https://data.wprdc.org/dataset/d0175115-c16b-48a0-b2cc-ca967b23bd40/resource/e64b944c-cf8e-4f67-873d-8fa4dad956b0/download/gtfs_2606_20260718_clever.zip",
+    "retrieved_utc": "2026-09-26T15:42:08+00:00",
+    "bytes": 22512405,
+    "sha256": "be6d517dae1c7ecbbd4645cf22014cba51a6ac66fd075dc85d0290b33845267d"
+  },
+  "neighborhoods.geojson": {
+    "title": "City of Pittsburgh Neighborhoods",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/neighborhoods2",
+    "url": "https://data.wprdc.org/dataset/e672f13d-71c4-4a66-8f38-710e75ed80a4/resource/4af8e160-57e9-4ebf-a501-76ca1b42fc99/download/neighborhoods.geojson",
+    "retrieved_utc": "2026-09-26T15:42:08+00:00",
+    "bytes": 1092656,
+    "sha256": "4d0d660f59c0fc2507d7ec99fe4a3bd47a6fd5e3da2036794ea6e1d7cf8c1f0a"
+  },
+  "zoning.geojson": {
+    "title": "City of Pittsburgh Zoning Districts",
+    "steward": "City of Pittsburgh (PGHWebZoning)",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/zoning1",
+    "url": "https://services1.arcgis.com/YZCmUqbcsUpOKfj7/arcgis/rest/services/PGHWebZoning/FeatureServer/0/query",
+    "retrieved_utc": "2026-09-26T15:42:11+00:00",
+    "bytes": 3106121,
+    "sha256": "ec12710366ab11208ab1de6fc8cfee124d4b12598b07bd0aa93658afe7d99148"
+  },
+  "slope.geojson": {
+    "title": "Pittsburgh 25% or Greater Slope",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/25-or-greater-slope",
+    "url": "https://data.wprdc.org/dataset/0f643c56-1c53-4c88-824d-3a3876c0d3a0/resource/5ce91a56-0799-46ea-9585-13fa8db5979e/download/slopes.geojson",
+    "retrieved_utc": "2026-09-26T15:42:13+00:00",
+    "bytes": 66564907,
+    "sha256": "a454962832fa7482d789d9e758302ce58a03e01a4072d3d052a5e80dcab5c698"
+  },
+  "undermined.geojson": {
+    "title": "Pittsburgh Undermined Areas",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/undermined-areas",
+    "url": "https://data.wprdc.org/dataset/ea849f53-0aa9-4621-b9fb-e8dc323d3a9e/resource/e1d96015-818f-46fb-88dd-85c20eacb96c/download/undermined.geojson",
+    "retrieved_utc": "2026-09-26T15:42:13+00:00",
+    "bytes": 2487625,
+    "sha256": "2d513c92d3b877a426e7d7a9b0822437b6db490b608f97dffa0c46e538277575"
+  },
+  "landslide.geojson": {
+    "title": "Pittsburgh Landslide Prone Areas",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/landslide-prone-areas",
+    "url": "https://data.wprdc.org/dataset/6eb1be84-7abe-45c3-8a37-90db80ea6149/resource/b5b45ac6-f8ef-4805-b4e4-fc7c63fb4075/download/landslides.geojson",
+    "retrieved_utc": "2026-09-26T15:42:13+00:00",
+    "bytes": 618224,
+    "sha256": "cae4d6c076d3696a5dbe33f76daaaf12fd9bb19e936a5ec3075fa0cac09c404b"
+  },
+  "city_owned.csv": {
+    "title": "City-Owned Properties",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/city-owned-properties",
+    "url": "https://data.wprdc.org/datastore/dump/e1dcee82-9179-4306-8167-5891915b62a7",
+    "retrieved_utc": "2026-09-26T15:42:13+00:00",
+    "bytes": 2991741,
+    "sha256": "634b3d2a8b35d5ce3e3859331f9350b10143073c494c2191a7206210a80cbf34"
+  },
+  "condemned.csv": {
+    "title": "Condemned and Dead-End Properties",
+    "steward": "City of Pittsburgh PLI / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/condemned-properties",
+    "url": "https://data.wprdc.org/datastore/dump/0a963f26-eb4b-4325-bbbc-3ddf6a871410",
+    "retrieved_utc": "2026-09-26T15:42:13+00:00",
+    "bytes": 717711,
+    "sha256": "dd20477ae78c9dafe25269a087ab813c23b8cc5774881b6219d6c541c3c64bd9"
+  },
+  "violations.csv": {
+    "title": "PLI / DOMI / ES Violations",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/pittsburgh-pli-violations-report",
+    "url": "https://data.wprdc.org/datastore/dump/70c06278-92c5-4040-ab28-17671866f81c",
+    "retrieved_utc": "2026-09-26T15:42:23+00:00",
+    "bytes": 231924679,
+    "sha256": "e5f167cce15eef698ccbe92e4b2e0057ee1b96d02fa30e24959aa59aa60109a0"
+  },
+  "city_delinquency.csv": {
+    "title": "City of Pittsburgh and School District Property Tax Delinquency",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/city-of-pittsburgh-property-tax-delinquency",
+    "url": "https://data.wprdc.org/datastore/dump/ed0d1550-c300-4114-865c-82dc7c23235b",
+    "retrieved_utc": "2026-09-26T15:42:23+00:00",
+    "bytes": 4221607,
+    "sha256": "7b6a1bce97e89f58f5fe7e81e8bec8fdcaccca95b129d16ef9c9891c88e08a1f"
+  },
+  "city_parks.geojson": {
+    "title": "City of Pittsburgh Parks",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/parks",
+    "url": "https://data.wprdc.org/dataset/874bb5ef-e001-4553-94db-57303b439fb0/resource/93f2401c-6642-4776-b4ae-354f19ad0e1e/download/___",
+    "retrieved_utc": "2026-09-26T15:42:24+00:00",
+    "bytes": 6295292,
+    "sha256": "e5687ba5f37225a14fbe68940313098a40639801c269497da7f7f5b6f650d78b"
+  },
+  "greenways.geojson": {
+    "title": "City of Pittsburgh Greenways",
+    "steward": "City of Pittsburgh / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/greenways",
+    "url": "https://data.wprdc.org/dataset/8820c384-1424-45dd-a2bb-366a6a7c6d1b/resource/7c2b901b-6328-4e40-99a3-4b5952cd6f31/download/greenways.geojson",
+    "retrieved_utc": "2026-09-26T15:42:24+00:00",
+    "bytes": 145285,
+    "sha256": "11dddbf5370a387e2d4f7b3ccee39ee497578e04c771abb698af1ff6a886fafa"
+  },
+  "incidents.xlsx": {
+    "title": "Pittsburgh Bureau of Police Monthly Criminal Activity 2024-2026",
+    "steward": "Pittsburgh Bureau of Police / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/monthly-criminal-activity-dashboard",
+    "url": "https://data.wprdc.org/dataset/65e69ee3-93b2-4f7a-b9cb-8ce977f15d9a/resource/bd41992a-987a-4cca-8798-fbe1cd946b07/download/pbp_incidents_2024_2026.xlsx",
+    "retrieved_utc": "2026-09-26T15:42:24+00:00",
+    "bytes": 15265308,
+    "sha256": "cb59bd3c2b7d3c8da2b5144df3df14cbb018a84cf009d21b3e619763919dda12"
+  },
+  "acs_neighborhoods.csv": {
+    "title": "ACS 2009-13 and 2019-23 estimates for City of Pittsburgh neighborhoods (UCSUR)",
+    "steward": "Pitt UCSUR / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/2009-13-and-2019-23-american-community-survey-estimates-for-city-of-pittsburgh-neighborhoods",
+    "url": "https://data.wprdc.org/dataset/007c3ea8-3f76-4b26-8a09-a14811abf12e/resource/e68fe400-38a6-4d7a-864c-f84be9e58c6c/download/profiles_data_20132023.csv",
+    "retrieved_utc": "2026-09-26T15:42:25+00:00",
+    "bytes": 232828,
+    "sha256": "72a971207a66541393a5b2728a859c3a61086206246a53ec5dbdbfae13320640"
+  },
+  "acs_neighborhoods_dictionary.xlsx": {
+    "title": "Data dictionary for the UCSUR neighborhood ACS profiles",
+    "steward": "Pitt UCSUR / WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/2009-13-and-2019-23-american-community-survey-estimates-for-city-of-pittsburgh-neighborhoods",
+    "url": "https://data.wprdc.org/dataset/007c3ea8-3f76-4b26-8a09-a14811abf12e/resource/300132af-1be5-4f44-975c-10cb0024f8d3/download/profileschange_datadictionary_20132023.xlsx",
+    "retrieved_utc": "2026-09-26T15:42:25+00:00",
+    "bytes": 27749,
+    "sha256": "2b75e8e10af9a83df9ca0d2d4ccc98be1cb803361ecacd17565550329de39381"
+  },
+  "sidewalk_ratio_blockgroup.csv": {
+    "title": "Sidewalk to Street Walkability Ratio (block group, 2021-12)",
+    "steward": "WPRDC",
+    "scope": "city",
+    "page": "https://data.wprdc.org/dataset/sidewalk-to-street-walkability-ratio",
+    "url": "https://data.wprdc.org/dataset/853a077d-0a31-4292-8a1d-5d60b530169b/resource/b90ccee1-c0aa-43b9-93e2-8a25e690c393/download/sidewalkstreetratioupload.csv",
+    "retrieved_utc": "2026-09-26T15:42:25+00:00",
+    "bytes": 100717,
+    "sha256": "d5a2845a27f21c8577e6f57c6fe466e927aab503f4b279318f8531350790eeac"
+  }
+}
