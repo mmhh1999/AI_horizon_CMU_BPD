@@ -1,45 +1,49 @@
-# Housing Futures: web app (prototype v1, "planning workbench")
+# Housing Futures: web app (community-first, branch `mso-v0`)
 
-A static page (plain HTML + ES modules, no build step). MapLibre GL JS 4.7 and SunCalc 1.9 load from jsdelivr; the basemap is OpenFreeMap (no API key). The design spec is in [docs/ui-spec.md](../../docs/ui-spec.md).
+A static page (plain HTML + ES modules, no build step). MapLibre GL JS 4.7, SunCalc 1.9 and Lucide load from jsdelivr; the basemap is OpenFreeMap (no API key). The original design spec is in [docs/ui-spec.md](../../docs/ui-spec.md); the community-first flow is described in [docs/concept.md](../../docs/concept.md).
+
+**County → City neighborhoods → "What does this neighborhood need?" → opportunity lots → parcel → housing futures → performance and constraints → priorities → Why / Why not**
 
 ## Run
 
 ```bash
 cd src/app
 python3 -m http.server 8791
-# open http://localhost:8791 and click "Try an example parcel"
+# open http://localhost:8791 and click "Try an example lot" (Larimer demo path)
 ```
 
-ES modules and `fetch` do not work from `file://`, so the page must be served over HTTP.
+ES modules and `fetch` do not work from `file://`, so the page must be served over HTTP. Smoke test: `python tests/smoke_app.py` from the repo root (see the root README).
 
 ## Files
 
 | File | Role |
 |---|---|
-| `js/config.js` | Draft district rules, scenario templates, parking and stormwater parameters, examples, source texts |
-| `js/scenarios.js` | Scenario engine: massing, constraints, VIABLE / CONDITIONAL / CONSTRAINED status, qualitative levels, counterfactual chips |
-| `js/axo.js` | Monochrome axonometric SVG renderer (thumbnails and expanded view) |
-| `js/map.js` | Site map: parcels, selection, overlays |
-| `js/ui.js` | Parcel card, future cards, expanded view, Why / Why not drawer, Sources & Assumptions |
+| `js/main.js` | App state and wiring: map levels, panels, events |
+| `js/data.js` | Loads `county.json`, `city/neighborhoods.json` and per-neighborhood chunks on demand; opportunity tag and choropleth definitions |
+| `js/map.js` | County and neighborhood choropleths, opportunity parcels, context overlays (zoning, transit, green space, slope, hazards), selected lot with 500 / 1,000 ft rings |
+| `js/needs.js` | County and City panels, "What does X need?" panel, parcel opportunity card, safety context sentence |
+| `js/config.js` | Draft district rules, 13 housing-type templates, presets and needs-to-type suggestions, examples, source texts |
+| `js/scenarios.js` | Scenario engine: massing, constraints, status, qualitative levels, counterfactual chips |
+| `js/solar.js` | Solar envelope (Knowles-style, Boulder solar-fence rules as a community goal), compactness, TOD and green-space metrics |
+| `js/priorities.js` | Ten criteria, weights that sum to 100, value-judgment presets, fit explanations, SMAA robustness |
+| `js/axo.js` | Axonometric SVG renderer (porches, kept houses, garage doors, shopfronts, zoning and solar envelopes) |
+| `js/ui.js` | Parcel card, type picker, future cards, detail view, performance tiles, illustrations, priorities, Why / Why not |
 | `js/answers.js` | Structured answers for the ask box (only computed facts) |
 | `js/sun.js`, `js/geo.js` | Winter shadow; lot-aligned local frame |
-| `data/area.json` | Area extract (about 2 MB; see below) |
+| `assets/renderings/` | AI-generated illustration per housing type (labeled in the UI; not a design for any site) |
+| `data/county.json` | 130 municipalities with parcel-level statistics; ACS profiles for County, City, rest of county |
+| `data/city/neighborhoods.json` | 90 City neighborhoods: boundaries, ACS profile, stock and opportunity counts, needs flags, safety context |
+| `data/city/nbhd/<slug>.json` | Per-neighborhood parcels (with opportunity tags), buildings, zoning, hazards, stops, parks |
+| `data/area.json` | Original Garfield extract, kept so other branches keep working |
 
-## Data (`data/area.json`, retrieved 2026-09-25)
+## Data
 
-The extract covers the Garfield / Penn Ave / Liberty Ave area of the City of Pittsburgh:
-
-- 3,204 parcels (Allegheny County Parcels REST);
-- zoning (City PGHWebZoning);
-- WPRDC Property Assessments (use, class, lot area, stories only; **no owner fields**);
-- 25%+ slope, undermined areas, and landslide-prone areas (City GIS);
-- FEMA NFHL (only Zone X in this area);
-- PRT stops with weekday trips (GTFS feed 2606);
-- 2,603 OpenStreetMap buildings (© OpenStreetMap contributors, ODbL), with heights from assessment stories.
+Built by `src/pipeline/build.py` from public County and City data retrieved 2026-09-26 (provenance in `data/reference/retrievals.json`). 142,305 City parcels, 88.9 MB total, largest neighborhood file 4.4 MB. `src/pipeline/check.py` fails the build if any owner mailing address, owner name or foreclosure plaintiff appears in an export. Owner mailing addresses are used only inside the pipeline, to derive an aggregate absentee / multi-parcel signal.
 
 ## Placeholders (said in the UI)
 
 - **All zoning numbers are draft placeholders** until verified against the codified Pittsburgh Code. A header flag says so.
-- Typology dimensions are placeholders until sourced from Parolek 2020 and missingmiddlehousing.com.
-- The ask box and chip summaries use templates. LLM phrasing needs the small server; the answers never add facts.
-- Not modeled: walkability to daily destinations, ACS/CHAS need, RECS energy, infrastructure capacity, market feasibility.
+- Typology dimensions and the needs-to-type and priority value mappings are draft editorial judgments.
+- The solar envelope, compactness, transit and green-space goals are community goals, not current Pittsburgh law, and never change a future's approval status.
+- Safety is context only: never scored, ranked or mapped as a choropleth.
+- Not modeled: construction cost and market feasibility, infrastructure capacity, walkability to daily destinations.

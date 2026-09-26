@@ -132,6 +132,20 @@ with sync_playwright() as pw:
     page.wait_for_timeout(1500)
     check(page.locator(".fcard").count() >= 1 or page.locator(".oos").count() == 1, "cycled through all examples")
 
+    timing = page.evaluate("""async () => {
+      const city = await (await fetch('data/city/neighborhoods.json')).json();
+      const out = [];
+      for (const h of city.hoods) {
+        const t = performance.now();
+        const d = await (await fetch(`data/city/nbhd/${h.slug}.json`, {cache: 'no-store'})).json();
+        out.push([h.slug, performance.now() - t, d.parcels.length]);
+      }
+      return out;
+    }""")
+    worst = max(timing, key=lambda r: r[1])
+    check(len(timing) == 90 and all(r[2] > 0 for r in timing), "all 90 neighborhood files load and parse")
+    check(worst[1] < 3000, f"slowest neighborhood file (local fetch + parse): {worst[0]} {worst[1]:.0f} ms")
+
     extra = [e for e in errors if "tiles.openfreemap" not in e and "Failed to load resource" not in e]
     check(not extra, f"no JavaScript errors ({len(extra)})" + ("".join("\n     " + e[:200] for e in extra[:5])))
     browser.close()

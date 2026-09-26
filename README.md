@@ -61,6 +61,7 @@ Under the hackathon rules, no project code is written before Saturday 09:00 ET. 
 │   ├── branch-notes/        per-branch feature manifests for selective merging
 │   └── meeting-notes/       team and advisor meeting notes
 ├── data/                    see data/README.md (raw/ and interim/ are git-ignored)
+├── tests/                   headless smoke test of the demo path
 └── src/                     application code, written during the build window (see src/README.md)
     ├── app/                 static web app (no build step)
     └── pipeline/            data download and processing (Python)
@@ -111,6 +112,13 @@ python3 -m venv .venv && .venv/bin/pip install -r src/pipeline/requirements.txt
 .venv/bin/python src/pipeline/check.py    # counts and privacy checks
 ```
 
+Headless smoke test of the demo path (County → City → Larimer → example lots → futures, performance, priorities, Why not), with the app served on port 8791:
+
+```bash
+.venv/bin/pip install playwright            # dev only; uses the local Chrome
+.venv/bin/python tests/smoke_app.py
+```
+
 ## Libraries, services, and tools
 
 | Item | Use | License / terms |
@@ -121,10 +129,12 @@ python3 -m venv .venv && .venv/bin/pip install -r src/pipeline/requirements.txt
 | Lucide icons | UI icons | ISC |
 | Inter (Google Fonts) | Typeface | SIL OFL |
 | Python: pandas, GeoPandas, Shapely, pyproj, pyogrio, requests, openpyxl | Data pipeline | BSD / MIT / Apache-2.0 |
+| Playwright (Python) | Headless smoke test only (`tests/smoke_app.py`), not shipped | Apache-2.0 |
 | NLR PVWatts v8 API | Specific PV yield (one cached call) | Free API key |
 | Open-Meteo Climate API | Climate context | CC BY 4.0, non-commercial |
 | OpenStreetMap | Building context in the original demo extract | ODbL |
 | AI tools | See [docs/ai-usage-log.md](docs/ai-usage-log.md) | — |
+| AI image generation | 13 housing-type illustrations in `src/app/assets/renderings/`, labeled in the app as "AI-generated illustration of the type, not a design for this site" | Disclosed in the AI log |
 
 ## License
 

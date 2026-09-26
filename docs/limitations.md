@@ -55,7 +55,8 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 
 ### Values and robustness
 - Persona weight presets are **illustrative value judgments** by our team, not recommendations and not research findings.
-- The robustness view (SMAA) samples weights uniformly by default. That is an assumption that every priority mix is equally plausible, and it is not a survey of what people actually want. "Wins under 58% of priority mixes" describes the model, not public opinion.
+- The robustness view (SMAA) samples weights uniformly by default. That is an assumption that every priority mix is equally plausible, and it is not a survey of what people actually want. "Wins under 58% of priority mixes" describes the model, not public opinion. The app also reports a second share for mixes close to the user's own weights (random perturbations of the chosen weights).
+- Several criterion values are **typology judgments** by our team (family-size homes, street presence, aging in place), and the mapping from neighborhood needs to suggested housing types and suggested emphasis is editorial. Both are shown as suggestions, never applied automatically, and should be reviewed with the advisors.
 
 ### Equity lens
 - Market clusters come from the 2021 Market Value Analysis and may be out of date.
