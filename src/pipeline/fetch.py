@@ -31,14 +31,21 @@ def ckan_latest(spec):
     return res[-1]["url"]
 
 
-def arcgis_geojson(base, dest):
-    """Page through an ArcGIS FeatureServer layer and write one GeoJSON file."""
+def arcgis_geojson(base, dest, extra=None, step=None):
+    """Page through an ArcGIS FeatureServer/MapServer layer and write one GeoJSON file."""
     meta = requests.get(base, params={"f": "json"}, headers=UA, timeout=60).json()
-    step = int(meta.get("maxRecordCount") or 1000)
+    step = step or int(meta.get("maxRecordCount") or 1000)
     feats, offset = [], 0
     while True:
-        q = {"where": "1=1", "outFields": "*", "outSR": 4326, "f": "geojson", "resultOffset": offset, "resultRecordCount": step}
-        page = requests.get(f"{base}/query", params=q, headers=UA, timeout=120).json()
+        q = {"where": "1=1", "outFields": "*", "outSR": 4326, "f": "geojson", "resultOffset": offset, "resultRecordCount": step, **(extra or {})}
+        for attempt in range(5):
+            try:
+                page = requests.get(f"{base}/query", params=q, headers=UA, timeout=120).json()
+                break
+            except ValueError:
+                if attempt == 4:
+                    raise
+                time.sleep(3 * (attempt + 1))
         got = page.get("features", [])
         feats += got
         if len(got) < step and not page.get("exceededTransferLimit"):
@@ -75,7 +82,7 @@ def main(keys):
         t0 = time.time()
         try:
             if "arcgis" in spec:
-                url = arcgis_geojson(spec["arcgis"], dest)
+                url = arcgis_geojson(spec["arcgis"], dest, spec.get("query"), spec.get("page_size"))
             else:
                 url = ckan_latest(spec["ckan_latest"]) if "ckan_latest" in spec else spec["url"]
                 download(url, dest)

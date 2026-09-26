@@ -238,5 +238,15 @@
     "retrieved_utc": "2026-09-26T15:42:25+00:00",
     "bytes": 100717,
     "sha256": "d5a2845a27f21c8577e6f57c6fe466e927aab503f4b279318f8531350790eeac"
+  },
+  "flood.geojson": {
+    "title": "FEMA National Flood Hazard Layer: flood hazard zones (City of Pittsburgh extent)",
+    "steward": "FEMA",
+    "scope": "city",
+    "page": "https://www.fema.gov/flood-maps/national-flood-hazard-layer",
+    "url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28/query",
+    "retrieved_utc": "2026-09-26T15:59:58+00:00",
+    "bytes": 7444482,
+    "sha256": "7351e8a723ae59b809052c0e83a9d8e1b581c278b48b7be1f1598cf4eacf406b"
   }
 }

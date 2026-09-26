@@ -107,6 +107,19 @@ SOURCES = {
         "url": f"{WPRDC}/dataset/6eb1be84-7abe-45c3-8a37-90db80ea6149/resource/b5b45ac6-f8ef-4805-b4e4-fc7c63fb4075/download/landslides.geojson",
         "page": f"{WPRDC}/dataset/landslide-prone-areas",
     },
+    "flood.geojson": {
+        "scope": "city",
+        "title": "FEMA National Flood Hazard Layer: flood hazard zones (City of Pittsburgh extent)",
+        "steward": "FEMA",
+        "arcgis": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+        "query": {
+            "geometry": "-80.10,40.36,-79.86,40.51", "geometryType": "esriGeometryEnvelope", "inSR": 4326,
+            "spatialRel": "esriSpatialRelIntersects", "outFields": "FLD_ZONE,ZONE_SUBTY,SFHA_TF",
+            "maxAllowableOffset": 0.00001,  # ~1 m generalization; full-detail pages fail server-side
+        },
+        "page_size": 100,
+        "page": "https://www.fema.gov/flood-maps/national-flood-hazard-layer",
+    },
     "city_owned.csv": {
         "scope": "city",
         "title": "City-Owned Properties",
