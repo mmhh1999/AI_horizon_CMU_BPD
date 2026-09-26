@@ -2,6 +2,37 @@
 
 All sources are public. Most rows come from the organizer's data catalog; caveats are quoted or condensed from it. **When a dataset is downloaded, record the retrieval date and version here.** Vintages must line up; for example, ACS 2020–2024 joins to 2020 census tract boundaries.
 
+## Branch `mso-v0`: full-county pull (retrieved 2026-09-26)
+
+`src/pipeline/fetch.py` downloads every source below into `data/raw/` (git-ignored). The exact URL, UTC retrieval time, byte size, and sha256 for each file are in [`data/reference/retrievals.json`](../data/reference/retrievals.json). Source URLs live in `src/pipeline/sources.py`.
+
+| Dataset | Scope | Steward | Used for | Caveat |
+|---|---|---|---|---|
+| [Property Assessments](https://data.wprdc.org/dataset/property-assessments) (584,999 rows) | County | Allegheny County OPA / WPRDC | Use, class, lot area, stories, year built, condition (`CONDITIONDESC`, `CDUDESC`), homestead flag, owner *type* (`OWNERDESC`); housing-stock mix per neighborhood; vacancy | Assessed value ≠ market value. **The owner's mailing address is used only in memory to derive two booleans and a count, then discarded; it is never written to disk or displayed** (see Privacy) |
+| [Parcel Boundaries, 2026-09 release](https://data.wprdc.org/dataset/allegheny-county-parcel-boundaries1) (580,039 polygons) | County | Allegheny County GIS / WPRDC | Lot geometry, area, width/depth, deep-lot flag | Geometry and assessment update on different schedules |
+| [Parcel Centroids with Geographic Identifiers, 2025-03](https://data.wprdc.org/dataset/parcel-centroids-in-allegheny-county-with-geographic-identifiers) | County | WPRDC | Parcel → municipality, City neighborhood, tract, block group | 2025 vintage; parcels created later fall back to a spatial join |
+| [Building Footprints](https://data.wprdc.org/dataset/allegheny-county-building-footprint-locations) | County | Allegheny County GIS / WPRDC | Existing buildings; detached-garage / accessory-structure proxy; massing context | Historical photogrammetry (last update after 2015 flyover); no height field |
+| [Municipal Boundaries](https://data.wprdc.org/dataset/allegheny-county-municipal-boundaries) | County | Allegheny County GIS / WPRDC | County overview map | — |
+| [Delinquent Real Estate Taxes (cumulative)](https://data.wprdc.org/dataset/delinquent-real-estate-taxes) | County | County Treasurer / WPRDC | Distress signal (county overview; parcel context) | Delinquency is not abandonment |
+| [Mortgage Foreclosure Filings](https://data.wprdc.org/dataset/allegheny-county-mortgage-foreclosure-records) | County | Allegheny County / WPRDC | Distress context (counts only) | A filing does not mean the property changed hands |
+| [Parks Outlines](https://data.wprdc.org/dataset/allegheny-county-parks-outlines) | County | Allegheny County GIS / WPRDC | Green-space proximity | County parks only; combined with City parks |
+| [PRT GTFS](https://data.wprdc.org/dataset/gtfs-archive) (feed 2606, 2026-07-18) | Region | Pittsburgh Regional Transit / WPRDC | Stops, weekday trips per stop, frequent-transit nodes | Scheduled service ≠ realized reliability |
+| [Neighborhoods](https://data.wprdc.org/dataset/neighborhoods2) (90) | City | City of Pittsburgh / WPRDC | Community boundary for the needs panel | City-defined lines, not resident-defined |
+| Zoning districts (PGHWebZoning FeatureServer) | City | City of Pittsburgh | Base district per parcel | Map alone is insufficient; overlays and exceptions matter |
+| 25%+ slope, undermined areas, landslide-prone areas | City | City of Pittsburgh / WPRDC | Site constraints | Screening layers only |
+| [City-Owned Properties](https://data.wprdc.org/dataset/city-owned-properties) | City | City of Pittsburgh / WPRDC | PUBLIC OWNED opportunity tag | Ownership ≠ availability; verify disposition status |
+| [Condemned and Dead-End Properties](https://data.wprdc.org/dataset/condemned-properties) | City | City of Pittsburgh PLI / WPRDC | VACANT BUILDING tag (abandoned / condemned) | Condemnation ≠ demolition feasibility |
+| [PLI / DOMI / ES Violations](https://data.wprdc.org/dataset/pittsburgh-pli-violations-report) | City | City of Pittsburgh / WPRDC | Condition signal (violations in the last 3 years) | Multiple departments share the feed; complaint-driven |
+| [City Property Tax Delinquency](https://data.wprdc.org/dataset/city-of-pittsburgh-property-tax-delinquency) | City | City of Pittsburgh / WPRDC | Distress signal | Current year only |
+| [City Parks](https://data.wprdc.org/dataset/parks), [Greenways](https://data.wprdc.org/dataset/greenways) | City | City of Pittsburgh / WPRDC | Green-space proximity and continuity | Parks of all sizes; quality not measured |
+| [Monthly Criminal Activity 2024–2026](https://data.wprdc.org/dataset/monthly-criminal-activity-dashboard) | City | Pittsburgh Bureau of Police / WPRDC | Community safety **context** by neighborhood (per 1,000 residents, by category, trend) | Reported incidents only; reporting propensity varies; locations generalized for privacy; **never a score** |
+| [ACS 2009–13 and 2019–23 by neighborhood](https://data.wprdc.org/dataset/2009-13-and-2019-23-american-community-survey-estimates-for-city-of-pittsburgh-neighborhoods) | City | Pitt UCSUR / WPRDC | Age, income, race/ethnicity, households, tenure, vehicles, by neighborhood | Tract-based estimates aggregated to neighborhoods; margins of error |
+| [Sidewalk-to-Street Walkability Ratio](https://data.wprdc.org/dataset/sidewalk-to-street-walkability-ratio) | City | WPRDC | Walkability context | 2021 vintage |
+
+**Also in the organizer catalog, not yet used:** HUD CHAS; USPS vacancy; LODES; LIHTC and the National Housing Preservation Database (for preserving existing subsidized stock); Opportunity Atlas (context only, never used to rank people); NCES school locations (family access); 311 requests (reporting propensity varies); PLI permits (pipeline). The organizer's *Brief Source Map* lists these as the Track 3 core: ACS, CHAS, parcels/land use/zoning, PRT GTFS, LAI, FEMA, slopes, ResStock. High-value additions it names: Opportunity Atlas, EJScreen, NLCD, NOAA, schools, market-demand data.
+
+**Not used by design:** listing-level data from Zillow, Redfin, or Realtor.com. Their public *aggregate* research files are allowed; scraping their sites is not.
+
 ## Core (team shortlist, 2026-09-25)
 
 | Dataset | Steward | Grain / join key | Used for | Caveat | Retrieved |
@@ -68,3 +99,9 @@ Full organizer catalog (58 sources): [AI Hackathon for Housing — Public Data C
 
 - We use parcel-level data about property, never about people. Owner names and mailing addresses are dropped at ingest and never displayed, logged, or sent to an LLM.
 - Tract-level demographics describe areas, not households, and are never used to rank people.
+- **Ownership signal (branch `mso-v0`).** The public assessment file has no owner names, but it does carry the tax-bill mailing address. The pipeline reads that address in memory only, to compute:
+  - `absentee`: the mailing address differs from the property address, and there is no homestead exemption;
+  - `multi`: the number of parcels that share the same mailing address, counted through a salted hash whose salt is generated per run and never saved.
+
+  The address, the hash, and the salt are never written to disk, logged, displayed, or sent to an LLM. Exports carry only the boolean, the count bucket, and the owner *type* (for example, corporation or regular). A check script fails the build if any address-like field appears in an export.
+- Police data is aggregated to the neighborhood before display; point locations are not shown.

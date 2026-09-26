@@ -35,6 +35,9 @@
 | Equity lens | Existing-occupancy check, MVA join, displacement-pathway flags, evidence panel text | |
 | AI layer (A2–A4) | Explainers with the number-grounding check and template fallback | |
 | Interface and massing | [ui-spec.md](ui-spec.md) and [massing-and-metrics.md](massing-and-metrics.md) | Minghao |
+| **Community-first rework (branch `mso-v0`)**: full-county pipeline; County → neighborhood → parcel drill-down; community needs; opportunity layers; expanded housing types; solar envelope; stakeholder priorities | [branch-notes/mso-v0.md](branch-notes/mso-v0.md), [concept.md § v3](concept.md#v3-what-changed-after-the-sat-2026-09-26-advisor-review) | Meltem |
+
+**Branching (from Sat 2026-09-26):** each member develops on their own branch from `main`, and selected features are cherry-picked back. Branch manifests live in [branch-notes/](branch-notes/).
 | Docs, limitations, video | README, limitations, AI log, script, recording | |
 
 ## Questions for advisors and office hours

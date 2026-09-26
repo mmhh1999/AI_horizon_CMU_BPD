@@ -19,8 +19,8 @@ Every team member builds on their own branch. Selected features go back to `main
 | # | Feature | Status | Files | Commits |
 |---|---|---|---|---|
 | F0 | Branch manifest | done | `docs/branch-notes/mso-v0.md` | see `git log --oneline main..mso-v0` |
-| F1 | Docs: advisor review, v3 concept, data catalog, limitations, AI log | in progress | `docs/**`, `README.md` | |
-| F2 | Pipeline: full Allegheny County pull with provenance | in progress | `src/pipeline/**`, `data/reference/retrievals.json` | |
+| F1 | Docs: advisor review, v3 concept, data catalog, limitations, AI log | done | `docs/**`, `README.md` | `docs:` commits |
+| F2 | Pipeline: full Allegheny County pull with provenance | done | `src/pipeline/{fetch,sources}.py`, `requirements.txt`, `data/reference/retrievals.json` | `feat(pipeline): full Allegheny County…` |
 | F3 | Pipeline: derived parcel fields, opportunity tags, neighborhood profiles, exports | planned | `src/pipeline/build.py`, `src/app/data/county.json`, `src/app/data/city/**` | |
 | F4 | App: County → City → Neighborhood → Parcel drill-down; layer groups | planned | `src/app/js/map.js`, `src/app/js/main.js`, `src/app/index.html`, `src/app/styles.css` | |
 | F5 | App: Community Needs panel and parcel opportunity context | planned | `src/app/js/needs.js`, `src/app/js/ui.js` | |

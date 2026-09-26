@@ -37,6 +37,22 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 - Runoff uses simple rational-method coefficients. It is a comparison between typologies, not a stormwater design.
 - Climate projections (Open-Meteo, CMIP6) are regional context at 10 km with model spread. They are not parcel forecasts.
 
+### Community needs, opportunities, and context layers (branch `mso-v0`)
+- **Neighborhood profiles are area statistics.** ACS estimates by neighborhood are built from tracts and carry margins of error. The "needs" flags compare a neighborhood with the city median using thresholds that are our own judgments, published in the app.
+- **Opportunity tags are screening signals, not recommendations.**
+  - VACANT LOT and VACANT BUILDING come from assessment land-use codes and the City's condemned and dead-end list; both can be out of date.
+  - PUBLIC OWNED means public ownership, not availability. Disposition status must be checked with the City or the URA.
+  - DEEP LOT and GARAGE/ADU are geometric proxies from parcel polygons and historical building footprints. They do not check easements, access, or utilities.
+  - TRANSIT NODE uses scheduled service.
+- **The ownership signal can mislabel people.** "Not owner-occupied, the owner's tax-bill address holds several parcels, and there are condition or violation signs" is a proxy. It flags community land trusts, CDCs, family owners, and property managers as readily as neglectful landlords. The tool never shows names or addresses, never ranks owners, and shows the signal only with this caveat. It is not evidence of negligence.
+- **Community safety context is not a crime score.** Reported incidents depend on reporting and policing practices, and locations are generalized. The tool shows neighborhood-level rates and trends as context, and does **not** claim that any housing type or design feature reduces crime.
+- **Green-space access** is straight-line distance to a mapped park edge (City and County parks). It ignores barriers, park quality, and hours, and it misses informal green space.
+- **Solar envelope.**
+  - It is computed on a grid from sun positions (SunCalc) on Dec 21, from two hours before to two hours after solar noon, with a hypothetical solar fence on neighboring lot lines (Boulder's method as the precedent).
+  - The ground is treated as flat, so terrain is ignored. Street edges are protected across an assumed right-of-way width, and trees are ignored.
+  - **Solar access is not a Pittsburgh zoning rule.** It is presented as a community goal and a possible rule change.
+- **AI illustrations** show a *housing type*, not a design for the selected parcel. They are labeled as AI-generated and carry no dimensions or claims.
+
 ### Values and robustness
 - Persona weight presets are **illustrative value judgments** by our team, not recommendations and not research findings.
 - The robustness view (SMAA) samples weights uniformly by default. That is an assumption that every priority mix is equally plausible, and it is not a survey of what people actually want. "Wins under 58% of priority mixes" describes the model, not public opinion.
@@ -51,7 +67,7 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 - AI-proposed weights take effect only after the user confirms them.
 
 ### Coverage
-- City of Pittsburgh only; the zoning layer does not cover other Allegheny County municipalities.
+- The data pipeline ingests all of Allegheny County. Parcel-level housing futures are shown only for the City of Pittsburgh, because the zoning layer does not cover the other 129 municipalities. Outside the City, the app shows a county overview (vacancy and distress counts by municipality).
 - Demo results were precomputed for *[neighborhoods]*. Other areas may have gaps.
 
 ## Who benefits, and who might be harmed
@@ -68,6 +84,9 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 | Users treat a "Fits" result as legal permission | Disclaimer on every result, code citations, and a standing "confirm with City Planning / ZBA" box |
 | Hazard flags missed or overstated (slope, undermining) | Labeled as screening only, with pointers to survey and geotech |
 | Area statistics read as facts about the people living there | Tract-level labels; no household-level data; no PII |
+| Opportunity or ownership layers used as a target list for speculative buying | Tags framed as "where exploration may be relevant"; no owner names or addresses; ownership signal shown with its caveat; no ranking of parcels by acquisition value |
+| Crime context used to stigmatize a neighborhood | No score; rates with caveats; framed around design questions and community goals, not "bad neighborhoods" |
+| Needs panel read as "this neighborhood should get affordable-only housing" | For narrow income mixes the panel suggests diversifying types and incomes, following the advisors' anti-displacement guidance |
 | One team's weights presented as neutral | Presets labeled as value judgments; the user controls the weights; tipping points show how much the answer depends on values |
 
 ## What we do not claim

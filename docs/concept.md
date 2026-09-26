@@ -1,4 +1,35 @@
-# Concept: Housing Futures "Why-Not?" (v2)
+# Concept: Housing Futures "Why-Not?" (v3, community-first)
+
+> **Housing Futures helps planners and communities start from what a neighborhood needs, find where intervention is plausible, explore different housing types and configurations, and understand what each future would require, trade off, or need to change to become plausible.**
+
+## v3: what changed after the Sat 2026-09-26 advisor review
+
+The advisors asked us to stop leading with what the zoning code prohibits ([meeting notes](meeting-notes/2026-09-26-advisor-review.md)). v2 below was parcel-first. v3 keeps all of v2's analytical engine (constraints, three levers, robustness, Reform Lens, equity lens) but changes the order in which a user meets it.
+
+**County → Neighborhood → Community needs → Development opportunities → Parcel → Housing futures → Performance + constraints → Stakeholder priorities → Why / Why not**
+
+| Layer | Question it answers | What the user sees | Data |
+|---|---|---|---|
+| **1. Community** | What does this neighborhood need? | Neighborhood profile: age, income and ethnic mix with diversity indices vs. the city median; households with children and seniors; tenure; housing-stock mix (which types are missing); vacancy; green-space and transit access; community safety *context*; "needs" flags with published thresholds | ACS 2019–23 by neighborhood (UCSUR/WPRDC); assessments (stock mix, vacancy); parks; GTFS; police monthly activity |
+| **2. Opportunity** | Where could intervention plausibly happen? | Parcels tagged VACANT LOT · VACANT BUILDING · PUBLIC OWNED · DEEP LOT · GARAGE/ADU · OWNERSHIP SIGNAL · TRANSIT NODE. Tags mark where exploration is relevant; they never recommend redevelopment by themselves | Assessments, City-owned properties, condemned/dead-end properties, violations, tax delinquency, building footprints, GTFS |
+| **3. Housing futures** | What housing type, at what scale, in what configuration? | Detached + ADU, garage ADU, duplex, triplex, fourplex (individual porches vs. shared entry), townhouse, cottage court, courtyard building, live-work, multigenerational, small multifamily, mixed-use | Typology templates (Parolek; MMH), massing engine |
+| **4. Performance + constraints** | What does each future do, and what stands in the way? | Solar envelope (right to sun) against the zoning envelope; compactness (surface-to-volume); TOD and parking avoided; green-space proximity; stormwater; hazards; zoning use and dimensional checks | SunCalc; Boulder-style solar fence method [F4–F5]; PVWatts; zoning; hazard layers |
+| **5. Decision support** | Given *my* priorities, which futures fit, and why or why not? | Weights that always sum to 100, applied **after** the community needs; futures ordered by fit with a per-criterion reason; robustness ("top under X% of priority mixes"); the three levers (values, rules, site) | Deterministic scoring; SMAA [D1] |
+
+**Principle kept from v2: "Why Not?"** A blocked option is never silently removed. The tool says "not allowed by current code, here is the rule and who could change it" and lets the user decide.
+
+**Framing, stated boldly (after Parolek [A1]):** *it is not about adding density; it is about which housing type, at what scale, in what configuration, makes sense here.*
+
+### Design guardrails added in v3
+
+- **Community safety is context, never a score.** No "crime score." Reported incidents per 1,000 residents are shown with caveats. They are connected to design questions (active frontage, porches, shared space) without claiming that built form causes lower crime.
+- **The ownership signal is not a target list.** It is derived without names or addresses leaving the pipeline: not owner-occupied, the owner holds several parcels, and condition or violation signs. It is shown as a neighborhood-level context and a parcel tag with a caveat that many multi-parcel owners are community developers.
+- **Underserved ≠ affordable-only.** When a neighborhood's income mix is narrow, the needs panel suggests diversifying types and income levels, so that middle-income families and young families with enough bedrooms can stay.
+- **Solar access is a community goal, not current Pittsburgh law.** The solar envelope follows the Boulder solar-fence method as a documented precedent. A future that breaks through it is flagged "shades neighbors in winter," with the lever "design change" or "adopt a solar access rule."
+
+---
+
+## v2 analytical engine (kept)
 
 > **Housing Futures shows which housing types could plausibly go on a Pittsburgh site, which of them hold up across different people's priorities, and exactly what would have to change (your values, the rules, or the site) for a different choice to win.**
 
@@ -152,5 +183,6 @@ The uniform prior is itself an assumption. We say so, and we offer a toggle to s
 | **P1** | Reform Lens with `pre-2025` vs. `current`, plus the **HNA replication check**; equity lens (MVA and occupancy check) |
 | **P2** | `bill-2025-1545` ADU and parking scenario; RECS energy coefficients; landslide layer; neighborhood-level unlock counts; values interview; zoning Q&A |
 
-- **Geography:** City of Pittsburgh. Demo on **two contrasting neighborhoods**, one appreciating market and one weak market with vacancy, so the equity lens shows both pathways. Candidates: Garfield (a transitioning market, site of the HUD-studied Picket Fence [A5]) and one of the HNA's decline-driven examples. Decide at the sync.
+- **Geography (v3):** the pipeline ingests all of Allegheny County. The app opens on a county overview and goes parcel-level for all 90 City of Pittsburgh neighborhoods, where the zoning layer exists. Demo path: Larimer, with Garfield as the second example.
+- **Geography (v2, superseded):** City of Pittsburgh. Demo on **two contrasting neighborhoods**, one appreciating market and one weak market with vacancy, so the equity lens shows both pathways. Candidates: Garfield (a transitioning market, site of the HUD-studied Picket Fence [A5]) and one of the HNA's decline-driven examples. Decide at the sync.
 - **Zoning:** the residential districts R1D, R1A, R2, R3, and RM with their density subdistricts.

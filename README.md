@@ -2,7 +2,11 @@
 
 **AI Horizons 2026 · AI for Housing Hackathon (Pittsburgh) · Track 3: Housing Typology, Equity & Climate Matchmaker**
 
-This is a parcel-level decision-support tool. For a real Pittsburgh site it shows which housing types could plausibly go there, what each one gives up, and what would have to change for a different choice to rank higher.
+This is a decision-support tool that starts from **what a neighborhood needs**. It then shows **where intervention is plausible**: vacant lots and buildings, public land, deep lots and garages, and transit nodes. For a real Pittsburgh parcel, it shows which housing types could plausibly go there, at what scale and in what configuration, what each one gives up, and what would have to change for a different choice to rank higher.
+
+**County → Neighborhood → Community needs → Development opportunities → Parcel → Housing futures → Performance + constraints → Stakeholder priorities → Why / Why not** (see [docs/concept.md § v3](docs/concept.md)).
+
+> It is not about adding density. It is about which housing type, at what scale, in what configuration, makes sense in this place.
 
 It does not name one "best" housing type. Instead it keeps apart three things that usually get blurred together:
 
@@ -29,8 +33,9 @@ One-page summary: [docs/pitch.md](docs/pitch.md).
 
 | Phase | When (ET) | State |
 |---|---|---|
-| Ideation, data exploration, planning docs | Fri Sep 25, after kickoff | In progress (documents only) |
-| **Build window** (code starts) | Sat Sep 26 09:00 to Sun Sep 27 23:59 | Not started |
+| Ideation, data exploration, planning docs | Fri Sep 25, after kickoff | Done |
+| Advisor review; direction changed to community-first ([notes](docs/meeting-notes/2026-09-26-advisor-review.md)) | Sat Sep 26, morning | Done |
+| **Build window** | Sat Sep 26 09:00 to Sun Sep 27 23:59 | In progress, on per-member branches (see [docs/branch-notes/](docs/branch-notes/)) |
 | Submission form and 3–5 min demo video | By Sun Sep 27 23:59 | Not started |
 
 Under the hackathon rules, no project code is written before Saturday 09:00 ET. Commits made before then contain planning documents only.
@@ -53,12 +58,17 @@ Under the hackathon rules, no project code is written before Saturday 09:00 ET. 
 │   ├── limitations.md       limitations statement (required deliverable)
 │   ├── ai-usage-log.md      running disclosure of AI tools used to build this project
 │   ├── build-plan.md        weekend plan, advisor questions, submission and video checklist
-│   └── meeting-notes/       team discussion notes
+│   ├── branch-notes/        per-branch feature manifests for selective merging
+│   └── meeting-notes/       team and advisor meeting notes
 ├── data/                    see data/README.md (raw/ and interim/ are git-ignored)
 └── src/                     application code, written during the build window (see src/README.md)
+    ├── app/                 static web app (no build step)
+    └── pipeline/            data download and processing (Python)
 ```
 
 ## Data sources (summary)
+
+The branch `mso-v0` pipeline (`src/pipeline/`) pulls full Allegheny County parcels, assessments, building footprints, parcel geographic identifiers, municipal boundaries, tax delinquency, foreclosures, and parks. It also pulls City of Pittsburgh neighborhoods, zoning, hazards, City-owned properties, condemned and dead-end properties, PLI violations, parks and greenways, police monthly criminal activity, neighborhood ACS 2019–23 (UCSUR), sidewalk ratios, and PRT GTFS. Provenance for every file is in `data/reference/retrievals.json`.
 
 These are all public: Allegheny County parcel boundaries and property assessments, City of Pittsburgh zoning districts and Zoning Code Chapters 903 and 911 (with the 2025 amendment and pending Bill 2025-1545), Pittsburgh 25%+ slope, undermined areas, and landslide-prone areas, the Pittsburgh Regional Transit GTFS feed, ACS 2020–2024 5-year estimates, the URA/County Market Value Analysis 2021, EIA RECS 2020, and Missing Middle Housing type specifications. Local policy grounding comes from the City's 2022 Housing Needs Assessment. Full citations, join keys, caveats, and candidate additions are in [docs/data-sources.md](docs/data-sources.md).
 
@@ -76,7 +86,7 @@ Details are in [docs/ai-design.md](docs/ai-design.md), and the tools used to bui
 
 | Name | Role |
 |---|---|
-| Meltem Sahin Ozkoc | TBD |
+| Meltem Sahin Ozkoc | Product direction after the advisor review; community-first rework on branch `mso-v0`: county data pipeline, community needs, opportunity layers, solar envelope, stakeholder priorities |
 | Fengrui Liu | TBD |
 | Olaf Fu | TBD |
 | David | TBD |
@@ -91,6 +101,30 @@ cd src/app && python3 -m http.server 8791   # then open http://localhost:8791
 ```
 
 See [src/app/README.md](src/app/README.md) for what works and what is still a placeholder.
+
+To rebuild the data (branch `mso-v0`):
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r src/pipeline/requirements.txt
+.venv/bin/python src/pipeline/fetch.py    # ~1.2 GB of public data into data/raw/ (git-ignored)
+.venv/bin/python src/pipeline/build.py    # derived fields and the app's data files
+.venv/bin/python src/pipeline/check.py    # counts and privacy checks
+```
+
+## Libraries, services, and tools
+
+| Item | Use | License / terms |
+|---|---|---|
+| MapLibre GL JS 4.7 | Map rendering | BSD-3-Clause |
+| OpenFreeMap (positron style) | Basemap tiles | Free, OSM/OpenMapTiles attribution |
+| SunCalc 1.9 | Sun positions for shadows and the solar envelope | BSD-2-Clause |
+| Lucide icons | UI icons | ISC |
+| Inter (Google Fonts) | Typeface | SIL OFL |
+| Python: pandas, GeoPandas, Shapely, pyproj, pyogrio, requests, openpyxl | Data pipeline | BSD / MIT / Apache-2.0 |
+| NLR PVWatts v8 API | Specific PV yield (one cached call) | Free API key |
+| Open-Meteo Climate API | Climate context | CC BY 4.0, non-commercial |
+| OpenStreetMap | Building context in the original demo extract | ODbL |
+| AI tools | See [docs/ai-usage-log.md](docs/ai-usage-log.md) | — |
 
 ## License
 

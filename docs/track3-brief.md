@@ -28,6 +28,9 @@ This table is our honest coverage map. Anything marked "limitation" is named as 
 | Opportunity access | *Access* score | PRT GTFS (LODES jobs is a stretch goal) | P0 (transit only) |
 | Carbon emissions | *Land & climate*: operational energy by building type, infill, transit proximity | EIA RECS 2020, GTFS, parcels | P2 (RECS); embodied carbon is a limitation |
 | Displacement risk | **Equity lens**: existing-occupancy check, market context, two displacement pathways, evidence panel. Never a score to optimize | Assessments, MVA 2021, ACS, HNA 2022 | P1; a prediction is out of scope |
+| Community needs (v3) | **Community layer**: neighborhood profile, diversity indices, missing housing types, access, safety context | ACS by neighborhood, assessments, parks, GTFS, police monthly activity | Branch `mso-v0` |
+| Where intervention is possible (v3) | **Opportunity layer**: vacant lots and buildings, public land, deep lots, garage/ADU, ownership signal, transit nodes | Assessments, City-owned, condemned, violations, footprints, GTFS | Branch `mso-v0` |
+| Climate: solar access and compactness (v3) | **Performance layer**: solar envelope (Boulder method), surface-to-volume ratio, envelope area per unit | SunCalc, massing | Branch `mso-v0` |
 | Infrastructure capacity | Not scored | No public parcel-level utility capacity data | Limitation |
 | "Data-driven vs. value judgments" | **SMAA robustness** (rank-1 acceptability) plus DATA, ASSUMPTION, and VALUE tags | Our scores | P0 |
 

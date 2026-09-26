@@ -1,5 +1,7 @@
 # Interface Spec (v1.2: Pittsburgh civic dashboard)
 
+> **Update, Sat 2026-09-26 (branch `mso-v0`).** After the advisor review, the page no longer starts at a parcel. It starts at the county, drills into a neighborhood, and shows "What does this neighborhood need?" and the development opportunities before the parcel-level futures. The visual system below still applies. See [concept.md § v3](concept.md) and [meeting-notes/2026-09-26-advisor-review.md](meeting-notes/2026-09-26-advisor-review.md).
+
 *Updated Fri 2026-09-25 from the team's UI brief. It supersedes the earlier "six futures" wireframe ([design/wireframe.svg](design/wireframe.svg), kept for reference). Screenshot: [design/workbench-v1.png](design/workbench-v1.png). Owner: Minghao.*
 
 ## v1.2 visual system (team direction: Pittsburgh civic dashboard)
