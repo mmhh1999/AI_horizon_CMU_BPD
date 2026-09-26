@@ -1,8 +1,10 @@
-# Housing Futures: web app (community-first, branch `mso-v0`)
+# Housing Futures: web app
 
 A static page (plain HTML + ES modules, no build step). MapLibre GL JS 4.7, SunCalc 1.9 and Lucide load from jsdelivr; the basemap is OpenFreeMap (no API key). The original design spec is in [docs/ui-spec.md](../../docs/ui-spec.md); the community-first flow is described in [docs/concept.md](../../docs/concept.md).
 
-**County → City neighborhoods → "What does this neighborhood need?" → opportunity lots → parcel → housing futures → performance and constraints → priorities → Why / Why not**
+**County → City neighborhoods → community needs → opportunity lots → parcel → three suggested housing futures → trade-offs and Why / Why not**
+
+On `olaf-ai-integration`, the guided bar follows these stages. The map stays prominent while choosing a lot or comparing futures. A selected lot starts with three needs-based types; the user can open all 13 and compare up to four. The performance metrics, individual weights, ranking sensitivity, and calculations remain available in expandable sections of the trade-offs stage. The question box uses the existing structured-answer engine; no live LLM is connected.
 
 ## Run
 
@@ -12,7 +14,7 @@ python3 -m http.server 8791
 # open http://localhost:8791 and click "Try an example lot" (Larimer demo path)
 ```
 
-ES modules and `fetch` do not work from `file://`, so the page must be served over HTTP. Smoke test: `python tests/smoke_app.py` from the repo root (see the root README).
+ES modules and `fetch` do not work from `file://`, so the page must be served over HTTP. From the repo root, run `python tests/smoke_app.py` and `python tests/guided_flow.py` after installing Playwright and Chrome (see the root README).
 
 ## Files
 

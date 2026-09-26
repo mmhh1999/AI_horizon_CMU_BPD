@@ -36,6 +36,8 @@
       </div>
     </header>
 
+    <nav id="journey" class="journey" aria-label="Explore housing futures"></nav>
+
     <main class="ws">
       <section class="col map-col" id="sec-explore">
         <div class="map-wrap">
@@ -58,11 +60,12 @@
         <div id="needs"></div>
         <div id="futuresBlock">
           <div class="col-head">
-            <div><div class="eyebrow">Step 2 · Housing futures</div><h2>What could go here?</h2></div>
+            <div><div class="eyebrow">Housing futures</div><h2>What could go here?</h2></div>
             <select id="setSelect" title="Which building types to compare" aria-label="Building types to compare"></select>
           </div>
-          <div id="typePicker"></div>
+          <details id="typeOptions" class="type-options"><summary>Explore all 13 housing types</summary><div id="typePicker"></div></details>
           <div id="futures" class="fcards"><div class="placeholder"><i data-lucide="map-pinned" class="ic xl"></i><p>Pick a neighborhood, then a lot on the map, or press <b>Try an example lot</b>.</p></div></div>
+          <button id="reviewTradeoffs" class="btn-primary review-tradeoffs"><i data-lucide="scale" class="ic"></i>Review trade-offs<i data-lucide="arrow-right" class="ic"></i></button>
           <div id="detail" class="detail"></div>
           <div id="priorities"></div>
         </div>

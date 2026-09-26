@@ -128,7 +128,9 @@ export function renderPriorities(el, futures, state, hood) {
     <div class="presets"><span class="lbl-sm">Starting points (each one is a value judgment)</span>
       ${Object.entries(PRESETS).map(([k, p]) => `<button data-preset="${k}" class="${state.preset === k ? "on" : ""}">${esc(p.label)}</button>`).join("")}</div>
     ${emph.length ? `<div class="emph">${icon("sparkles")}<span><b>${esc(hood.name)}'s needs</b> suggest more weight on ${emph.map((k) => `<em>${esc(label(k).toLowerCase())}</em>`).join(", ")}.</span><button data-emph class="${state.preset === "needs" ? "on" : ""}">Use as a starting point</button></div>` : ""}
-    <div class="sliders">${CRITERIA.map((c) => `<label class="sl">${icon(c.icon)}<span>${esc(c.label)}</span><output data-out="${c.key}">${state.weights[c.key]}</output><input type="range" min="0" max="100" step="1" data-w="${c.key}" value="${state.weights[c.key]}" aria-label="${esc(c.label)} weight"/></label>`).join("")}</div>
+    <details class="weight-details" ${state.weightsOpen ? "open" : ""}><summary>Adjust all 10 weights</summary>
+      <div class="sliders">${CRITERIA.map((c) => `<label class="sl">${icon(c.icon)}<span>${esc(c.label)}</span><output data-out="${c.key}">${state.weights[c.key]}</output><input type="range" min="0" max="100" step="1" data-w="${c.key}" value="${state.weights[c.key]}" aria-label="${esc(c.label)} weight"/></label>`).join("")}</div>
+    </details>
     <div id="prioRank">${prioRankHTML(futures, state.weights)}</div>
   </section>`;
 }
@@ -142,9 +144,9 @@ export function prioRankHTML(futures, weights) {
       <div class="ph">${icon(r.f.icon)}<b>${esc(r.f.name)}</b>${statusChip(r.f.status)}<span class="fitnum">${Math.round(r.fit * 100)}<small>/100</small></span></div>
       <div class="fitbar">${r.parts.filter((p) => p.contrib > 0.004).map((p) => `<i style="width:${(p.contrib * 100).toFixed(1)}%" title="${esc(p.label)}: ${Math.round(p.contrib * 100)}"></i>`).join("")}</div>
       <div class="pwhy">${r.pros.map((p) => `<span class="pro">${icon("check")}${esc(p.text)}</span>`).join("")}${r.cons.map((p) => `<span class="con">${icon("minus")}${esc(p.text)}</span>`).join("")}</div>
-      ${rob[r.f.id] ? `<div class="robust">${icon("dices")}Ranks first under ${pc(rob[r.f.id].near)} of priority mixes close to yours, and ${pc(rob[r.f.id].any)} of all possible mixes</div>` : ""}
+      ${rob[r.f.id] ? `<details class="robust-details"><summary>Ranking sensitivity</summary><div class="robust">${icon("dices")}Ranks first under ${pc(rob[r.f.id].near)} of priority mixes close to yours, and ${pc(rob[r.f.id].any)} of all possible mixes</div></details>` : ""}
     </div></li>`).join("")}</ol>
-    <p class="muted small">Fit = Σ weight × criterion value (0–1). Values come from the numbers above and from draft typology judgments; see Sources. Robustness: 1,500 random weight mixes (SMAA).</p>`;
+    <details class="tech rank-method"><summary>How ranking is calculated</summary><p class="muted small">Fit = Σ weight × criterion value (0–1). Values come from the numbers above and from draft typology judgments; see Sources. Robustness: 1,500 random weight mixes (SMAA).</p></details>`;
 }
 
 // ---------- expanded view (center, below cards)
@@ -166,7 +168,7 @@ export function renderDetail(el, f, parcel, ctx, state) {
     <div class="axo-big">${renderAxo({ width: 640, height: 280, lotRing: ctx.lotST, neighborLots: ctx.nbLotsST, neighbors: ctx.nbST, envelope: f.envelope, volumes: f.volumes, shadows: state.shadow ? ctx.shadows : [], dashed: f.status === "constrained", pad: 14, solar: state.solarShow ? ctx.solarEnv : null })}
       <div class="axo-legend"><span><i class="lg-lot"></i>This lot</span><span><i class="lg-mass"></i>New building</span>${f.volumes.some((v) => v.existing) ? `<span><i class="lg-kept"></i>Existing house (kept)</span>` : ""}<span><i class="lg-env"></i>Zoning envelope</span>${state.solarShow ? `<span><i class="lg-solar"></i>Solar envelope</span>` : ""}<span><i class="lg-nb"></i>Neighbors</span></div>
     </div>
-    ${performance(f, parcel, ctx, state)}
+    <details class="perf-more" ${state.perfOpen ? "open" : ""}><summary>Performance and climate details</summary>${performance(f, parcel, ctx, state)}</details>
     <div class="kpis">
       <div>${icon("house")}<b>${f.netUnits >= 0 ? "+" : ""}${f.netUnits}</b><span>new homes</span></div>
       <div>${icon("building-2")}<b>${f.stories}</b><span>floors</span></div>

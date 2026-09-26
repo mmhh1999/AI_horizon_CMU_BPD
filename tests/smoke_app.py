@@ -77,6 +77,7 @@ with sync_playwright() as pw:
     check(page.locator(".cons li, .drawer p").count() >= 1, "Why-not drawer opens")
     shot(page, "5-why")
 
+    page.locator(".perf-more summary").click()
     check(page.locator(".ptile").count() == 4, "performance tiles: solar envelope, compactness, transit, green space")
     solar_txt = page.inner_text(".ptile >> nth=0")
     page.select_option("#solarWindow", "day")
@@ -94,6 +95,7 @@ with sync_playwright() as pw:
     check("not a design for this site" in page.inner_text(".rendering figcaption"), "illustration carries the AI disclosure label")
     shot(page, "5d-rendering")
 
+    page.locator(".weight-details summary").click()
     check(page.locator("#priorities .sl").count() == 10, "priorities: 10 criteria sliders")
     total = lambda: page.eval_on_selector_all("#priorities [data-w]", "xs => xs.reduce((s, x) => s + +x.value, 0)")
     check(total() == 100, "weights start at 100")
@@ -102,6 +104,7 @@ with sync_playwright() as pw:
     page.click("[data-preset=climate]")
     check(page.locator("#priorities [data-preset=climate].on").count() == 1 and total() == 100, "preset applies and sums to 100")
     check(page.locator(".prank li").count() == page.locator(".fcard").count(), "every compared future is ranked")
+    page.locator(".robust-details summary").first.click()
     check("priority mixes" in page.inner_text("#prioRank"), "SMAA robustness line shown")
     if page.locator("[data-emph]").count():
         page.click("[data-emph]")
@@ -109,6 +112,7 @@ with sync_playwright() as pw:
     page.locator("#priorities").scroll_into_view_if_needed()
     shot(page, "5c-priorities")
 
+    page.locator("#typeOptions summary").click()
     sugg = page.locator(".tp.on").count()
     check(1 <= sugg <= 4, f"type picker: {sugg} types preselected from needs")
     presets = page.eval_on_selector_all("#setSelect option", "os => os.map(o => o.value)")
@@ -123,6 +127,7 @@ with sync_playwright() as pw:
         if key == "gentle":
             shot(page, "6-gentle-garage")
     before = page.locator(".fcard").count()
+    page.locator("#typeOptions summary").click()
     page.locator(".tp:not(.on):not([disabled])").first.click()
     page.wait_for_timeout(250)
     check(page.locator(".fcard").count() == min(before + 1, 4), "adding a type adds a card")
