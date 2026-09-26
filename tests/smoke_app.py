@@ -88,6 +88,12 @@ with sync_playwright() as pw:
     shot(page, "5b-performance")
     page.select_option("#solarWindow", "noon2")
 
+    page.locator(".rendering img").scroll_into_view_if_needed()
+    page.wait_for_function("document.querySelector('.rendering img')?.complete", timeout=10000)
+    check(page.eval_on_selector(".rendering img", "i => i.naturalWidth") > 0, "illustration for the selected type loads")
+    check("not a design for this site" in page.inner_text(".rendering figcaption"), "illustration carries the AI disclosure label")
+    shot(page, "5d-rendering")
+
     check(page.locator("#priorities .sl").count() == 10, "priorities: 10 criteria sliders")
     total = lambda: page.eval_on_selector_all("#priorities [data-w]", "xs => xs.reduce((s, x) => s + +x.value, 0)")
     check(total() == 100, "weights start at 100")

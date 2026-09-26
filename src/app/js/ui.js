@@ -173,6 +173,8 @@ export function renderDetail(el, f, parcel, ctx, state) {
       <div>${icon("bus")}<b>${wm} min</b><span>to the bus</span></div>
       <div>${icon("trees")}<b>${Math.round((f.pervious / f.lotArea) * 100)}%</b><span>open space</span></div>
     </div>
+    <figure class="rendering"><img src="assets/renderings/${f.id}.jpg" alt="Illustration: ${esc(f.name)} on a Pittsburgh street" loading="lazy" onerror="this.closest('figure').remove()"/>
+      <figcaption>${icon("sparkles")}<span><b>AI-generated illustration of the type, not a design for this site.</b> ${esc(f.name)}: what this type can feel like on a Pittsburgh street. Size, materials and details are not proposals. ${src("RENDER")}</span></figcaption></figure>
     <div class="sect"><h4>How the lot is used ${src("ZONING")}</h4>${lotBudget(f)}</div>
     <div class="sect"><h4>What it means</h4><ul class="means">${meaning.map(([i, t]) => `<li>${icon(i)}<span>${esc(t)}</span></li>`).join("")}</ul></div>
     <details class="tech"><summary>Technical details</summary>
