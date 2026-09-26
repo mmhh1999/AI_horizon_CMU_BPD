@@ -3,7 +3,8 @@ import { EXAMPLES, SCENARIO_SETS, MAX_TYPES, districtRules, suggestTypes } from 
 import { makeFrame, bbox } from "./geo.js";
 import { buildScenario, effectiveRules, defaultAssumptions, applyChip, removeChange } from "./scenarios.js";
 import { createMap, setLevel, setClasses, setHood, setOpportunities, setContext, showParcel, fitTo, ringsOf, CONTEXT } from "./map.js";
-import { renderParcelCard, renderFutures, renderDetail, renderWhy, renderSetSelect, renderTypePicker, renderSources } from "./ui.js";
+import { renderParcelCard, renderFutures, renderDetail, renderWhy, renderSetSelect, renderTypePicker, renderSources, renderPriorities, prioRankHTML } from "./ui.js";
+import { PRESETS, setWeight, suggestedEmphasis, weightsFromEmphasis } from "./priorities.js";
 import { sunAt, shadowST } from "./sun.js";
 import { solarDefaults, solarEnvelope, checkSolar, compactness, tod, green, goalsFor } from "./solar.js";
 import { answer } from "./answers.js";
@@ -15,7 +16,7 @@ const state = {
   level: "county", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
   parcelId: null, setKey: "suggested", types: SCENARIO_SETS.default.ids, selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
   assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", exampleIdx: -1,
-  solar: solarDefaults(), solarShow: true,
+  solar: solarDefaults(), solarShow: true, weights: { ...PRESETS.even.w }, preset: "even",
 };
 let county, city, hood, area, map, byId, frame, ctx, futures = [];
 let mapReady = false;
@@ -203,7 +204,7 @@ function render() {
   const rules0 = districtRules(p.z);
   if (!rules0) {
     $("#futures").innerHTML = `<div class="oos">Zoning <b>${p.z || "unknown"}</b> is outside this prototype's draft rule set (residential and neighborhood-commercial districts only). Try another lot.</div>`;
-    $("#detail").innerHTML = ""; renderWhy($("#why"), null); $("#exampleNote").textContent = ""; icons(); return;
+    $("#detail").innerHTML = ""; $("#priorities").innerHTML = ""; renderWhy($("#why"), null); $("#exampleNote").textContent = ""; icons(); return;
   }
   state.lotST = ctx.lotST;
   renderSetSelect($("#setSelect"), state.setKey, hood.name);
@@ -212,6 +213,7 @@ function render() {
   const f = futures.find((x) => x.id === state.selected);
   renderDetail($("#detail"), f, p, ctx, state);
   renderWhy($("#why"), f, p, state, futures);
+  renderPriorities($("#priorities"), futures, state, hood);
   $("#exampleNote").textContent = state.exampleIdx >= 0 ? EXAMPLES[state.exampleIdx].why : "";
   icons();
 }
@@ -346,6 +348,22 @@ function bindEvents() {
     else if (state.types.length < MAX_TYPES) state.types = [...state.types, id];
     state.setKey = "custom";
     retype();
+  });
+  $("#priorities").addEventListener("input", (e) => {
+    const s = e.target.closest("[data-w]");
+    if (!s) return;
+    state.weights = setWeight(state.weights, s.dataset.w, +s.value);
+    state.preset = null;
+    document.querySelectorAll("#priorities [data-w]").forEach((x) => { if (x !== s) x.value = state.weights[x.dataset.w]; });
+    document.querySelectorAll("#priorities [data-out]").forEach((o) => { o.textContent = state.weights[o.dataset.out]; });
+    document.querySelectorAll("#priorities [data-preset], #priorities [data-emph]").forEach((b) => b.classList.remove("on"));
+    $("#prioRank").innerHTML = prioRankHTML(futures, state.weights);
+    icons();
+  });
+  $("#priorities").addEventListener("click", (e) => {
+    const p = e.target.closest("[data-preset]");
+    if (p) { state.weights = { ...PRESETS[p.dataset.preset].w }; state.preset = p.dataset.preset; render(); }
+    if (e.target.closest("[data-emph]")) { state.weights = weightsFromEmphasis(suggestedEmphasis(hood?.needs)); state.preset = "needs"; render(); }
   });
   $("#futures").addEventListener("click", (e) => {
     const why = e.target.closest("[data-why]");

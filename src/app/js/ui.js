@@ -3,6 +3,7 @@ import { SOURCES, SCENARIO_SETS, SCENARIOS, TYPE_ORDER, MAX_TYPES, CLIMATE_CONTE
 import { sortedConstraints, walkMinutes, activeChanges, zoneLabel, CAPACITY_CHIP, GREEN_CHIP } from "./scenarios.js";
 import { renderAxo } from "./axo.js";
 import { SOLAR_WINDOWS, SOLAR_FENCES } from "./solar.js";
+import { CRITERIA, PRESETS, evaluate, robustness, suggestedEmphasis } from "./priorities.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const n0 = (x) => (x == null || Number.isNaN(x) ? "—" : Math.round(x).toLocaleString("en-US"));
@@ -113,6 +114,37 @@ function performance(f, parcel, ctx, state) {
     </div>
     <div class="solar-opts">${icon("sliders-horizontal")} Solar access window ${opt("solarWindow", SOLAR_WINDOWS, env.opts.window)} ${opt("solarFence", SOLAR_FENCES, env.opts.fence)}</div>
   </div>`;
+}
+
+// ---------- priorities (center, after the detail view)
+export function renderPriorities(el, futures, state, hood) {
+  if (!futures.length) { el.innerHTML = ""; return; }
+  const emph = suggestedEmphasis(hood?.needs);
+  const label = (k) => CRITERIA.find((c) => c.key === k).label;
+  el.innerHTML = `<section class="prio-card">
+    <div class="eyebrow">Step 3 · Priorities</div>
+    <h2>What matters most?</h2>
+    <p class="muted small">Move the sliders; weights always add up to 100. The order below reflects these priorities only. It is not a recommendation and there is no single right answer.</p>
+    <div class="presets"><span class="lbl-sm">Starting points (each one is a value judgment)</span>
+      ${Object.entries(PRESETS).map(([k, p]) => `<button data-preset="${k}" class="${state.preset === k ? "on" : ""}">${esc(p.label)}</button>`).join("")}</div>
+    ${emph.length ? `<div class="emph">${icon("sparkles")}<span><b>${esc(hood.name)}'s needs</b> suggest more weight on ${emph.map((k) => `<em>${esc(label(k).toLowerCase())}</em>`).join(", ")}.</span><button data-emph class="${state.preset === "needs" ? "on" : ""}">Use as a starting point</button></div>` : ""}
+    <div class="sliders">${CRITERIA.map((c) => `<label class="sl">${icon(c.icon)}<span>${esc(c.label)}</span><output data-out="${c.key}">${state.weights[c.key]}</output><input type="range" min="0" max="100" step="1" data-w="${c.key}" value="${state.weights[c.key]}" aria-label="${esc(c.label)} weight"/></label>`).join("")}</div>
+    <div id="prioRank">${prioRankHTML(futures, state.weights)}</div>
+  </section>`;
+}
+
+export function prioRankHTML(futures, weights) {
+  const rows = evaluate(futures, weights);
+  const rob = robustness(futures, weights);
+  const pc = (x) => `${Math.round(x * 100)}%`;
+  return `<h4 class="rank-h">${icon("list-ordered")} Fit with these priorities</h4><ol class="prank">${rows.map((r, i) => `
+    <li><span class="rk">${i + 1}</span><div class="pm">
+      <div class="ph">${icon(r.f.icon)}<b>${esc(r.f.name)}</b>${statusChip(r.f.status)}<span class="fitnum">${Math.round(r.fit * 100)}<small>/100</small></span></div>
+      <div class="fitbar">${r.parts.filter((p) => p.contrib > 0.004).map((p) => `<i style="width:${(p.contrib * 100).toFixed(1)}%" title="${esc(p.label)}: ${Math.round(p.contrib * 100)}"></i>`).join("")}</div>
+      <div class="pwhy">${r.pros.map((p) => `<span class="pro">${icon("check")}${esc(p.text)}</span>`).join("")}${r.cons.map((p) => `<span class="con">${icon("minus")}${esc(p.text)}</span>`).join("")}</div>
+      ${rob[r.f.id] ? `<div class="robust">${icon("dices")}Ranks first under ${pc(rob[r.f.id].near)} of priority mixes close to yours, and ${pc(rob[r.f.id].any)} of all possible mixes</div>` : ""}
+    </div></li>`).join("")}</ol>
+    <p class="muted small">Fit = Σ weight × criterion value (0–1). Values come from the numbers above and from draft typology judgments; see Sources. Robustness: 1,500 random weight mixes (SMAA).</p>`;
 }
 
 // ---------- expanded view (center, below cards)

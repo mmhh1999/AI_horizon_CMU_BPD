@@ -88,6 +88,21 @@ with sync_playwright() as pw:
     shot(page, "5b-performance")
     page.select_option("#solarWindow", "noon2")
 
+    check(page.locator("#priorities .sl").count() == 10, "priorities: 10 criteria sliders")
+    total = lambda: page.eval_on_selector_all("#priorities [data-w]", "xs => xs.reduce((s, x) => s + +x.value, 0)")
+    check(total() == 100, "weights start at 100")
+    page.eval_on_selector("[data-w=homes]", "x => { x.value = 47; x.dispatchEvent(new Event('input', {bubbles: true})); }")
+    check(total() == 100 and page.input_value("[data-w=homes]") == "47", f"moving a slider keeps the total at 100 ({total()})")
+    page.click("[data-preset=climate]")
+    check(page.locator("#priorities [data-preset=climate].on").count() == 1 and total() == 100, "preset applies and sums to 100")
+    check(page.locator(".prank li").count() == page.locator(".fcard").count(), "every compared future is ranked")
+    check("priority mixes" in page.inner_text("#prioRank"), "SMAA robustness line shown")
+    if page.locator("[data-emph]").count():
+        page.click("[data-emph]")
+        check(total() == 100, "needs-based emphasis applied on request, sums to 100")
+    page.locator("#priorities").scroll_into_view_if_needed()
+    shot(page, "5c-priorities")
+
     sugg = page.locator(".tp.on").count()
     check(1 <= sugg <= 4, f"type picker: {sugg} types preselected from needs")
     presets = page.eval_on_selector_all("#setSelect option", "os => os.map(o => o.value)")
