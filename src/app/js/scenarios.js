@@ -2,7 +2,7 @@
 // Status: viable ("Can be built") · conditional ("Needs changes") · constrained ("Not allowed").
 
 import {
-  districtRules, SCENARIOS, PARKING, FLOOR_TO_FLOOR, ROOF_ALLOWANCE, PV, RUNOFF_C, STORMWATER_FLAG, EXISTING_UNITS,
+  districtRules, SCENARIOS, lower, PARKING, FLOOR_TO_FLOOR, ROOF_ALLOWANCE, PV, RUNOFF_C, STORMWATER_FLAG, EXISTING_UNITS,
 } from "./config.js";
 import { rectXY } from "./geo.js";
 
@@ -20,11 +20,12 @@ const WHO = {
   bill: { who: "City Council · Bill 2025-1545 (pending)", type: "Policy change", icon: "landmark" },
   rezoning: { who: "City Council · rezoning", type: "Rezoning", icon: "landmark" },
   design: { who: "Developer", type: "Design choice", icon: "hard-hat" },
+  siteplan: { who: "Planning Commission · site plan", type: "Review", icon: "clipboard-check" },
 };
 
 export const defaultAssumptions = () => ({
   heightFt: null, stories: null, sideYard: null, rearYard: null, lotWaiver: false,
-  allowUses: [], parking: "current", greenRoof: false, capacity: false, allowAdu: false,
+  allowUses: [], parking: "current", greenRoof: false, capacity: false, allowAdu: false, sitePlan: false,
 });
 
 export function effectiveRules(parcel, a) {
@@ -101,12 +102,93 @@ export function buildScenario(id, parcel, frame, rules, a, hz, existingFoot) {
     if (id === "mixeduse") f.commercialSf = Math.round(foot * T.commercialShare);
     f.stories = stories;
     if (f.units < 5 && id === "smallmf") C({ key: "size", kind: "physical", severity: f.units < 3 ? "blocking" : "conditional", icon: "ruler", title: "Lot too small for apartments", plain: `Only ${f.units} homes fit; apartment buildings usually need 5 or more.`, current: `${f.units} homes fit`, required: "5+ homes", chip: null, src: "TYPOLOGY" });
-  } else if (id === "duplex" || id === "fourplex") {
+  } else if (id === "duplex" || id === "fourplex" || id === "triplex") {
     const w = flex(T.w, bw, T.minW), d = flex(T.d, bd, T.minD);
     if (w.dev > 0) dimGap("width", w.dev, T.minW, sideChip(w.dev));
     if (d.dev > 0) dimGap("depth", d.dev, T.minD, rearChip(d.dev));
     f.volumes.push({ s0: mid - w.val / 2, s1: mid + w.val / 2, t0, t1: t0 + d.val, h: h(T.stories, T.roof), stories: T.stories });
     f.units = T.units; f.stories = T.stories;
+  } else if (id === "porch4") {
+    const w = flex(T.w, bw, T.minW), d = flex(T.d + T.porch, bd, T.minD + T.porch);
+    if (w.dev > 0) dimGap("width", w.dev, T.minW, sideChip(w.dev));
+    if (d.dev > 0) dimGap("depth", d.dev, T.minD + T.porch, rearChip(d.dev));
+    const a = mid - w.val / 2, b = mid + w.val / 2;
+    f.volumes.push({ s0: a, s1: b, t0: t0 + T.porch, t1: t0 + d.val, h: h(T.stories, T.roof), stories: T.stories });
+    f.volumes.push({ s0: a, s1: b, t0, t1: t0 + T.porch, h: 2 * FLOOR_TO_FLOOR, stories: 2, porch: true });
+    f.units = T.units; f.stories = T.stories;
+  } else if (id === "courtyard") {
+    if (bw < T.minW) dimGap("width", T.minW - bw, T.minW, sideChip(T.minW - bw));
+    if (bd < T.minD) dimGap("depth", T.minD - bd, T.minD, rearChip(T.minD - bd));
+    const ww = Math.min(Math.max(bw, T.minW), T.maxW), dd = Math.min(Math.max(bd, T.minD), T.maxD);
+    const a = mid - ww / 2, b = mid + ww / 2, hh = h(T.stories, T.roof);
+    f.volumes.push({ s0: a, s1: a + T.wing, t0, t1: t0 + dd, h: hh, stories: T.stories });
+    f.volumes.push({ s0: b - T.wing, s1: b, t0, t1: t0 + dd, h: hh, stories: T.stories });
+    f.volumes.push({ s0: a + T.wing, s1: b - T.wing, t0: t0 + dd - T.wing, t1: t0 + dd, h: hh, stories: T.stories, party: 2 });
+    const gfa = f.volumes.reduce((s, v) => s + (v.s1 - v.s0) * (v.t1 - v.t0) * v.stories, 0);
+    f.units = Math.max(0, Math.floor((gfa * T.efficiency) / unitSf));
+    f.courtSf = Math.max(0, (ww - 2 * T.wing) * (dd - T.wing));
+    f.stories = T.stories;
+  } else if (id === "livework") {
+    const W = rules.side === 0 ? frame.width : frame.width - 2 * rules.side;
+    let n = Math.floor(W / T.unitW);
+    if (W < T.minUnitW) dimGap("width", T.minUnitW - W, T.minUnitW, sideChip(T.minUnitW - W));
+    n = Math.max(1, n);
+    const d = flex(T.d, bd, T.minD);
+    if (d.dev > 0) dimGap("depth", d.dev, T.minD, rearChip(d.dev));
+    const start = rules.side === 0 ? frame.sMin : frame.sMin + rules.side;
+    const uw = Math.max(T.minUnitW, W / n);
+    for (let i = 0; i < n; i++) f.volumes.push({ s0: start + i * uw, s1: start + (i + 1) * uw, t0, t1: t0 + d.val, h: h(T.stories, T.roof, T.groundFt), stories: T.stories, groundFt: T.groundFt, party: n > 1 ? (i === 0 || i === n - 1 ? 1 : 2) : 0 });
+    f.units = n; f.stories = T.stories;
+    f.commercialSf = Math.round(n * uw * d.val * T.workShare);
+  } else if (id === "multigen") {
+    const keep = existingUnits > 0;
+    const w = flex(T.w, bw, T.minW);
+    if (w.dev > 0 && !keep) dimGap("width", w.dev, T.minW, sideChip(w.dev));
+    const need = T.minD + T.suite.d;
+    if (bd < need) dimGap("depth", need - bd, need, rearChip(need - bd));
+    const pd = Math.min(T.d, Math.max(T.minD, bd - T.suite.d));
+    f.volumes.push({ s0: mid - w.val / 2, s1: mid + w.val / 2, t0, t1: t0 + pd, h: h(T.stories, T.roof), stories: T.stories, existing: keep });
+    const sw = Math.min(T.suite.w, w.val);
+    f.volumes.push({ s0: mid - sw / 2, s1: mid + sw / 2, t0: t0 + pd, t1: t0 + pd + T.suite.d, h: h(1, "flat"), stories: 1, adu: true, party: 0 });
+    f.units = keep ? existingUnits + 1 : 2;
+    f.keepsExisting = keep;
+    f.stories = T.stories;
+    if (!a.allowAdu && !rules.uses.includes("duplex")) C({ key: "adu", kind: "regulatory", severity: "conditional", icon: "house", title: "A second kitchen counts as a second home", plain: "A suite with its own kitchen is an accessory unit, which single-family zoning does not allow today; the pending bill would allow attached ADUs.", current: "Single-family only", required: "Attached suite", chip: { key: "allowAdu", value: true, label: "Allow accessory units (ADUs)", ...WHO.bill }, src: "POLICY" });
+  } else if (id === "cottage") {
+    const two = bw >= 2 * T.cw + T.court;
+    if (bw < T.cw) dimGap("width", T.cw - bw, T.cw, sideChip(T.cw - bw));
+    const minD = 2 * T.cd + T.gap;
+    if (bd < minD) dimGap("depth", minD - bd, minD, rearChip(minD - bd));
+    const per = Math.max(1, Math.floor((Math.max(bd, minD) + T.gap) / (T.cd + T.gap)));
+    const cols = two ? [s0, s1 - T.cw] : [mid - T.cw / 2];
+    for (const c of cols) for (let i = 0; i < per; i++) {
+      const tt = t0 + i * (T.cd + T.gap);
+      f.volumes.push({ s0: c, s1: c + T.cw, t0: tt, t1: tt + T.cd, h: h(1, "pitched"), stories: 1 });
+    }
+    f.units = f.volumes.length; f.stories = 1;
+    f.courtSf = two ? (s1 - s0 - 2 * T.cw) * Math.max(0, per * (T.cd + T.gap) - T.gap) : 0;
+    if (f.units < T.minUnits) C({ key: "size", kind: "physical", severity: "blocking", icon: "ruler", title: "Lot too small for a cottage court", plain: `Only ${f.units} cottages fit; a court usually has ${T.minUnits} or more around a shared green. Combining lots would help.`, current: `${f.units} cottages fit`, required: `${T.minUnits}+ cottages`, chip: null, src: "TYPOLOGY" });
+    if (!a.sitePlan) C({ key: "sitePlan", kind: "regulatory", severity: "conditional", icon: "clipboard-check", title: "Several houses on one lot", plain: "More than one main building on a lot usually needs a planned-development or site-plan approval (draft reading; confirm with City Planning).", current: "One main building per lot", required: `${f.units} cottages`, chip: { key: "sitePlan", value: true, label: "Approve a site plan for the court", ...WHO.siteplan }, src: "ZONING" });
+  } else if (id === "garageadu") {
+    const keep = existingUnits > 0;
+    const G = T.carriage;
+    const w = flex(T.w, bw, T.minW);
+    if (w.dev > 0 && !keep) dimGap("width", w.dev, T.minW, sideChip(w.dev));
+    const tBack = frame.tMax - G.rear;
+    const need = T.minD + G.sep + G.d;
+    const room = tBack - t0;
+    if (room < need) dimGap("depth", need - room, need, rearChip(need - room));
+    const pd = Math.min(T.d, Math.max(T.minD, room - G.sep - G.d));
+    f.volumes.push({ s0: mid - w.val / 2, s1: mid + w.val / 2, t0, t1: t0 + pd, h: h(T.stories, T.roof), stories: T.stories, existing: keep });
+    const gw = Math.min(G.w, frame.width - 6);
+    const gs = Math.max(frame.sMin + 3, frame.sMax - 3 - gw);
+    f.volumes.push({ s0: gs, s1: gs + gw, t0: tBack - G.d, t1: tBack, h: Math.min(G.maxH, h(G.stories, "pitched")), stories: G.stories, adu: true, garage: true });
+    f.units = keep ? existingUnits + 1 : 2;
+    f.keepsExisting = keep;
+    f.stories = T.stories;
+    f.parkingCredit = 1;
+    if (parcel.o && parcel.o.includes("GA")) f.sub = "Apartment over the existing rear garage; the house stays";
+    if (!a.allowAdu) C({ key: "adu", kind: "regulatory", severity: "conditional", icon: "house", title: "Backyard homes not allowed yet", plain: "Pittsburgh does not allow accessory units (ADUs) citywide today; a pending bill would.", current: "ADUs not allowed", required: "Unit over the garage", chip: { key: "allowAdu", value: true, label: "Allow backyard units (ADUs)", ...WHO.bill }, src: "POLICY" });
   } else if (id === "detached") {
     const w = flex(T.w, bw, T.minW);
     if (w.dev > 0) dimGap("width", w.dev, T.minW, sideChip(w.dev));
@@ -124,12 +206,12 @@ export function buildScenario(id, parcel, frame, rules, a, hz, existingFoot) {
 
   // --- zoning use
   if (!rules.uses.includes(id)) {
-    const allowed = rules.base0.uses.map((u) => SCENARIOS[u] ? SCENARIOS[u].name.toLowerCase() : u);
+    const allowed = rules.base0.uses.map((u) => SCENARIOS[u] ? lower(SCENARIOS[u].name) : u);
     C({
       key: "use", kind: "regulatory", severity: "blocking", icon: "file-text", title: "Zoning doesn't allow it",
-      plain: `${zoneLabel(rules)} zoning (${parcel.z}) allows ${allowed.join(", ") || "none of these"}, not ${T.name.toLowerCase()}.`,
+      plain: `${zoneLabel(rules)} zoning (${parcel.z}) allows ${allowed.join(", ") || "none of these"}, not ${lower(T.name)}.`,
       current: `Allowed: ${allowed.join(", ")}`, required: T.name,
-      chip: { key: "allowUses", value: id, label: `Rezone to allow ${T.name.toLowerCase()}`, ...WHO.rezoning }, src: "ZONING",
+      chip: { key: "allowUses", value: id, label: `Rezone to allow ${lower(T.name)}`, ...WHO.rezoning }, src: "ZONING",
     });
   }
 
@@ -153,7 +235,7 @@ export function buildScenario(id, parcel, frame, rules, a, hz, existingFoot) {
 
   // --- quantities
   f.footprint = f.volumes.reduce((s, v) => s + (v.s1 - v.s0) * (v.t1 - v.t0), 0);
-  f.gfa = f.volumes.reduce((s, v) => s + (v.s1 - v.s0) * (v.t1 - v.t0) * v.stories, 0);
+  f.gfa = f.volumes.filter((v) => !v.porch).reduce((s, v) => s + (v.s1 - v.s0) * (v.t1 - v.t0) * v.stories, 0);
   f.heightFt = hMax;
   f.far = f.gfa / lotArea;
   f.coverage = f.footprint / lotArea;
@@ -163,7 +245,7 @@ export function buildScenario(id, parcel, frame, rules, a, hz, existingFoot) {
 
   // --- parking
   const spaces = a.parking === "none" ? 0 : Math.ceil(f.units * PARKING.perUnit + f.commercialSf * PARKING.perCommercialSf);
-  const parkingSf = spaces * PARKING.sfPerSpace;
+  const parkingSf = Math.max(0, spaces - (f.parkingCredit || 0)) * PARKING.sfPerSpace;
   const available = Math.max(0, lotArea * (1 - PARKING.minOpenShare) - f.footprint);
   f.parking = { spaces, sf: parkingSf, available };
   if (parkingSf > available + 1) {
@@ -213,6 +295,7 @@ export function buildScenario(id, parcel, frame, rules, a, hz, existingFoot) {
   f.pvPerUnit = f.units ? (kw * PV.yield[roofType]) / f.units : 0;
   let walls = 0;
   for (const v of f.volumes) {
+    if (v.porch) continue;
     const w = v.s1 - v.s0, d = v.t1 - v.t0, hh = v.stories * FLOOR_TO_FLOOR;
     walls += (v.party === 2 ? 2 * w : v.party === 1 ? 2 * w + d : 2 * (w + d)) * hh;
   }
@@ -265,11 +348,12 @@ export function activeChanges(a) {
   if (a.parking === "none") out.push({ key: "parking", label: "No parking minimum", icon: "car" });
   if (a.greenRoof) out.push({ key: "greenRoof", label: "Green roof", icon: "sprout" });
   if (a.allowAdu) out.push({ key: "allowAdu", label: "Backyard units allowed", icon: "house" });
+  if (a.sitePlan) out.push({ key: "sitePlan", label: "Site plan approved", icon: "clipboard-check" });
   if (a.sideYard != null) out.push({ key: "sideYard", label: `Side yards ${a.sideYard} ft`, icon: "ruler" });
   if (a.rearYard != null) out.push({ key: "rearYard", label: `Rear yard ${a.rearYard} ft`, icon: "ruler" });
   if (a.lotWaiver) out.push({ key: "lotWaiver", label: "Lot-size relief", icon: "ruler" });
   if (a.capacity) out.push({ key: "capacity", label: "Smaller units", icon: "users" });
-  for (const u of a.allowUses) out.push({ key: "allowUses:" + u, label: `Rezoned for ${SCENARIOS[u] ? SCENARIOS[u].name.toLowerCase() : u}`, icon: "landmark" });
+  for (const u of a.allowUses) out.push({ key: "allowUses:" + u, label: `Rezoned for ${SCENARIOS[u] ? lower(SCENARIOS[u].name) : u}`, icon: "landmark" });
   return out;
 }
 

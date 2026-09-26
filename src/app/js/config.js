@@ -13,17 +13,20 @@ const RES_SUB = {
   H: { minLot: 1200, front: 15, rear: 15, side: 5 },
   VH: { minLot: 1200, front: 15, rear: 15, side: 5 },
 };
+// House + ADU, garage ADU and multigenerational suites are listed where the main house is allowed;
+// the second unit itself is gated separately by the ADU policy constraint.
 const RES_USES = {
-  R1D: ["detached"],
-  R1A: ["detached", "townhouse"],
-  R2: ["detached", "duplex"],
-  R3: ["detached", "duplex", "townhouse"],
-  RM: ["detached", "duplex", "townhouse", "fourplex", "smallmf"],
+  R1D: ["detached", "garageadu", "multigen"],
+  R1A: ["detached", "garageadu", "multigen", "townhouse"],
+  R2: ["detached", "garageadu", "multigen", "duplex"],
+  R3: ["detached", "garageadu", "multigen", "duplex", "triplex", "townhouse"],
+  RM: ["detached", "garageadu", "multigen", "duplex", "triplex", "townhouse", "fourplex", "porch4", "cottage", "courtyard", "smallmf"],
 };
+const MIXED_USES = ["townhouse", "smallmf", "mixeduse", "livework", "triplex", "fourplex", "porch4", "courtyard"];
 const MIXED = {
-  LNC: { label: "Neighborhood commercial", uses: ["townhouse", "smallmf", "mixeduse", "fourplex"], front: 0, rear: 15, side: 0, minLot: 0, maxHeightFt: 40, maxStories: 3 },
-  NDO: { label: "Neighborhood office", uses: ["townhouse", "smallmf", "fourplex"], front: 0, rear: 15, side: 0, minLot: 0, maxHeightFt: 40, maxStories: 3 },
-  UNC: { label: "Urban neighborhood commercial", uses: ["townhouse", "smallmf", "mixeduse", "fourplex"], front: 0, rear: 15, side: 0, minLot: 0, maxHeightFt: 45, maxStories: 4 },
+  LNC: { label: "Neighborhood commercial", uses: MIXED_USES, front: 0, rear: 15, side: 0, minLot: 0, maxHeightFt: 40, maxStories: 3 },
+  NDO: { label: "Neighborhood office", uses: ["townhouse", "smallmf", "livework", "triplex", "fourplex", "porch4"], front: 0, rear: 15, side: 0, minLot: 0, maxHeightFt: 40, maxStories: 3 },
+  UNC: { label: "Urban neighborhood commercial", uses: MIXED_USES, front: 0, rear: 15, side: 0, minLot: 0, maxHeightFt: 45, maxStories: 4 },
 };
 
 export function districtRules(zoning) {
@@ -54,14 +57,51 @@ export const SCENARIOS = {
   mixeduse: { id: "mixeduse", name: "Shops + apartments", icon: "store", sub: "Ground-floor shop, homes above", stories: 4, groundFt: 14, roof: "flat", unitSf: 850, efficiency: 0.8, commercialShare: 0.7 },
   detached: { id: "detached", name: "House + backyard unit", icon: "house", sub: "Single home with an ADU", w: 22, d: 34, minW: 14, minD: 26, stories: 2, roof: "pitched", adu: { w: 20, d: 22, stories: 2, maxH: 30, sep: 10 } },
   duplex: { id: "duplex", name: "Duplex", icon: "house", sub: "Two homes side by side", w: 30, d: 40, minW: 24, minD: 30, stories: 2, roof: "pitched", units: 2 },
-  fourplex: { id: "fourplex", name: "Fourplex", icon: "building", sub: "Four homes, two floors", w: 32, d: 44, minW: 28, minD: 36, stories: 2, roof: "flat", units: 4 },
+  triplex: { id: "triplex", name: "Triplex", icon: "building", sub: "Three stacked flats, one per floor", w: 26, d: 44, minW: 22, minD: 34, stories: 3, roof: "flat", units: 3 },
+  fourplex: { id: "fourplex", name: "Fourplex · shared entry", icon: "building", sub: "Four flats off one stair and door", w: 32, d: 44, minW: 28, minD: 36, stories: 2, roof: "flat", units: 4 },
+  porch4: { id: "porch4", name: "Fourplex · porches", icon: "door-open", sub: "Four flats, each with its own porch and door", w: 34, d: 44, minW: 30, minD: 36, porch: 8, stories: 2, roof: "pitched", units: 4 },
+  courtyard: { id: "courtyard", name: "Courtyard apartments", icon: "layout-panel-top", sub: "Two-story U around a shared court", wing: 24, minW: 64, maxW: 110, minD: 72, maxD: 120, stories: 2, roof: "flat", unitSf: 750, efficiency: 0.8 },
+  livework: { id: "livework", name: "Live-work units", icon: "briefcase", sub: "Row homes with a street-level workshop", unitW: 20, minUnitW: 18, d: 40, minD: 32, stories: 3, groundFt: 14, roof: "flat", workShare: 0.5 },
+  multigen: { id: "multigen", name: "Multigenerational house", icon: "users", sub: "Main house plus an accessible ground-floor suite", w: 24, d: 32, minW: 18, minD: 26, stories: 2, roof: "pitched", suite: { w: 18, d: 20 } },
+  cottage: { id: "cottage", name: "Cottage court", icon: "tent-tree", sub: "Small one-story cottages around a shared green", cw: 20, cd: 28, gap: 10, court: 20, minUnits: 3, stories: 1, roof: "pitched" },
+  garageadu: { id: "garageadu", name: "Garage ADU", icon: "warehouse", sub: "Apartment over a rear garage; the house stays", w: 22, d: 32, minW: 14, minD: 26, stories: 2, roof: "pitched", carriage: { w: 22, d: 24, stories: 2, rear: 5, sep: 10, maxH: 26 } },
 };
+
+export const lower = (s) => s.split(" ").map((w) => (/^[A-Z]{2,}$/.test(w) ? w : w.toLowerCase())).join(" ");
+
+export const TYPE_ORDER = ["garageadu", "detached", "multigen", "duplex", "triplex", "fourplex", "porch4", "cottage", "townhouse", "livework", "courtyard", "smallmf", "mixeduse"];
+export const MAX_TYPES = 4;
 
 export const SCENARIO_SETS = {
   default: { label: "Townhouses · Apartments · Shops + homes", ids: ["townhouse", "smallmf", "mixeduse"] },
-  middle: { label: "Missing middle · Duplex · Fourplex · Townhouses", ids: ["duplex", "fourplex", "townhouse"] },
-  gentle: { label: "Gentle infill · House + ADU · Duplex · Townhouses", ids: ["detached", "duplex", "townhouse"] },
+  middle: { label: "Missing middle · Duplex · Triplex · Porch fourplex", ids: ["duplex", "triplex", "porch4", "townhouse"] },
+  gentle: { label: "Gentle infill · Garage ADU · House + ADU · Multigenerational", ids: ["garageadu", "detached", "multigen", "duplex"] },
+  entries: { label: "Fourplex: shared entry vs. porches", ids: ["fourplex", "porch4"] },
+  shared: { label: "Shared open space · Cottage court · Courtyard", ids: ["cottage", "courtyard", "townhouse"] },
+  corridor: { label: "Main street · Live-work · Shops + homes · Apartments", ids: ["livework", "mixeduse", "smallmf"] },
 };
+
+// Types that tend to answer each community need (draft editorial mapping, shown as a suggestion only).
+export const NEED_TYPES = {
+  aging: ["multigen", "garageadu", "cottage"],
+  families: ["triplex", "townhouse", "courtyard"],
+  transit: ["smallmf", "mixeduse", "livework"],
+  middle: ["duplex", "triplex", "porch4"],
+  affordability: ["fourplex", "courtyard", "smallmf"],
+  vacancy: ["townhouse", "cottage", "duplex"],
+  renters: ["townhouse", "porch4", "duplex"],
+  alone: ["cottage", "smallmf", "garageadu"],
+  population: ["townhouse", "triplex", "fourplex"],
+  green: ["cottage", "courtyard"],
+  distress: ["duplex", "garageadu"],
+};
+
+export function suggestTypes(needs) {
+  const score = new Map();
+  (needs || []).forEach((n, i) => (NEED_TYPES[n.key] || []).forEach((t, j) => score.set(t, (score.get(t) || 0) + 3 - j + (needs.length - i) * 0.01)));
+  const ranked = [...score.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
+  return ranked.length ? ranked.slice(0, MAX_TYPES) : SCENARIO_SETS.default.ids;
+}
 
 export const FLOOR_TO_FLOOR = 10.5;
 export const ROOF_ALLOWANCE = { pitched: 5, flat: 2 };
@@ -99,7 +139,7 @@ export const SOURCES = {
   HAZARD: { label: "HAZARD · City GIS / FEMA", text: "25%+ slope, undermined areas, landslide-prone areas (City of Pittsburgh GIS via WPRDC); FEMA NFHL flood hazard areas (retrieved 2026-09-26, generalized to about 1 m). Screening layers only, not a site survey or geotechnical assessment." },
   SOLAR: { label: "SOLAR · NLR PVWatts v8", text: "Specific yield for central Pittsburgh from the NLR PVWatts v8 API (NSRDB TMY): 1,141 kWh/kW·yr at 10° tilt, 1,205 at 25°. Usable roof share and module density are assumptions." },
   CLIMATE: { label: "CLIMATE · Open-Meteo CMIP6", text: "Days ≥ 90°F and ≥ 1 in rain per year, 1991–2010 vs 2031–2050, two CMIP6 HighResMIP models downscaled to 10 km (Open-Meteo Climate API, CC BY 4.0). City-level context, not a parcel forecast." },
-  TYPOLOGY: { label: "TYPOLOGY · MMH refs (draft)", text: "Building templates are DRAFT placeholders to be replaced with dimensions from Parolek (2020) Missing Middle Housing and missingmiddlehousing.com." },
+  TYPOLOGY: { label: "TYPOLOGY · MMH refs (draft)", text: "Thirteen building templates (from garage ADU and multigenerational house through triplex, porch vs. shared-entry fourplex, cottage court, courtyard, live-work, apartments and shops + homes) are DRAFT placeholders to be replaced with dimensions from Parolek (2020) Missing Middle Housing and missingmiddlehousing.com. Types suggested by neighborhood needs use an editorial mapping and are a starting point, not a ranking." },
   CONTEXT: { label: "CONTEXT · County footprints", text: "Neighbor buildings from Allegheny County building footprints (WPRDC). Heights estimated from assessment stories × 11 ft + 4 ft, 28 ft when unknown, 12 ft for small accessory buildings." },
   POLICY: { label: "POLICY · Bill 2025-1545", text: "Pittsburgh Council Bill 2025-1545 (ADUs, affordable housing bonus, parking minimums), as proposed. Public hearing 2026-09-23; vote pending. Not law." },
 };

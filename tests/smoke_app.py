@@ -38,6 +38,8 @@ with sync_playwright() as pw:
     page.wait_for_selector("#countyInd", timeout=20000)
     page.wait_for_function("document.querySelector('#legend') && !document.querySelector('#legend').hidden", timeout=20000)
     check(True, f"county overview loaded in {time.time() - t0:.1f}s")
+    page.wait_for_function("window.__hfMap && window.__hfMap.loaded() && window.__hfMap.queryRenderedFeatures({layers: ['muni-fill']}).length > 50", timeout=20000)
+    check(True, "county choropleth rendered")
     shot(page, "1-county")
 
     page.click("[data-go=city]")
@@ -50,7 +52,7 @@ with sync_playwright() as pw:
     t1 = time.time()
     page.fill("#search", "Larimer")
     page.press("#search", "Enter")
-    page.wait_for_selector(".needs-card h2", timeout=20000)
+    page.wait_for_function("document.querySelector('.needs-card h2')?.textContent.startsWith('What does')", timeout=20000)
     load_s = time.time() - t1
     h2 = page.inner_text(".needs-card h2")
     check(h2 == "What does Larimer need?", f"needs panel title: {h2!r} (loaded in {load_s:.1f}s)")
@@ -75,9 +77,27 @@ with sync_playwright() as pw:
     check(page.locator(".cons li, .drawer p").count() >= 1, "Why-not drawer opens")
     shot(page, "5-why")
 
-    for _ in range(3):
-        page.click("#tryExample")
-        page.wait_for_timeout(1500)
+    sugg = page.locator(".tp.on").count()
+    check(1 <= sugg <= 4, f"type picker: {sugg} types preselected from needs")
+    presets = page.eval_on_selector_all("#setSelect option", "os => os.map(o => o.value)")
+    page.click("#tryExample")
+    page.click("#tryExample")
+    page.wait_for_selector(".fcard", timeout=20000)
+    for key in presets:
+        page.select_option("#setSelect", key)
+        page.wait_for_timeout(250)
+        n = page.locator(".fcard").count()
+        check(n >= 2, f"preset {key!r} on the garage lot: {n} cards")
+        if key == "gentle":
+            shot(page, "6-gentle-garage")
+    before = page.locator(".fcard").count()
+    page.locator(".tp:not(.on):not([disabled])").first.click()
+    page.wait_for_timeout(250)
+    check(page.locator(".fcard").count() == min(before + 1, 4), "adding a type adds a card")
+    check(page.input_value("#setSelect") == "custom", "custom mix selected after toggling a type")
+
+    page.click("#tryExample")
+    page.wait_for_timeout(1500)
     check(page.locator(".fcard").count() >= 1 or page.locator(".oos").count() == 1, "cycled through all examples")
 
     extra = [e for e in errors if "tiles.openfreemap" not in e and "Failed to load resource" not in e]

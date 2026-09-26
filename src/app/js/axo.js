@@ -64,12 +64,21 @@ export function renderAxo({ width, height, lotRing, neighborLots = [], neighbors
   for (const it of items) {
     const f = prismFaces(it.ring, 0, it.h);
     const mass = it.kind === "mass";
-    const stroke = mass ? (dashed ? '#8A8A87" stroke-dasharray="3 2' : "#1E1E1E") : "#C4C4C0";
-    const sw = mass ? (style === "thumb" ? 0.8 : 1) : 0.5;
+    const v = it.v || {};
+    const kept = mass && v.existing, porch = mass && v.porch;
+    const stroke = mass ? (dashed ? '#8A8A87" stroke-dasharray="3 2' : kept ? "#77776F" : "#1E1E1E") : "#C4C4C0";
+    const sw = mass ? (style === "thumb" ? 0.8 : 1) * (porch ? 0.7 : 1) : 0.5;
     for (const w of f.walls.sort((a, b) => depth([a.a, a.b]) - depth([b.a, b.b]))) {
-      const fill = mass ? (dashed ? "none" : w.facing === "t" ? "#FFFFFF" : "#DCDCD9") : w.facing === "t" ? "#EEEEEB" : "#E1E1DE";
-      svg += poly([Q(...w.a, 0), Q(...w.b, 0), Q(...w.b, it.h), Q(...w.a, it.h)], `fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"`);
-      if (mass && !dashed && it.v.stories > 1) {
+      let fill = mass ? (dashed ? "none" : w.facing === "t" ? "#FFFFFF" : "#DCDCD9") : w.facing === "t" ? "#EEEEEB" : "#E1E1DE";
+      if (kept && !dashed) fill = w.facing === "t" ? "#ECECE8" : "#D3D3CF";
+      const op = porch && !dashed ? ' fill-opacity="0.35"' : "";
+      svg += poly([Q(...w.a, 0), Q(...w.b, 0), Q(...w.b, it.h), Q(...w.a, it.h)], `fill="${fill}"${op} stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"`);
+      if (mass && !dashed && v.garage && w.facing === "t") {
+        const inset = 0.2;
+        const pa = [w.a[0] + (w.b[0] - w.a[0]) * inset, w.a[1] + (w.b[1] - w.a[1]) * inset], pb = [w.a[0] + (w.b[0] - w.a[0]) * (1 - inset), w.a[1] + (w.b[1] - w.a[1]) * (1 - inset)];
+        svg += poly([Q(...pa, 0), Q(...pb, 0), Q(...pb, 8), Q(...pa, 8)], `fill="#8A8A87" fill-opacity="0.45" stroke="none"`);
+      }
+      if (mass && !dashed && !porch && it.v.stories > 1) {
         // floor lines
         const g = it.v.groundFt;
         const levels = [];
@@ -80,7 +89,7 @@ export function renderAxo({ width, height, lotRing, neighborLots = [], neighbors
         }
       }
     }
-    const topFill = mass ? (dashed ? "none" : "#FFFFFF") : "#F6F6F4";
+    const topFill = mass ? (dashed ? "none" : kept ? "#F1F1EE" : "#FFFFFF") : "#F6F6F4";
     svg += poly(f.top.map(([s, t, z]) => Q(s, t, z)), `fill="${topFill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"`);
   }
 

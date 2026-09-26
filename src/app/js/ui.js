@@ -1,5 +1,5 @@
 // DOM rendering: plain language for developers and policymakers, icons (Lucide), small diagrams.
-import { SOURCES, SCENARIO_SETS, CLIMATE_CONTEXT, districtRules } from "./config.js";
+import { SOURCES, SCENARIO_SETS, SCENARIOS, TYPE_ORDER, MAX_TYPES, CLIMATE_CONTEXT, districtRules, lower } from "./config.js";
 import { sortedConstraints, walkMinutes, activeChanges, zoneLabel, CAPACITY_CHIP, GREEN_CHIP } from "./scenarios.js";
 import { renderAxo } from "./axo.js";
 
@@ -111,7 +111,7 @@ export function renderDetail(el, f, parcel, ctx, state) {
       ${state.shadow ? `<input type="range" id="hour" min="9" max="15" step="1" value="${state.hour}"/><span class="muted">${state.hour}:00</span>` : ""}
     </div>
     <div class="axo-big">${renderAxo({ width: 640, height: 280, lotRing: ctx.lotST, neighborLots: ctx.nbLotsST, neighbors: ctx.nbST, envelope: f.envelope, volumes: f.volumes, shadows: state.shadow ? ctx.shadows : [], dashed: f.status === "constrained", pad: 14 })}
-      <div class="axo-legend"><span><i class="lg-lot"></i>This lot</span><span><i class="lg-mass"></i>New building</span><span><i class="lg-env"></i>Zoning envelope</span><span><i class="lg-nb"></i>Neighbors</span></div>
+      <div class="axo-legend"><span><i class="lg-lot"></i>This lot</span><span><i class="lg-mass"></i>New building</span>${f.volumes.some((v) => v.existing) ? `<span><i class="lg-kept"></i>Existing house (kept)</span>` : ""}<span><i class="lg-env"></i>Zoning envelope</span><span><i class="lg-nb"></i>Neighbors</span></div>
     </div>
     <div class="kpis">
       <div>${icon("house")}<b>${f.netUnits >= 0 ? "+" : ""}${f.netUnits}</b><span>new homes</span></div>
@@ -143,7 +143,7 @@ export function renderWhy(el, f, parcel, state) {
   const chips = [];
   const seen = new Set();
   for (const c of cs) if (c.chip && !seen.has(c.chip.label)) { seen.add(c.chip.label); chips.push(c.chip); }
-  if ((f.id === "smallmf" || f.id === "mixeduse") && !state.assumptions.capacity) chips.push(CAPACITY_CHIP);
+  if (["smallmf", "mixeduse", "courtyard"].includes(f.id) && !state.assumptions.capacity) chips.push(CAPACITY_CHIP);
   if (!state.assumptions.greenRoof && !seen.has(GREEN_CHIP.label)) chips.push(GREEN_CHIP);
   const t = state.transitions[f.id];
   const works = worksList(f, parcel);
@@ -189,11 +189,13 @@ export function renderWhy(el, f, parcel, state) {
 
 function worksList(f, parcel) {
   const out = [];
-  if (!f.constraints.some((c) => c.key === "use")) out.push(`Zoning allows ${f.name.toLowerCase()} here`);
+  if (!f.constraints.some((c) => c.key === "use")) out.push(`Zoning allows ${lower(f.name)} here`);
   const wm = Math.max(1, Math.round(walkMinutes(parcel)));
   if (wm <= 10) out.push(`${wm}-minute walk to frequent bus service`);
   if (f.existingUnits === 0) out.push("Empty lot: no one is displaced");
   else if (f.keepsExisting) out.push("Keeps the existing home and adds one");
+  if (f.courtSf > 400) out.push(`Shared court of about ${n0(f.courtSf)} sq ft`);
+  if (f.id === "porch4") out.push("Each home has its own porch and front door");
   if (!parcel.hz.s && !parcel.hz.u && !parcel.hz.l && parcel.hz.f !== "SFHA") out.push("No mapped slope, mine, landslide or flood risk");
   if (!f.constraints.some((c) => c.key === "height")) out.push(`Fits the ${f.envelope.h} ft height limit`);
   return out.slice(0, 4);
@@ -204,11 +206,22 @@ function summaryText(f, changes) {
   const joined = list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : list[0];
   const st = { viable: "can be built", conditional: "still needs changes", constrained: "is still not allowed" }[f.status];
   const rest = f.constraints.length ? ` Still in the way: ${sortedConstraints(f).map((c) => c.title.toLowerCase()).join("; ")}.` : "";
-  return `With ${joined}, the ${f.name.toLowerCase()} ${st}: ${f.units} homes on ${f.stories} floors, ${Math.round((f.pervious / f.lotArea) * 100)}% of the lot left open.${rest}`;
+  return `With ${joined}, the ${lower(f.name)} ${st}: ${f.units} homes on ${f.stories} floors, ${Math.round((f.pervious / f.lotArea) * 100)}% of the lot left open.${rest}`;
 }
 
-export function renderSetSelect(el, key) {
-  el.innerHTML = Object.entries(SCENARIO_SETS).map(([k, s]) => `<option value="${k}" ${k === key ? "selected" : ""}>${esc(s.label)}</option>`).join("");
+export function renderSetSelect(el, key, hoodName) {
+  const opts = [["suggested", `Suggested by ${hoodName ? hoodName + "'s" : "the neighborhood's"} needs`], ...Object.entries(SCENARIO_SETS).map(([k, s]) => [k, s.label])];
+  if (key === "custom") opts.push(["custom", "Custom mix"]);
+  el.innerHTML = opts.map(([k, l]) => `<option value="${k}" ${k === key ? "selected" : ""}>${esc(l)}</option>`).join("");
+}
+
+export function renderTypePicker(el, types, suggested, hoodName) {
+  const full = types.length >= MAX_TYPES;
+  el.innerHTML = `<div class="tp-row">${TYPE_ORDER.map((id) => {
+    const T = SCENARIOS[id], on = types.includes(id);
+    return `<button class="tp ${on ? "on" : ""}" data-type="${id}" aria-pressed="${on}" ${!on && full ? `disabled title="Compare up to ${MAX_TYPES}: remove one first"` : ""}>${icon(T.icon)}${esc(T.name)}${suggested.includes(id) ? `<span class="star" title="Suggested by ${esc(hoodName || "the neighborhood")}'s needs">${icon("sparkles")}</span>` : ""}</button>`;
+  }).join("")}</div>
+  <div class="tp-note">${icon("sparkles")} suggested by ${esc(hoodName || "the neighborhood")}'s needs, as a starting point, not a ranking. Compare up to ${MAX_TYPES}.</div>`;
 }
 
 export function renderSources(el, focus) {

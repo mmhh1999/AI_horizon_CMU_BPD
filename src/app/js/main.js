@@ -1,9 +1,9 @@
 // App state and wiring: County > City > neighborhood (needs + opportunities) > parcel (futures, why / why not).
-import { EXAMPLES, SCENARIO_SETS, districtRules } from "./config.js";
+import { EXAMPLES, SCENARIO_SETS, MAX_TYPES, districtRules, suggestTypes } from "./config.js";
 import { makeFrame, bbox } from "./geo.js";
 import { buildScenario, effectiveRules, defaultAssumptions, applyChip, removeChange } from "./scenarios.js";
 import { createMap, setLevel, setClasses, setHood, setOpportunities, setContext, showParcel, fitTo, ringsOf, CONTEXT } from "./map.js";
-import { renderParcelCard, renderFutures, renderDetail, renderWhy, renderSetSelect, renderSources } from "./ui.js";
+import { renderParcelCard, renderFutures, renderDetail, renderWhy, renderSetSelect, renderTypePicker, renderSources } from "./ui.js";
 import { sunAt, shadowST } from "./sun.js";
 import { answer } from "./answers.js";
 import { loadCounty, loadCity, loadHood, HOOD_INDICATORS, COUNTY_INDICATORS, TAGS, TAG_ORDER, RAMP, classify } from "./data.js";
@@ -12,7 +12,7 @@ import { renderCountyPanel, renderCityPanel, renderNeeds, renderNeedsCompact, pa
 const $ = (s) => document.querySelector(s);
 const state = {
   level: "county", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
-  parcelId: null, setKey: "default", selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
+  parcelId: null, setKey: "suggested", types: SCENARIO_SETS.default.ids, selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
   assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", exampleIdx: -1,
 };
 let county, city, hood, area, map, byId, frame, ctx, futures = [];
@@ -21,13 +21,17 @@ let mapReady = false;
 async function init() {
   [county, city] = await Promise.all([loadCounty(), loadCity()]);
   $("#hoodList").innerHTML = city.hoods.map((h) => `<option value="${h.name}"></option>`).join("");
-  renderSetSelect($("#setSelect"), state.setKey);
   renderLayerButtons();
   bindEvents();
   map = createMap("map", { county, city }, {
     muni: onMuni, hood: (slug) => goHood(slug), parcel: (id) => selectParcel(id),
-    ready: () => { mapReady = true; applyChoropleths(); setLevel(map, state.level); render(); },
+    ready: () => {
+      mapReady = true; applyChoropleths(); setLevel(map, state.level);
+      if (state.level === "county") fitTo(map, county.munis.flatMap((m) => ringsOf(m.g)), 16);
+      render();
+    },
   });
+  window.__hfMap = map;
   render();
 }
 
@@ -62,6 +66,7 @@ async function goHood(slug, parcelId = null) {
     const data = await loadHood(slug);
     hood = meta; area = data; byId = new Map(data.parcels.map((p) => [p.id, p]));
     Object.assign(state, { level: "nbhd", slug, parcelId: null, needsOpen: false, layersOpen: true });
+    if (state.setKey === "suggested") state.types = suggestTypes(meta.needs);
     setLevel(map, "nbhd");
     setHood(map, data, slug, state.opp);
     setContext(map, state.overlay);
@@ -135,7 +140,7 @@ function computeFutures(assumptions) {
   const p = byId.get(state.parcelId);
   const rules = effectiveRules(p, assumptions);
   if (!rules) return [];
-  return SCENARIO_SETS[state.setKey].ids.map((id) => buildScenario(id, p, frame, rules, assumptions, p.hz, ctx.existingFoot));
+  return state.types.map((id) => buildScenario(id, p, frame, rules, assumptions, p.hz, ctx.existingFoot));
 }
 
 function recompute(prev) {
@@ -193,6 +198,8 @@ function render() {
     $("#detail").innerHTML = ""; renderWhy($("#why"), null); $("#exampleNote").textContent = ""; icons(); return;
   }
   state.lotST = ctx.lotST;
+  renderSetSelect($("#setSelect"), state.setKey, hood.name);
+  renderTypePicker($("#typePicker"), state.types, suggestTypes(hood.needs), hood.name);
   renderFutures($("#futures"), futures, state);
   const f = futures.find((x) => x.id === state.selected);
   renderDetail($("#detail"), f, p, ctx, state);
@@ -310,12 +317,27 @@ function bindEvents() {
     renderLegend();
     icons();
   });
-  $("#setSelect").addEventListener("change", (e) => {
-    state.setKey = e.target.value;
+  const retype = () => {
     if (!state.parcelId) return;
     recompute(null);
-    state.selected = futures.length ? futures[0].id : null;
+    if (!state.types.includes(state.selected)) state.selected = futures.length ? futures[0].id : null;
+    updateShadows();
     render();
+  };
+  $("#setSelect").addEventListener("change", (e) => {
+    state.setKey = e.target.value;
+    if (state.setKey === "suggested") state.types = suggestTypes(hood?.needs);
+    else if (SCENARIO_SETS[state.setKey]) state.types = SCENARIO_SETS[state.setKey].ids;
+    retype();
+  });
+  $("#typePicker").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-type]");
+    if (!b || b.disabled) return;
+    const id = b.dataset.type;
+    if (state.types.includes(id)) { if (state.types.length === 1) return; state.types = state.types.filter((t) => t !== id); }
+    else if (state.types.length < MAX_TYPES) state.types = [...state.types, id];
+    state.setKey = "custom";
+    retype();
   });
   $("#futures").addEventListener("click", (e) => {
     const why = e.target.closest("[data-why]");
