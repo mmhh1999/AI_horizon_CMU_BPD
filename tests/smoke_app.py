@@ -77,6 +77,17 @@ with sync_playwright() as pw:
     check(page.locator(".cons li, .drawer p").count() >= 1, "Why-not drawer opens")
     shot(page, "5-why")
 
+    check(page.locator(".ptile").count() == 4, "performance tiles: solar envelope, compactness, transit, green space")
+    solar_txt = page.inner_text(".ptile >> nth=0")
+    page.select_option("#solarWindow", "day")
+    page.wait_for_timeout(300)
+    check(page.inner_text(".ptile >> nth=0") != solar_txt or "9–15" in page.inner_text(".ptile >> nth=0"), "solar window control recomputes the envelope")
+    check(page.locator(".axo-big path[stroke='#2F7FB8']").count() > 4, "solar envelope mesh drawn in the axo")
+    check("not current Pittsburgh law" in page.inner_text("#why"), "Why panel lists community goals as not current law")
+    page.locator(".axo-big").scroll_into_view_if_needed()
+    shot(page, "5b-performance")
+    page.select_option("#solarWindow", "noon2")
+
     sugg = page.locator(".tp.on").count()
     check(1 <= sugg <= 4, f"type picker: {sugg} types preselected from needs")
     presets = page.eval_on_selector_all("#setSelect option", "os => os.map(o => o.value)")

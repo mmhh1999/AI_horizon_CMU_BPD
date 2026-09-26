@@ -2,6 +2,7 @@
 import { SOURCES, SCENARIO_SETS, SCENARIOS, TYPE_ORDER, MAX_TYPES, CLIMATE_CONTEXT, districtRules, lower } from "./config.js";
 import { sortedConstraints, walkMinutes, activeChanges, zoneLabel, CAPACITY_CHIP, GREEN_CHIP } from "./scenarios.js";
 import { renderAxo } from "./axo.js";
+import { SOLAR_WINDOWS, SOLAR_FENCES } from "./solar.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const n0 = (x) => (x == null || Number.isNaN(x) ? "—" : Math.round(x).toLocaleString("en-US"));
@@ -95,6 +96,25 @@ function lotBudget(f) {
     <div class="blegend"><span><i class="b-bld"></i>Building ${pc(b)}%</span><span><i class="b-park"></i>Parking ${pc(p)}%</span><span><i class="b-open"></i>Open / green ${pc(o)}%</span></div>`;
 }
 
+function performance(f, parcel, ctx, state) {
+  const P = f.perf;
+  if (!P) return "";
+  const s = P.solar, env = ctx.solarEnv, t = P.tod, g = P.green, c = P.compact;
+  const opt = (id, obj, cur) => `<select id="${id}" class="mini">${Object.entries(obj).map(([k, v]) => `<option value="${k}" ${String(k) === String(cur) ? "selected" : ""}>${esc(v.label || v)}</option>`).join("")}</select>`;
+  const tile = (ic, head, big, cls, body) => `<div class="ptile ${cls}"><div class="pt-head">${icon(ic)}<span>${head}</span></div><b>${big}</b><p>${body}</p></div>`;
+  return `<div class="sect perf"><h4>Performance ${src("SOLARENV")}<span class="goal-note">community goals, not current Pittsburgh law</span></h4>
+    <div class="ptiles">
+      ${tile("sun-medium", "Solar envelope", s.fits ? "Fits" : `+${Math.round(s.maxOver)} ft over`, s.fits ? "ok" : "warn",
+        `${s.fits ? "Keeps winter sun on neighbors' lots" : `Over the envelope on ${Math.round(s.share * 100)}% of the footprint`}: Dec 21, ${esc(SOLAR_WINDOWS[env.opts.window].short)}, above a ${env.opts.fence} ft solar fence. Sun peaks at ${Math.round(env.altNoonDeg)}°.`)}
+      ${tile("box", "Compactness", c.sv.toFixed(2) + "<small> m²/m³</small>", c.label === "Spread out" ? "warn" : c.label === "Compact" ? "ok" : "", `${c.label}. ${n0(c.perUnit)} sq ft of outside surface per home. Lower means less heat loss.`)}
+      ${tile("bus", "Transit (TOD)", `${Math.max(1, Math.round(t.walk))} min walk`, t.walk <= 5 ? "ok" : t.walk > 10 ? "warn" : "",
+        `${n0(t.trips)} weekday trips within ¼ mile${t.rapid ? " · rapid (T / busway) stop" : ""}. ${t.avoided ? `${t.avoided} parking space${t.avoided === 1 ? "" : "s"} avoided (≈${n0(t.sfAvoided)} sq ft).` : t.required ? `Dropping the parking minimum would avoid ${t.required} space${t.required === 1 ? "" : "s"}.` : "No parking required."}`)}
+      ${tile("trees", "Green space", g.d == null ? "—" : `${n0(g.d)} ft`, g.band === "near" ? "ok" : g.band === "far" ? "warn" : "", `${esc(g.label)}. ${Math.round(g.open * 100)}% of the lot stays open or green.`)}
+    </div>
+    <div class="solar-opts">${icon("sliders-horizontal")} Solar access window ${opt("solarWindow", SOLAR_WINDOWS, env.opts.window)} ${opt("solarFence", SOLAR_FENCES, env.opts.fence)}</div>
+  </div>`;
+}
+
 // ---------- expanded view (center, below cards)
 export function renderDetail(el, f, parcel, ctx, state) {
   if (!f) { el.innerHTML = ""; return; }
@@ -109,10 +129,12 @@ export function renderDetail(el, f, parcel, ctx, state) {
       <h2>${icon(f.icon)} ${esc(f.name)} on this lot</h2>${statusChip(f.status)}
       <label class="toggle">${icon("sun")}<input type="checkbox" id="shadowToggle" ${state.shadow ? "checked" : ""}/> Winter shadow</label>
       ${state.shadow ? `<input type="range" id="hour" min="9" max="15" step="1" value="${state.hour}"/><span class="muted">${state.hour}:00</span>` : ""}
+      <label class="toggle">${icon("sun-medium")}<input type="checkbox" id="solarToggle" ${state.solarShow ? "checked" : ""}/> Solar envelope</label>
     </div>
-    <div class="axo-big">${renderAxo({ width: 640, height: 280, lotRing: ctx.lotST, neighborLots: ctx.nbLotsST, neighbors: ctx.nbST, envelope: f.envelope, volumes: f.volumes, shadows: state.shadow ? ctx.shadows : [], dashed: f.status === "constrained", pad: 14 })}
-      <div class="axo-legend"><span><i class="lg-lot"></i>This lot</span><span><i class="lg-mass"></i>New building</span>${f.volumes.some((v) => v.existing) ? `<span><i class="lg-kept"></i>Existing house (kept)</span>` : ""}<span><i class="lg-env"></i>Zoning envelope</span><span><i class="lg-nb"></i>Neighbors</span></div>
+    <div class="axo-big">${renderAxo({ width: 640, height: 280, lotRing: ctx.lotST, neighborLots: ctx.nbLotsST, neighbors: ctx.nbST, envelope: f.envelope, volumes: f.volumes, shadows: state.shadow ? ctx.shadows : [], dashed: f.status === "constrained", pad: 14, solar: state.solarShow ? ctx.solarEnv : null })}
+      <div class="axo-legend"><span><i class="lg-lot"></i>This lot</span><span><i class="lg-mass"></i>New building</span>${f.volumes.some((v) => v.existing) ? `<span><i class="lg-kept"></i>Existing house (kept)</span>` : ""}<span><i class="lg-env"></i>Zoning envelope</span>${state.solarShow ? `<span><i class="lg-solar"></i>Solar envelope</span>` : ""}<span><i class="lg-nb"></i>Neighbors</span></div>
     </div>
+    ${performance(f, parcel, ctx, state)}
     <div class="kpis">
       <div>${icon("house")}<b>${f.netUnits >= 0 ? "+" : ""}${f.netUnits}</b><span>new homes</span></div>
       <div>${icon("building-2")}<b>${f.stories}</b><span>floors</span></div>
@@ -178,6 +200,7 @@ export function renderWhy(el, f, parcel, state) {
         <button class="whynot wide" data-why="${f.id}">WHY NOT? ${icon("arrow-right")}</button>` : ""}
     </section>
     ${drawer}
+    ${goalsHTML(f)}
     <section class="ask">
       <h4>${icon("message-circle-question")} Ask a question</h4>
       <div class="sugg">${["Why not 4 floors?", "What if parking minimums were dropped?", "What if climate matters more than home count?", "Which problems can policy fix?"].map((q) => `<button class="q" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
@@ -185,6 +208,13 @@ export function renderWhy(el, f, parcel, state) {
       <div id="answer">${state.answer || ""}</div>
       <div class="note">Answers only use the numbers on this page.</div>
     </section>`;
+}
+
+function goalsHTML(f) {
+  if (!f.goals) return "";
+  const head = `<h4>${icon("sprout")} Community goals <span class="goal-note">not current Pittsburgh law</span></h4>`;
+  if (!f.goals.length) return `<section class="goals">${head}<p class="muted small">${icon("check")} Meets the solar-access, compactness, transit and green-space goals used here.</p></section>`;
+  return `<section class="goals">${head}<ul class="glist">${f.goals.map((g) => `<li>${icon(g.icon)}<div><b>${esc(g.title)}</b><span>${esc(g.plain)}</span></div>${src(g.src)}</li>`).join("")}</ul></section>`;
 }
 
 function worksList(f, parcel) {

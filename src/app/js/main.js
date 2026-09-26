@@ -5,6 +5,7 @@ import { buildScenario, effectiveRules, defaultAssumptions, applyChip, removeCha
 import { createMap, setLevel, setClasses, setHood, setOpportunities, setContext, showParcel, fitTo, ringsOf, CONTEXT } from "./map.js";
 import { renderParcelCard, renderFutures, renderDetail, renderWhy, renderSetSelect, renderTypePicker, renderSources } from "./ui.js";
 import { sunAt, shadowST } from "./sun.js";
+import { solarDefaults, solarEnvelope, checkSolar, compactness, tod, green, goalsFor } from "./solar.js";
 import { answer } from "./answers.js";
 import { loadCounty, loadCity, loadHood, HOOD_INDICATORS, COUNTY_INDICATORS, TAGS, TAG_ORDER, RAMP, classify } from "./data.js";
 import { renderCountyPanel, renderCityPanel, renderNeeds, renderNeedsCompact, parcelOpportunityHTML } from "./needs.js";
@@ -14,6 +15,7 @@ const state = {
   level: "county", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
   parcelId: null, setKey: "suggested", types: SCENARIO_SETS.default.ids, selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
   assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", exampleIdx: -1,
+  solar: solarDefaults(), solarShow: true,
 };
 let county, city, hood, area, map, byId, frame, ctx, futures = [];
 let mapReady = false;
@@ -87,6 +89,7 @@ function selectParcel(id, fly = true) {
   state.answer = "";
   frame = makeFrame(p.c, p.fe);
   ctx = buildContext(p);
+  ctx.solarEnv = solarEnvelope(frame, ctx.lotST, state.solar);
   setLevel(map, "parcel");
   showParcel(map, p, fly);
   recompute(null);
@@ -140,7 +143,12 @@ function computeFutures(assumptions) {
   const p = byId.get(state.parcelId);
   const rules = effectiveRules(p, assumptions);
   if (!rules) return [];
-  return state.types.map((id) => buildScenario(id, p, frame, rules, assumptions, p.hz, ctx.existingFoot));
+  return state.types.map((id) => {
+    const f = buildScenario(id, p, frame, rules, assumptions, p.hz, ctx.existingFoot);
+    f.perf = { solar: checkSolar(f, ctx.solarEnv), compact: compactness(f), tod: tod(p, f, assumptions, area.stops), green: green(p, f) };
+    f.goals = goalsFor(f, f.perf);
+    return f;
+  });
 }
 
 function recompute(prev) {
@@ -348,7 +356,16 @@ function bindEvents() {
     updateShadows();
     render();
   });
-  $("#detail").addEventListener("change", (e) => { if (e.target.id === "shadowToggle") { state.shadow = e.target.checked; updateShadows(); render(); } });
+  $("#detail").addEventListener("change", (e) => {
+    if (e.target.id === "shadowToggle") { state.shadow = e.target.checked; updateShadows(); render(); }
+    if (e.target.id === "solarToggle") { state.solarShow = e.target.checked; render(); }
+    if (e.target.id === "solarWindow" || e.target.id === "solarFence") {
+      state.solar = { ...state.solar, [e.target.id === "solarWindow" ? "window" : "fence"]: e.target.id === "solarFence" ? +e.target.value : e.target.value };
+      ctx.solarEnv = solarEnvelope(frame, ctx.lotST, state.solar);
+      recompute(null);
+      render();
+    }
+  });
   $("#detail").addEventListener("input", (e) => { if (e.target.id === "hour") { state.hour = +e.target.value; updateShadows(); render(); } });
   $("#why").addEventListener("click", (e) => {
     const why = e.target.closest("[data-why]");

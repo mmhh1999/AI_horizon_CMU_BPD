@@ -23,7 +23,7 @@ function prismFaces(ring, z0, z1) {
 
 const depth = (ring) => { let d = -Infinity; for (const [s, t] of ring) d = Math.max(d, s - t); return d; };
 
-export function renderAxo({ width, height, lotRing, neighborLots = [], neighbors = [], envelope = null, volumes = [], shadows = [], dashed = false, pad = 10, frameTo = "all", style = "full" }) {
+export function renderAxo({ width, height, lotRing, neighborLots = [], neighbors = [], envelope = null, volumes = [], shadows = [], dashed = false, pad = 10, frameTo = "all", style = "full", solar = null }) {
   // --- bounds
   const pts = [];
   const add = (s, t, z) => pts.push(P(s, t, z));
@@ -91,6 +91,24 @@ export function renderAxo({ width, height, lotRing, neighborLots = [], neighbors
     }
     const topFill = mass ? (dashed ? "none" : kept ? "#F1F1EE" : "#FFFFFF") : "#F6F6F4";
     svg += poly(f.top.map(([s, t, z]) => Q(s, t, z)), `fill="${topFill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"`);
+  }
+
+  // --- solar envelope (mesh over the lot); heights are capped so tall southern cells don't dominate the view
+  if (solar) {
+    const cap = Math.max(envelope ? envelope.h : 0, ...volumes.map((v) => v.h), 30) * 1.15;
+    const R = solar.rows, nj = R.length, ni = R[0].length;
+    const stepJ = Math.max(1, Math.round(nj / 7)), stepI = Math.max(1, Math.round(ni / 5));
+    const line = (cells) => {
+      let d = "", pen = false;
+      for (const c of cells) {
+        if (!c) { pen = false; continue; }
+        const [x, y] = Q(c[0], c[1], Math.min(cap, c[2])).split(",");
+        d += `${pen ? "L" : "M"}${x},${y}`; pen = true;
+      }
+      return d ? `<path d="${d}" fill="none" stroke="#2F7FB8" stroke-width="0.8" stroke-opacity="0.7" stroke-linejoin="round"/>` : "";
+    };
+    for (let j = 0; j < nj; j += stepJ) svg += line(R[j]);
+    for (let i = 0; i < ni; i += stepI) svg += line(R.map((row) => row[i]));
   }
 
   // --- zoning envelope (dashed wireframe)
