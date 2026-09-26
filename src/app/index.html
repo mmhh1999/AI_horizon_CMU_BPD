@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Housing Futures · Pittsburgh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <link href="./styles.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <nav class="rail" aria-label="Main">
+    <div class="rail-logo" title="Housing Futures"><i data-lucide="house-plus" class="ic"></i></div>
+    <button class="nav on" data-nav="explore"><i data-lucide="map" class="ic"></i><span>Lots</span></button>
+    <button class="nav" data-nav="futures"><i data-lucide="layout-grid" class="ic"></i><span>Futures</span></button>
+    <button class="nav" data-nav="why"><i data-lucide="circle-help" class="ic"></i><span>Why not</span></button>
+    <button class="nav" data-nav="sources"><i data-lucide="book-open" class="ic"></i><span>Sources</span></button>
+    <div class="rail-foot" title="Prototype: zoning numbers are draft placeholders"><i data-lucide="flask-conical" class="ic"></i><span>Draft</span></div>
+  </nav>
+
+  <div class="app">
+    <header class="top">
+      <div class="title">
+        <h1>Housing Futures</h1>
+        <p>Pittsburgh · What could this lot become, and what's in the way?</p>
+      </div>
+      <form id="searchForm" class="search" role="search"><i data-lucide="search" class="ic"></i><input id="search" placeholder="Search an address in Garfield / Bloomfield" autocomplete="off" aria-label="Search address" /></form>
+      <div class="top-right">
+        <span class="flag" title="Zoning numbers are placeholders until checked against the Pittsburgh Code."><i data-lucide="flask-conical" class="ic"></i>Prototype · draft rules</span>
+        <button id="openSources" class="btn-ghost"><i data-lucide="book-open" class="ic"></i>Sources</button>
+        <button id="tryExample" class="btn-primary"><i data-lucide="map-pin" class="ic"></i>Try an example lot</button>
+      </div>
+    </header>
+
+    <main class="ws">
+      <section class="col map-col" id="sec-explore">
+        <div class="map-wrap">
+          <div id="map"></div>
+          <div class="overlay-bar"><div id="overlays"></div></div>
+          <div id="legend" class="legend" hidden></div>
+          <div id="exampleNote" class="example-note"></div>
+        </div>
+        <div id="parcelCard" class="parcel-card"></div>
+      </section>
+
+      <section class="col futures-col" id="sec-futures">
+        <div class="col-head">
+          <div><div class="eyebrow">Step 2 · Compare</div><h2>What could go here?</h2></div>
+          <select id="setSelect" title="Which building types to compare" aria-label="Building types to compare"></select>
+        </div>
+        <div id="futures" class="fcards"><div class="placeholder"><i data-lucide="map-pinned" class="ic xl"></i><p>Pick a lot on the map, or press <b>Try an example lot</b>.</p></div></div>
+        <div id="detail" class="detail"></div>
+      </section>
+
+      <aside class="col why-col" id="why"></aside>
+    </main>
+
+    <footer class="foot"><i data-lucide="shield-check" class="ic"></i>Decision support only, not legal, zoning, or financial advice. Check zoning with City Planning; get engineering advice for site conditions.</footer>
+  </div>
+  <div id="sources" class="modal" hidden></div>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

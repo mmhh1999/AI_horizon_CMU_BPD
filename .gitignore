@@ -1,0 +1,36 @@
+# Secrets: never commit API keys (hackathon rule)
+.env
+.env.*
+!.env.example
+
+# Data: large or raw downloads stay local; see data/README.md
+data/raw/*
+data/interim/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+
+# Local copies of hackathon/team source documents (content is transcribed into docs/)
+Ai Horizons Hackathon - Participant Packet.docx
+AI Horizons - Hackathon*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Node
+node_modules/
+dist/
+.next/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+.vscode/
+.idea/
+
+# Pre-build mockups: not committed or reused (hackathon rule: no code before Sat 09:00 ET)
+housing_typology_tradeoff_matchmaker.html

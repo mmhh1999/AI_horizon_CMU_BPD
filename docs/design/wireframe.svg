@@ -1,0 +1,320 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1320" viewBox="0 0 1440 1320">
+<defs><clipPath id="stageclip"><rect x="24" y="88" width="1036" height="432" rx="6"/></clipPath></defs>
+<rect x="0" y="0" width="1440" height="1320" rx="0" fill="#FAF9F6" stroke="#FAF9F6" stroke-width="1" opacity="1"/>
+<rect x="0" y="0" width="1440" height="72" rx="0" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<rect x="24" y="22" width="28" height="28" rx="4" fill="#1C1B19" stroke="#1C1B19" stroke-width="1" opacity="1"/>
+<rect x="32" y="30" width="12" height="12" rx="1" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="1" opacity="1"/>
+<text x="64" y="42" font-family="Inter, Helvetica, Arial, sans-serif" font-size="20" fill="#1C1B19" font-weight="600" text-anchor="start">Housing Futures</text>
+<text x="64" y="60" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">Pittsburgh · Track 3 prototype · wireframe (placeholder values)</text>
+<rect x="360" y="20" width="330" height="32" rx="6" fill="#FAF9F6" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="376" y="41" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#6B6A66" font-weight="400" text-anchor="start">Search address or parcel ID</text>
+<text x="716" y="41" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Rules</text>
+<rect x="754" y="20" width="470" height="32" rx="6" fill="#FAF9F6" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="825.5" y="41" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="middle">Before May 2025</text>
+<rect x="899.0" y="24" width="61.0" height="24" rx="4" fill="#1C1B19" stroke="#1C1B19" stroke-width="1" opacity="1"/>
+<text x="929.5" y="41" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#fff" font-weight="600" text-anchor="middle">Today</text>
+<text x="1066.8" y="41" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="middle">If Bill 2025-1545 passes</text>
+<rect x="1256" y="26" width="160" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="1336.0" y="40" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">Decision support only</text>
+<rect x="24" y="88" width="1036" height="432" rx="6" fill="#F1EFEA" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<g clip-path="url(#stageclip)">
+<line x1="-836" y1="520" x2="-86" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="-686" y1="520" x2="64" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="-536" y1="520" x2="214" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="-386" y1="520" x2="364" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="-236" y1="520" x2="514" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="-86" y1="520" x2="664" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="64" y1="520" x2="814" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="214" y1="520" x2="964" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="364" y1="520" x2="1114" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="514" y1="520" x2="1264" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="664" y1="520" x2="1414" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="814" y1="520" x2="1564" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="964" y1="520" x2="1714" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="1114" y1="520" x2="1864" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="1264" y1="520" x2="2014" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="1414" y1="520" x2="2164" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="1564" y1="520" x2="2314" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<line x1="1714" y1="520" x2="2464" y2="88" stroke="#E9E6E0" stroke-width="6"/>
+<text x="40" y="114" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="start">STAGE · 3D map</text>
+<polygon points="354.0,518.0 270.9,470.0 270.9,422.0 354.0,470.0" fill="#c0bdb7" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="354.0,518.0 409.4,486.0 409.4,438.0 354.0,470.0" fill="#aba8a3" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="354.0,470.0 409.4,438.0 326.3,390.0 270.9,422.0" fill="#D6D3CC" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="454.0,468.0 370.9,420.0 370.9,359.2 454.0,407.2" fill="#c0bdb7" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="454.0,468.0 509.4,436.0 509.4,375.2 454.0,407.2" fill="#aba8a3" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="454.0,407.2 509.4,375.2 426.3,327.2 370.9,359.2" fill="#D6D3CC" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="674.0,468.0 590.9,420.0 590.9,378.4 674.0,426.4" fill="#c0bdb7" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="674.0,468.0 729.4,436.0 729.4,394.4 674.0,426.4" fill="#aba8a3" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="674.0,426.4 729.4,394.4 646.3,346.4 590.9,378.4" fill="#D6D3CC" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="774.0,418.0 690.9,370.0 690.9,315.6 774.0,363.6" fill="#c0bdb7" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="774.0,418.0 829.4,386.0 829.4,331.6 774.0,363.6" fill="#aba8a3" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="774.0,363.6 829.4,331.6 746.3,283.6 690.9,315.6" fill="#D6D3CC" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="274.0,418.0 204.7,378.0 204.7,342.8 274.0,382.8" fill="#c0bdb7" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="274.0,418.0 326.7,387.6 326.7,352.4 274.0,382.8" fill="#aba8a3" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="274.0,382.8 326.7,352.4 257.4,312.4 204.7,342.8" fill="#D6D3CC" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="844.0,538.0 760.9,490.0 760.9,445.2 844.0,493.2" fill="#c0bdb7" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="844.0,538.0 899.4,506.0 899.4,461.2 844.0,493.2" fill="#aba8a3" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="844.0,493.2 899.4,461.2 816.3,413.2 760.9,445.2" fill="#D6D3CC" stroke="#C7C3BA" stroke-width="1" opacity="1"/>
+<polygon points="584.0,508.0 445.4,428.0 445.4,428.0 584.0,508.0" fill="none" stroke="#1C1B19" stroke-width="1.5" opacity="1"/>
+<polygon points="584.0,508.0 633.9,479.2 633.9,479.2 584.0,508.0" fill="none" stroke="#1C1B19" stroke-width="1.5" opacity="1"/>
+<polygon points="584.0,508.0 633.9,479.2 495.3,399.2 445.4,428.0" fill="none" stroke="#1C1B19" stroke-width="1.5" opacity="1"/>
+<polygon points="590.0,488.0 734.0,538.0 694.0,568.0 544.0,518.0" fill="rgba(28,27,25,0.18)" stroke="none" stroke-width="1" opacity="1"/>
+<polygon points="575.7,496.8 471.8,436.8 471.8,372.8 575.7,432.8" fill="rgba(255,255,255,0.15)" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="5 4"/>
+<polygon points="575.7,496.8 614.5,474.4 614.5,410.4 575.7,432.8" fill="rgba(255,255,255,0.2)" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="5 4"/>
+<polygon points="575.7,432.8 614.5,410.4 510.6,350.4 471.8,372.8" fill="rgba(255,255,255,0.25)" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="5 4"/>
+<polygon points="566.0,486.4 516.1,457.6 516.1,419.2 566.0,448.0" fill="#2446a4" stroke="#1c367e" stroke-width="1" opacity="1"/>
+<polygon points="566.0,486.4 596.5,468.8 596.5,430.4 566.0,448.0" fill="#2a51bd" stroke="#1c367e" stroke-width="1" opacity="1"/>
+<polygon points="566.0,448.0 596.5,430.4 546.6,401.6 516.1,419.2" fill="#2F5BD3" stroke="#1c367e" stroke-width="1" opacity="1"/>
+<text x="654" y="358" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">zoning envelope (dashed glass)</text>
+<line x1="652" y1="354" x2="624" y2="388" stroke="#6B6A66" stroke-width="1"/>
+<text x="284" y="358" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#2F5BD3" font-weight="600" text-anchor="start">future A massing (blue)</text>
+<line x1="424" y1="362" x2="554" y2="438" stroke="#2F5BD3" stroke-width="1"/>
+<text x="734" y="548" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">winter shadow at 12:00</text>
+</g>
+<rect x="40" y="472" width="420" height="32" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="54" y="493" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="600" text-anchor="start">☀ Dec 21</text>
+<line x1="124" y1="488" x2="384" y2="488" stroke="#E4E1DA" stroke-width="3"/>
+<circle cx="254" cy="488" r="7" fill="#1C1B19"/>
+<text x="120" y="500" font-family="Inter, Helvetica, Arial, sans-serif" font-size="10" fill="#6B6A66" font-weight="400" text-anchor="start">09</text>
+<text x="374" y="500" font-family="Inter, Helvetica, Arial, sans-serif" font-size="10" fill="#6B6A66" font-weight="400" text-anchor="start">15</text>
+<text x="404" y="493" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="600" text-anchor="start">12:00</text>
+<rect x="848" y="476" width="90" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="893.0" y="490" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">flip front</text>
+<rect x="948" y="476" width="96" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="996.0" y="490" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">reset view</text>
+<rect x="1076" y="88" width="340" height="432" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="1096" y="118" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="start">THE LOT</text>
+<text x="1096" y="146" font-family="Inter, Helvetica, Arial, sans-serif" font-size="20" fill="#1C1B19" font-weight="600" text-anchor="start">1234 Example St</text>
+<text x="1096" y="170" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" fill="#1C1B19" font-weight="400" text-anchor="start">R2-M · 3,000 sf · 30 × 100 ft</text>
+<text x="1096" y="192" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#6B6A66" font-weight="400" text-anchor="start">Existing: vacant land · 0 units</text>
+<line x1="1096" y1="210" x2="1396" y2="210" stroke="#E4E1DA" stroke-width="1"/>
+<text x="1096" y="234" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Hazards</text>
+<circle cx="1102" cy="256" r="5" fill="#FFFFFF" stroke="#6B6A66"/>
+<text x="1114" y="260" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="400" text-anchor="start">Flood</text>
+<circle cx="1252" cy="256" r="5" fill="#1C1B19" stroke="#1C1B19"/>
+<text x="1264" y="260" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">Slope 25%+ · 12%</text>
+<circle cx="1102" cy="284" r="5" fill="#FFFFFF" stroke="#6B6A66"/>
+<text x="1114" y="288" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="400" text-anchor="start">Undermined</text>
+<circle cx="1252" cy="284" r="5" fill="#FFFFFF" stroke="#6B6A66"/>
+<text x="1264" y="288" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="400" text-anchor="start">Landslide-prone</text>
+<line x1="1096" y1="314" x2="1396" y2="314" stroke="#E4E1DA" stroke-width="1"/>
+<text x="1096" y="338" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Market (MVA 2021)</text>
+<text x="1396" y="338" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">Transitional</text>
+<text x="1096" y="364" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Nearest PRT stop</text>
+<text x="1396" y="364" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">180 m · 96 trips/day</text>
+<line x1="1096" y1="382" x2="1396" y2="382" stroke="#E4E1DA" stroke-width="1"/>
+<text x="1096" y="406" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Climate context (city, CMIP6, 2 models)</text>
+<text x="1096" y="434" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Days ≥ 90°F / yr</text>
+<text x="1396" y="434" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">11 → 21–28</text>
+<text x="1096" y="458" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Days ≥ 1 in rain / yr</text>
+<text x="1396" y="458" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">5–6 → 6–8</text>
+<text x="1096" y="482" font-family="Inter, Helvetica, Arial, sans-serif" font-size="10" fill="#6B6A66" font-weight="400" text-anchor="start" font-style="italic">1991–2010 vs 2031–2050 · context, not a parcel forecast</text>
+<rect x="1096" y="492" width="52" height="20" rx="10" fill="#1C1B19" stroke="#1C1B19" stroke-width="1" opacity="1"/>
+<text x="1122.0" y="506" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#fff" font-weight="600" text-anchor="middle">DATA</text>
+<text x="1156" y="506" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">click any value for its source</text>
+<text x="24" y="554" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="start">SIX FUTURES FOR THIS LOT</text>
+<text x="1416" y="554" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="400" text-anchor="end">sorted by: fit ▾</text>
+<rect x="24" y="568" width="218" height="222" rx="6" fill="#FFFFFF" stroke="#2F5BD3" stroke-width="2" opacity="1"/>
+<polygon points="142.0,676.0 117.7,662.0 117.7,636.2 142.0,650.3" fill="#2446a4" stroke="#1c367e" stroke-width="1" opacity="1"/>
+<polygon points="142.0,676.0 164.3,663.1 164.3,637.4 142.0,650.3" fill="#2a51bd" stroke="#1c367e" stroke-width="1" opacity="1"/>
+<polygon points="142.0,650.3 164.3,637.4 140.0,623.4 117.7,636.2" fill="#2F5BD3" stroke="#1c367e" stroke-width="1" opacity="1"/>
+<text x="40" y="708" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" fill="#1C1B19" font-weight="600" text-anchor="start">Detached</text>
+<text x="40" y="730" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#2E7D5B" font-weight="600" text-anchor="start">● Fits</text>
+<text x="40" y="752" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Net 1 unit</text>
+<rect x="40" y="764" width="120" height="6" rx="3" fill="#E4E1DA" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<rect x="40" y="764" width="26.4" height="6" rx="3" fill="#6E4BB5" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="226" y="771" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6E4BB5" font-weight="600" text-anchor="end">22%</text>
+<rect x="202" y="580" width="26" height="20" rx="10" fill="#2F5BD3" stroke="#2F5BD3" stroke-width="1" opacity="1"/>
+<text x="215.0" y="594" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#fff" font-weight="600" text-anchor="middle">A</text>
+<rect x="258" y="568" width="218" height="222" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<polygon points="376.0,676.0 365.2,669.8 365.2,653.4 376.0,659.6" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<polygon points="376.0,676.0 390.2,667.8 390.2,651.4 376.0,659.6" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<polygon points="376.0,659.6 390.2,651.4 379.4,645.2 365.2,653.4" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<polygon points="348.0,676.0 314.2,656.5 314.2,627.9 348.0,647.4" fill="#6d6b66" stroke="none" stroke-width="1" opacity="1"/>
+<polygon points="348.0,676.0 372.8,661.7 372.8,633.1 348.0,647.4" fill="#7e7c76" stroke="none" stroke-width="1" opacity="1"/>
+<polygon points="348.0,647.4 372.8,633.1 339.0,613.6 314.2,627.9" fill="#8C8A84" stroke="none" stroke-width="1" opacity="1"/>
+<text x="274" y="708" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" fill="#1C1B19" font-weight="600" text-anchor="start">ADU</text>
+<text x="274" y="730" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">○ Only if Bill 2025-1545</text>
+<text x="274" y="752" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Net +1 unit</text>
+<rect x="274" y="764" width="120" height="6" rx="3" fill="#E4E1DA" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<rect x="274" y="764" width="21.6" height="6" rx="3" fill="#FFFFFF" stroke="#6E4BB5" stroke-width="1" stroke-dasharray="3 2" opacity="1"/>
+<text x="460" y="771" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6E4BB5" font-weight="400" text-anchor="end">if passed 18%</text>
+<rect x="418" y="580" width="46" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="441.0" y="594" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">set B</text>
+<rect x="492" y="568" width="218" height="222" rx="6" fill="#FFFFFF" stroke="#D9822B" stroke-width="2" opacity="1"/>
+<polygon points="610.0,676.0 583.0,660.4 583.0,634.7 610.0,650.3" fill="#a96521" stroke="#824e19" stroke-width="1" opacity="1"/>
+<polygon points="610.0,676.0 636.3,660.8 636.3,635.0 610.0,650.3" fill="#c37526" stroke="#824e19" stroke-width="1" opacity="1"/>
+<polygon points="610.0,650.3 636.3,635.0 609.3,619.4 583.0,634.7" fill="#D9822B" stroke="#824e19" stroke-width="1" opacity="1"/>
+<text x="508" y="708" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" fill="#1C1B19" font-weight="600" text-anchor="start">Duplex</text>
+<text x="508" y="730" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#2E7D5B" font-weight="600" text-anchor="start">● Fits</text>
+<text x="508" y="752" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Net 2 units</text>
+<rect x="508" y="764" width="120" height="6" rx="3" fill="#E4E1DA" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<rect x="508" y="764" width="54.0" height="6" rx="3" fill="#6E4BB5" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="694" y="771" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6E4BB5" font-weight="600" text-anchor="end">45%</text>
+<rect x="670" y="580" width="26" height="20" rx="10" fill="#D9822B" stroke="#D9822B" stroke-width="1" opacity="1"/>
+<text x="683.0" y="594" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#fff" font-weight="600" text-anchor="middle">B</text>
+<rect x="726" y="568" width="218" height="222" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<polygon points="844.0,676.0 821.0,662.7 821.0,627.6 844.0,640.9" fill="#6d6b66" stroke="#54524f" stroke-width="1" opacity="1"/>
+<polygon points="844.0,676.0 884.5,652.6 884.5,617.5 844.0,640.9" fill="#7e7c76" stroke="#54524f" stroke-width="1" opacity="1"/>
+<polygon points="844.0,640.9 884.5,617.5 861.6,604.2 821.0,627.6" fill="#8C8A84" stroke="#54524f" stroke-width="1" opacity="1"/>
+<line x1="857.830453" y1="668.01475" x2="857.830453" y2="632.91475" stroke="#54524f" stroke-width="1"/>
+<line x1="871.660906" y1="660.0295" x2="871.660906" y2="624.9295" stroke="#54524f" stroke-width="1"/>
+<text x="742" y="708" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" fill="#1C1B19" font-weight="600" text-anchor="start">Townhouse</text>
+<text x="742" y="730" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#B7791F" font-weight="600" text-anchor="start">◐ Stretch · +2 ft side yard</text>
+<text x="742" y="752" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Net 3 units</text>
+<rect x="742" y="764" width="120" height="6" rx="3" fill="#E4E1DA" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<rect x="742" y="764" width="39.6" height="6" rx="3" fill="#6E4BB5" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="928" y="771" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6E4BB5" font-weight="600" text-anchor="end">33%</text>
+<rect x="886" y="580" width="46" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="909.0" y="594" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">set B</text>
+<rect x="960" y="568" width="218" height="222" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<polygon points="1078.0,676.0 1049.6,659.6 1049.6,631.5 1078.0,647.9" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<polygon points="1078.0,676.0 1108.4,658.5 1108.4,630.4 1078.0,647.9" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<polygon points="1078.0,647.9 1108.4,630.4 1080.0,614.0 1049.6,631.5" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<text x="976" y="708" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" fill="#1C1B19" font-weight="600" text-anchor="start">Fourplex</text>
+<text x="976" y="730" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#B42318" font-weight="600" text-anchor="start">✕ Use not permitted (R2)</text>
+<text x="976" y="752" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Net 4 units</text>
+<rect x="976" y="764" width="120" height="6" rx="3" fill="#E4E1DA" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<rect x="976" y="764" width="28.8" height="6" rx="3" fill="#FFFFFF" stroke="#6E4BB5" stroke-width="1" stroke-dasharray="3 2" opacity="1"/>
+<text x="1162" y="771" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6E4BB5" font-weight="400" text-anchor="end">if allowed 24%</text>
+<rect x="1120" y="580" width="46" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="1143.0" y="594" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">set B</text>
+<rect x="1194" y="568" width="218" height="222" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<polygon points="1312.0,676.0 1271.5,652.6 1271.5,605.8 1312.0,629.2" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<polygon points="1312.0,676.0 1348.5,654.9 1348.5,608.1 1312.0,629.2" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<polygon points="1312.0,629.2 1348.5,608.1 1307.9,584.7 1271.5,605.8" fill="none" stroke="#6B6A66" stroke-width="1.2" opacity="1" stroke-dasharray="4 3"/>
+<text x="1210" y="708" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" fill="#1C1B19" font-weight="600" text-anchor="start">Small MF</text>
+<text x="1210" y="730" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#B42318" font-weight="600" text-anchor="start">✕ Use not permitted (R2)</text>
+<text x="1210" y="752" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Net 9 units</text>
+<rect x="1210" y="764" width="120" height="6" rx="3" fill="#E4E1DA" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<rect x="1210" y="764" width="10.8" height="6" rx="3" fill="#FFFFFF" stroke="#6E4BB5" stroke-width="1" stroke-dasharray="3 2" opacity="1"/>
+<text x="1396" y="771" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6E4BB5" font-weight="400" text-anchor="end">if allowed 9%</text>
+<rect x="1354" y="580" width="46" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="1377.0" y="594" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">set B</text>
+<text x="24" y="810" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start" font-style="italic">Robustness (violet) = share of all priority mixes under which this future ranks first among permitted futures (SMAA). Dashed = not permitted under the selected rules; its bar shows how often it would win if it were allowed.</text>
+<rect x="24" y="830" width="856" height="400" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="44" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="start">COMPARE</text>
+<text x="120" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#2F5BD3" font-weight="600" text-anchor="start">A Detached</text>
+<text x="214" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="400" text-anchor="start">vs</text>
+<text x="236" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#D9822B" font-weight="600" text-anchor="start">B Duplex</text>
+<text x="470" y="888" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#2F5BD3" font-weight="600" text-anchor="end">A</text>
+<text x="580" y="888" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#D9822B" font-weight="600" text-anchor="end">B</text>
+<text x="680" y="888" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="600" text-anchor="end">Δ</text>
+<text x="790" y="888" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="middle">type</text>
+<line x1="44" y1="898" x2="836" y2="898" stroke="#E4E1DA" stroke-width="1"/>
+<text x="44" y="922" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Housing &amp; land</text>
+<text x="60" y="944" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Net new units</text>
+<text x="470" y="944" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">1</text>
+<text x="580" y="944" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">2</text>
+<text x="680" y="944" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">+1</text>
+<rect x="776" y="930" width="28" height="20" rx="10" fill="#6B6A66" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="790.0" y="944" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#fff" font-weight="600" text-anchor="middle">M</text>
+<line x1="60" y1="952" x2="836" y2="952" stroke="#F0EEE9" stroke-width="1"/>
+<text x="60" y="970" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Lot coverage</text>
+<text x="470" y="970" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">28%</text>
+<text x="580" y="970" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">41%</text>
+<text x="680" y="970" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">+13</text>
+<rect x="776" y="956" width="28" height="20" rx="10" fill="#6B6A66" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="790.0" y="970" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#fff" font-weight="600" text-anchor="middle">M</text>
+<line x1="60" y1="978" x2="836" y2="978" stroke="#F0EEE9" stroke-width="1"/>
+<text x="44" y="996" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Energy &amp; solar</text>
+<text x="60" y="1018" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Rooftop PV per unit</text>
+<text x="470" y="1018" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">5.1 MWh</text>
+<text x="580" y="1018" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">3.4 MWh</text>
+<text x="680" y="1018" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">−1.7</text>
+<rect x="776" y="1004" width="28" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="790.0" y="1018" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">S</text>
+<line x1="60" y1="1026" x2="836" y2="1026" stroke="#F0EEE9" stroke-width="1"/>
+<text x="60" y="1044" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Site energy per unit</text>
+<text x="470" y="1044" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">—</text>
+<text x="580" y="1044" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">—</text>
+<text x="680" y="1044" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">—</text>
+<rect x="776" y="1030" width="28" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="790.0" y="1044" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">C</text>
+<line x1="60" y1="1052" x2="836" y2="1052" stroke="#F0EEE9" stroke-width="1"/>
+<text x="44" y="1070" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Neighbor impact</text>
+<text x="60" y="1092" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Winter shadow on neighbors</text>
+<text x="470" y="1092" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">— h·m²</text>
+<text x="580" y="1092" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">— h·m²</text>
+<text x="680" y="1092" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">—</text>
+<rect x="776" y="1078" width="28" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="790.0" y="1092" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">S</text>
+<line x1="60" y1="1100" x2="836" y2="1100" stroke="#F0EEE9" stroke-width="1"/>
+<text x="44" y="1118" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="600" text-anchor="start">Water &amp; heat</text>
+<text x="60" y="1140" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Impervious fraction</text>
+<text x="470" y="1140" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">34%</text>
+<text x="580" y="1140" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">47%</text>
+<text x="680" y="1140" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">+13</text>
+<rect x="776" y="1126" width="28" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" stroke-dasharray="3 2" opacity="1"/>
+<text x="790.0" y="1140" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">H</text>
+<line x1="60" y1="1148" x2="836" y2="1148" stroke="#F0EEE9" stroke-width="1"/>
+<text x="60" y="1166" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="start">Design-storm runoff increase</text>
+<text x="470" y="1166" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">—</text>
+<text x="580" y="1166" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="400" text-anchor="end">—</text>
+<text x="680" y="1166" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="#1C1B19" font-weight="600" text-anchor="end">—</text>
+<rect x="776" y="1152" width="28" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" opacity="1"/>
+<text x="790.0" y="1166" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">S</text>
+<line x1="60" y1="1174" x2="836" y2="1174" stroke="#F0EEE9" stroke-width="1"/>
+<text x="44" y="1214" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">M measured · S simulated · C published coefficient · H heuristic   ·   [ show all 6 futures ]</text>
+<rect x="896" y="830" width="520" height="176" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="916" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6E4BB5" font-weight="600" text-anchor="start">YOUR VALUES</text>
+<rect x="1016" y="844" width="71" height="24" rx="12" fill="#FFFFFF" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="1051.5" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6E4BB5" font-weight="600" text-anchor="middle">Planner</text>
+<rect x="1095" y="844" width="43" height="24" rx="12" fill="#6E4BB5" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="1116.5" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#fff" font-weight="600" text-anchor="middle">CDC</text>
+<rect x="1146" y="844" width="85" height="24" rx="12" fill="#FFFFFF" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="1188.5" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6E4BB5" font-weight="600" text-anchor="middle">Developer</text>
+<rect x="1239" y="844" width="78" height="24" rx="12" fill="#FFFFFF" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="1278.0" y="860" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6E4BB5" font-weight="600" text-anchor="middle">Resident</text>
+<text x="916" y="894" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">Supply</text>
+<line x1="1026" y1="890" x2="1146" y2="890" stroke="#E4E1DA" stroke-width="3"/>
+<line x1="1026" y1="890" x2="1098.0" y2="890" stroke="#6E4BB5" stroke-width="3"/>
+<circle cx="1098.0" cy="890" r="6" fill="#6E4BB5"/>
+<text x="1166" y="894" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">Buildability</text>
+<line x1="1276" y1="890" x2="1396" y2="890" stroke="#E4E1DA" stroke-width="3"/>
+<line x1="1276" y1="890" x2="1318.0" y2="890" stroke="#6E4BB5" stroke-width="3"/>
+<circle cx="1318.0" cy="890" r="6" fill="#6E4BB5"/>
+<text x="916" y="928" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">Affordability</text>
+<line x1="1026" y1="924" x2="1146" y2="924" stroke="#E4E1DA" stroke-width="3"/>
+<line x1="1026" y1="924" x2="1128.0" y2="924" stroke="#6E4BB5" stroke-width="3"/>
+<circle cx="1128.0" cy="924" r="6" fill="#6E4BB5"/>
+<text x="1166" y="928" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">Access</text>
+<line x1="1276" y1="924" x2="1396" y2="924" stroke="#E4E1DA" stroke-width="3"/>
+<line x1="1276" y1="924" x2="1336.0" y2="924" stroke="#6E4BB5" stroke-width="3"/>
+<circle cx="1336.0" cy="924" r="6" fill="#6E4BB5"/>
+<text x="916" y="962" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">Land &amp; climate</text>
+<line x1="1026" y1="958" x2="1146" y2="958" stroke="#E4E1DA" stroke-width="3"/>
+<line x1="1026" y1="958" x2="1110.0" y2="958" stroke="#6E4BB5" stroke-width="3"/>
+<circle cx="1110.0" cy="958" r="6" fill="#6E4BB5"/>
+<text x="1166" y="962" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">Neighborhood fit</text>
+<line x1="1276" y1="958" x2="1396" y2="958" stroke="#E4E1DA" stroke-width="3"/>
+<line x1="1276" y1="958" x2="1306.0" y2="958" stroke="#6E4BB5" stroke-width="3"/>
+<circle cx="1306.0" cy="958" r="6" fill="#6E4BB5"/>
+<rect x="916" y="970" width="480" height="26" rx="6" fill="#FAF9F6" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="928" y="988" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="400" text-anchor="start">Tell us what matters… (AI proposes weights; you accept)</text>
+<rect x="896" y="1022" width="520" height="208" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="916" y="1050" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="start">WHY A, NOT B?</text>
+<rect x="916" y="1066" width="64" height="20" rx="10" fill="#1C1B19" stroke="#1C1B19" stroke-width="1" opacity="1"/>
+<text x="948.0" y="1080" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#fff" font-weight="600" text-anchor="middle">DATA</text>
+<text x="990" y="1080" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">B adds 1 net unit; both fit R2-M setbacks (§903…)</text>
+<rect x="916" y="1094" width="64" height="20" rx="10" fill="#6E4BB5" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="948.0" y="1108" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#fff" font-weight="600" text-anchor="middle">VALUE</text>
+<text x="990" y="1108" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">With your weights, affordability outweighs solar per unit</text>
+<rect x="916" y="1122" width="64" height="20" rx="10" fill="#FFFFFF" stroke="#6B6A66" stroke-width="1" stroke-dasharray="3 2" opacity="1"/>
+<text x="948.0" y="1136" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="600" text-anchor="middle">ASSUMP.</text>
+<text x="990" y="1136" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="400" text-anchor="start">Solar uses one citywide PVWatts yield</text>
+<rect x="916" y="1156" width="150" height="60" rx="6" fill="#FAF9F6" stroke="#6E4BB5" stroke-width="1" opacity="1"/>
+<text x="928" y="1176" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6E4BB5" font-weight="600" text-anchor="start">Values</text>
+<text x="928" y="1194" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">A wins only if</text>
+<text x="928" y="1208" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">fit weight ≥ 7/10</text>
+<rect x="1078" y="1156" width="150" height="60" rx="6" fill="#FAF9F6" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="1090" y="1176" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="600" text-anchor="start">Rules</text>
+<text x="1090" y="1194" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">Fourplex blocked</text>
+<text x="1090" y="1208" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">by use (R2)</text>
+<rect x="1240" y="1156" width="150" height="60" rx="6" fill="#FAF9F6" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="1252" y="1176" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#1C1B19" font-weight="600" text-anchor="start">Site</text>
+<text x="1252" y="1194" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">12% on 25%+</text>
+<text x="1252" y="1208" font-family="Inter, Helvetica, Arial, sans-serif" font-size="11" fill="#6B6A66" font-weight="400" text-anchor="start">slope: flag</text>
+<rect x="24" y="1246" width="1392" height="50" rx="6" fill="#FFFFFF" stroke="#E4E1DA" stroke-width="1" opacity="1"/>
+<text x="44" y="1276" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" fill="#6B6A66" font-weight="400" text-anchor="start">Before acting: confirm zoning with City Planning / ZBA · survey &amp; geotech for slope and undermining · Sources · Limitations · Not legal, financial, or zoning advice</text>
+</svg>
