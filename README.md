@@ -29,6 +29,17 @@ One-page summary: [docs/pitch.md](docs/pitch.md).
 
 > **Decision support only.** This tool is not legal, financial, zoning, or engineering advice. The City of Pittsburgh has final say on zoning interpretation, and site safety needs survey and geotechnical work. See [docs/limitations.md](docs/limitations.md).
 
+## Active integration branch: `mso-v1`
+
+Built from `david_1.0` for the submission demo. It combines David's cost explorer, smell/context panel, stakeholder personas, search, and ranking with Olaf's four-step guided journey (Community → Opportunity → Housing futures → Trade-offs). Priority weights sit directly under the persona tabs; the solar envelope is optional (off by default). See [docs/branch-notes/mso-v1.md](docs/branch-notes/mso-v1.md).
+
+```bash
+git switch mso-v1
+cd src/app && python3 -m http.server 8791   # http://localhost:8791/?demo=1
+```
+
+**Still open on this branch:** API-based LLM for chat / rank reasoning (structured facts in); demo video; cherry-picks to `main`.
+
 ## What's new on the `david` branch
 
 This branch builds on `mso-v0` with neighborhood context and an editable cost explorer.
