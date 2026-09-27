@@ -2,7 +2,7 @@
 
 **Owner:** Meltem Sahin Ozkoc · **Base:** `david_1.0` @ `d81d131` · **Started:** Sun 2026-09-27
 
-Convergence branch for the submission demo. It rebuilds the interface as Olaf's map-first staged journey and keeps every feature David added (police and Smell Pittsburgh context, cost explorer, stakeholder personas, ranking, search, resizable panels). No new analysis features. `mso-v1` is superseded and left as is.
+Convergence branch for the submission demo. It rebuilds the interface as Olaf's map-first staged journey and keeps every feature David added (police and Smell Pittsburgh context, cost explorer, stakeholder personas, ranking, search, resizable panels). No new analysis features. The first attempt, `mso-v1`, is kept read-only as `archive/mso-v1`, marked superseded in its README and app.
 
 Run `python3 -m http.server 8795 --directory src/app` from the repo root and open `http://localhost:8795/`. The plain URL always starts at the County map.
 
