@@ -9,13 +9,14 @@
   <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <link href="./styles.css" rel="stylesheet" />
   <link href="./david.css" rel="stylesheet" />
+  <link href="./david-1.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="rail" aria-label="Main">
-    <div class="rail-logo" title="Housing Futures"><i data-lucide="house-plus" class="ic"></i></div>
+    <button class="rail-logo" id="homeButton" type="button" title="Start a new exploration" aria-label="Start a new exploration"><i data-lucide="house-plus" class="ic"></i></button>
     <button class="nav on" data-nav="explore"><i data-lucide="map" class="ic"></i><span>Map</span></button>
     <button class="nav" data-nav="needs"><i data-lucide="users" class="ic"></i><span>Needs</span></button>
     <button class="nav" data-nav="futures"><i data-lucide="layout-grid" class="ic"></i><span>Futures</span></button>
@@ -32,7 +33,7 @@
         <h1>Housing Futures</h1>
         <p>Pittsburgh · What does this community need, where could homes go, and what's in the way?</p>
       </div>
-      <form id="searchForm" class="search" role="search"><i data-lucide="search" class="ic"></i><input id="search" list="hoodList" placeholder="Search a neighborhood, or an address in the open one" autocomplete="off" aria-label="Search neighborhood or address" /><datalist id="hoodList"></datalist></form>
+      <div class="search-shell"><form id="searchForm" class="search" role="search"><i data-lucide="search" class="ic"></i><input id="search" placeholder="Search neighborhood, local lot, or page…" autocomplete="off" aria-label="Search neighborhood, local lot, or page" aria-controls="searchSuggestions" aria-expanded="false" /></form><div id="searchSuggestions" class="search-suggestions" hidden></div></div>
       <div class="top-right">
         <span class="flag" title="Zoning numbers are placeholders until checked against the Pittsburgh Code."><i data-lucide="flask-conical" class="ic"></i>Prototype · draft rules</span>        <button id="openSources" class="btn-ghost"><i data-lucide="book-open" class="ic"></i>Sources</button>
         <button id="tryExample" class="btn-primary"><i data-lucide="map-pin" class="ic"></i>Try an example lot</button>
@@ -63,6 +64,7 @@
         </div>
         <div id="parcelCard" class="parcel-card"></div>
       </section>
+      <div class="splitter" id="splitMap" role="separator" aria-label="Resize map and comparison panels" aria-orientation="vertical" tabindex="0" title="Drag to resize · double-click to reset"></div>
 
       <section class="col futures-col" id="sec-futures">
         <div id="needs"></div>
@@ -71,6 +73,8 @@
             <div><div class="eyebrow">Step 2 · Housing futures</div><h2>What could go here?</h2></div>
             <select id="setSelect" title="Which building types to compare" aria-label="Building types to compare"></select>
           </div>
+          <div id="roleView"></div>
+          <div id="ranking"></div>
           <div id="typePicker"></div>
           <div id="futures" class="fcards"><div class="placeholder"><i data-lucide="map-pinned" class="ic xl"></i><p>Pick a neighborhood, then a lot on the map, or press <b>Try an example lot</b>.</p></div></div>
           <div id="detail" class="detail"></div>
@@ -79,6 +83,7 @@
         </div>
       </section>
 
+      <div class="splitter" id="splitWhy" role="separator" aria-label="Resize comparison and explanation panels" aria-orientation="vertical" tabindex="0" title="Drag to resize · double-click to reset"></div>
       <aside class="col why-col" id="why"></aside>
     </main>
 

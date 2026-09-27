@@ -38,13 +38,16 @@ export function renderParcelCard(el, parcel, frame) {
 
 // ---------- futures cards (center)
 export function renderFutures(el, futures, state) {
-  el.innerHTML = futures.map((f) => {
+  const ranked = evaluate(futures, state.weights);
+  el.innerHTML = ranked.map((row, index) => {
+    const f = row.f;
     const t = state.transitions[f.id];
     const L = f.levels;
     const inWay = f.primary.length ? f.primary.join(" · ") : "Nothing under current rules";
     return `
     <article class="fcard ${state.selected === f.id ? "sel" : ""} ${f.status}" data-id="${f.id}">
       <header>${icon(f.icon, "tico")}<div><h3>${esc(f.name)}</h3><div class="fsub">${esc(f.sub)}</div></div></header>
+      <div class="fcard-rank">#${index + 1} for current priorities · ${Math.round(row.fit * 100)}/100 fit</div>
       ${statusChip(f.status)}
       ${t ? `<div class="trans">${STATUS[t.from].label} ${icon("arrow-right")} <b>${STATUS[t.to].label}</b></div>` : ""}
       <div class="thumb">${renderAxo({ width: 240, height: 140, lotRing: state.lotST, envelope: f.envelope, volumes: f.volumes, dashed: f.status === "constrained", style: "thumb", pad: 10 })}</div>
@@ -173,7 +176,7 @@ export function renderDetail(el, f, parcel, ctx, state) {
       <div>${icon("bus")}<b>${wm} min</b><span>to the bus</span></div>
       <div>${icon("trees")}<b>${Math.round((f.pervious / f.lotArea) * 100)}%</b><span>open space</span></div>
     </div>
-    <figure class="rendering"><img src="assets/renderings/${f.id}.jpg" alt="Illustration: ${esc(f.name)} on a Pittsburgh street" loading="lazy" onerror="this.closest('figure').remove()"/>
+    <figure class="rendering"><img src="assets/renderings-v2/${f.id}.png" alt="AI-generated illustration of ${esc(f.name)} housing type, not this lot" loading="lazy" onerror="this.closest('figure').remove()"/>
       <figcaption>${icon("sparkles")}<span><b>AI-generated illustration of the type, not a design for this site.</b> ${esc(f.name)}: what this type can feel like on a Pittsburgh street. Size, materials and details are not proposals. ${src("RENDER")}</span></figcaption></figure>
     <div class="sect"><h4>How the lot is used ${src("ZONING")}</h4>${lotBudget(f)}</div>
     <div class="sect"><h4>What it means</h4><ul class="means">${meaning.map(([i, t]) => `<li>${icon(i)}<span>${esc(t)}</span></li>`).join("")}</ul></div>

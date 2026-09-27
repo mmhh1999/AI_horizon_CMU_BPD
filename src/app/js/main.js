@@ -8,6 +8,9 @@ import { PRESETS, setWeight, suggestedEmphasis, weightsFromEmphasis } from "./pr
 import { sunAt, shadowST } from "./sun.js";
 import { solarDefaults, solarEnvelope, checkSolar, compactness, tod, green, goalsFor } from "./solar.js";
 import { answer } from "./answers.js";
+import { ROLES, roleWeights, roleHTML, rankingHTML } from "./roles.js";
+import { initSearch } from "./search.js";
+import { setupSplitters } from "./splitter.js";
 import { loadCounty, loadCity, loadHood, loadSmell, HOOD_INDICATORS, COUNTY_INDICATORS, TAGS, TAG_ORDER, RAMP, classify } from "./data.js";
 import { renderCountyPanel, renderCityPanel, renderNeeds, renderNeedsCompact, parcelOpportunityHTML } from "./needs.js";
 import { defaultCost, renderCost } from "./cost.js";
@@ -17,14 +20,32 @@ const state = {
   level: "county", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
   parcelId: null, setKey: "suggested", types: SCENARIO_SETS.default.ids, selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
   assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", exampleIdx: -1,
-  solar: solarDefaults(), solarShow: true, weights: { ...PRESETS.even.w }, preset: "even", cost: defaultCost(),
+  solar: solarDefaults(), solarShow: true, weights: roleWeights("community"), preset: null, role: "community", roleModified: false, cost: defaultCost(),
 };
 let county, city, smell, hood, area, map, byId, frame, ctx, futures = [];
-let mapReady = false;
+let mapReady = false, searchApi;
 
 async function init() {
   [county, city, smell] = await Promise.all([loadCounty(), loadCity(), loadSmell().catch(() => null)]);
-  $("#hoodList").innerHTML = city.hoods.map((h) => `<option value="${h.name}"></option>`).join("");
+  setupSplitters(document.querySelector(".ws"), () => map);
+  searchApi = initSearch({
+    city,
+    currentArea: () => ["nbhd", "parcel"].includes(state.level) ? area : null,
+    onHood: (slug) => { state.exampleIdx = -1; goHood(slug); },
+    onParcel: (id) => { state.exampleIdx = -1; selectParcel(id); },
+    onAction: (key) => {
+      if (key === "example") $("#tryExample").click();
+      else if (key === "sources") $("#openSources").click();
+      else {
+        const jump = () => (key === "ranking" ? $("#ranking") : key === "priorities" ? $("#priorities") : $("#cost")).scrollIntoView({ behavior: "smooth", block: "start" });
+        if (state.level === "parcel") jump();
+        else {
+          const ex = EXAMPLES[0]; state.exampleIdx = 0;
+          goHood(ex.slug, ex.id).then(() => { state.exampleIdx = 0; render(); jump(); });
+        }
+      }
+    },
+  });
   renderLayerButtons();
   bindEvents();
   map = createMap("map", { county, city }, {
@@ -206,10 +227,12 @@ function render() {
   const rules0 = districtRules(p.z);
   if (!rules0) {
     $("#futures").innerHTML = `<div class="oos">Zoning <b>${p.z || "unknown"}</b> is outside this prototype's draft rule set (residential and neighborhood-commercial districts only). Try another lot.</div>`;
-    $("#detail").innerHTML = ""; $("#cost").innerHTML = ""; $("#priorities").innerHTML = ""; renderWhy($("#why"), null); $("#exampleNote").textContent = ""; icons(); return;
+    $("#roleView").innerHTML = ""; $("#ranking").innerHTML = ""; $("#detail").innerHTML = ""; $("#cost").innerHTML = ""; $("#priorities").innerHTML = ""; renderWhy($("#why"), null); $("#exampleNote").textContent = ""; icons(); return;
   }
   state.lotST = ctx.lotST;
   renderSetSelect($("#setSelect"), state.setKey, hood.name);
+  $("#roleView").innerHTML = roleHTML(futures, state);
+  $("#ranking").innerHTML = rankingHTML(futures, state);
   renderTypePicker($("#typePicker"), state.types, suggestTypes(hood.needs), hood.name);
   renderFutures($("#futures"), futures, state);
   const f = futures.find((x) => x.id === state.selected);
@@ -276,24 +299,44 @@ function bindEvents() {
     if (k === "why") { if (state.parcelId) { state.whyOpen = true; render(); } $("#why").scrollIntoView({ behavior: "smooth", block: "start" }); }
     if (k === "cost" && state.parcelId) $("#cost").scrollIntoView({ behavior: "smooth", block: "start" });
   });
+  $("#homeButton").addEventListener("click", () => {
+    state.role = "community"; state.roleModified = false; state.weights = roleWeights("community");
+    state.preset = null; state.cost = defaultCost(); state.setKey = "suggested";
+    state.types = SCENARIO_SETS.default.ids; searchApi?.clear(); setNav("explore");
+    goCounty();
+  });
+  $("#roleView").addEventListener("click", (e) => {
+    const tab = e.target.closest("[data-role]");
+    const jump = e.target.closest("[data-role-jump]");
+    if (tab && ROLES[tab.dataset.role]) {
+      state.role = tab.dataset.role; state.roleModified = false;
+      state.weights = roleWeights(state.role); state.preset = null; render();
+    } else if (jump) {
+      if (jump.dataset.roleJump === "detail") $("#detail").scrollIntoView({ behavior: "smooth", block: "start" });
+      else document.querySelector(`[data-nav="${jump.dataset.roleJump}"]`)?.click();
+    }
+  });
+  $("#roleView").addEventListener("keydown", (e) => {
+    const tab = e.target.closest("[data-role]");
+    if (!tab || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+    e.preventDefault();
+    const keys = Object.keys(ROLES), at = keys.indexOf(tab.dataset.role);
+    const next = e.key === "Home" ? keys[0] : e.key === "End" ? keys[keys.length - 1]
+      : keys[(at + (e.key === "ArrowRight" ? 1 : -1) + keys.length) % keys.length];
+    $("#roleTab-" + next).click();
+    $("#roleTab-" + next).focus();
+  });
+  $("#ranking").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-rank]");
+    if (!b) return;
+    state.selected = b.dataset.rank; updateShadows(); render();
+    $("#detail").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
   $("#tryExample").addEventListener("click", () => {
     state.exampleIdx = (state.exampleIdx + 1) % EXAMPLES.length;
     const ex = EXAMPLES[state.exampleIdx];
     const idx = state.exampleIdx;
     goHood(ex.slug, ex.id).then(() => { state.exampleIdx = idx; render(); });
-  });
-  $("#searchForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const raw = $("#search").value.trim();
-    const q = raw.toUpperCase();
-    if (!q) return;
-    const h = city.hoods.find((x) => x.name.toUpperCase() === q) || city.hoods.find((x) => x.name.toUpperCase().startsWith(q));
-    if (h) { state.exampleIdx = -1; goHood(h.slug); return; }
-    const hit = area && (area.parcels.find((p) => p.id === q) || area.parcels.find((p) => (p.a || "").toUpperCase().includes(q)));
-    if (hit) { state.exampleIdx = -1; selectParcel(hit.id); return; }
-    $("#search").setCustomValidity(area ? `Not found in ${hood.name}. Try a neighborhood name.` : "Type a neighborhood name, e.g. Larimer");
-    $("#search").reportValidity();
-    setTimeout(() => $("#search").setCustomValidity(""), 1500);
   });
   $("#crumbs").addEventListener("click", (e) => {
     const b = e.target.closest("[data-crumb]");
@@ -357,18 +400,22 @@ function bindEvents() {
   $("#priorities").addEventListener("input", (e) => {
     const s = e.target.closest("[data-w]");
     if (!s) return;
+    state.roleModified = true;
     state.weights = setWeight(state.weights, s.dataset.w, +s.value);
     state.preset = null;
     document.querySelectorAll("#priorities [data-w]").forEach((x) => { if (x !== s) x.value = state.weights[x.dataset.w]; });
     document.querySelectorAll("#priorities [data-out]").forEach((o) => { o.textContent = state.weights[o.dataset.out]; });
     document.querySelectorAll("#priorities [data-preset], #priorities [data-emph]").forEach((b) => b.classList.remove("on"));
     $("#prioRank").innerHTML = prioRankHTML(futures, state.weights);
+    $("#roleView").innerHTML = roleHTML(futures, state);
+    $("#ranking").innerHTML = rankingHTML(futures, state);
+    renderFutures($("#futures"), futures, state);
     icons();
   });
   $("#priorities").addEventListener("click", (e) => {
     const p = e.target.closest("[data-preset]");
-    if (p) { state.weights = { ...PRESETS[p.dataset.preset].w }; state.preset = p.dataset.preset; render(); }
-    if (e.target.closest("[data-emph]")) { state.weights = weightsFromEmphasis(suggestedEmphasis(hood?.needs)); state.preset = "needs"; render(); }
+    if (p) { state.weights = { ...PRESETS[p.dataset.preset].w }; state.preset = p.dataset.preset; state.roleModified = true; render(); }
+    if (e.target.closest("[data-emph]")) { state.weights = weightsFromEmphasis(suggestedEmphasis(hood?.needs)); state.preset = "needs"; state.roleModified = true; render(); }
   });
   $("#futures").addEventListener("click", (e) => {
     const why = e.target.closest("[data-why]");

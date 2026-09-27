@@ -36,7 +36,11 @@ This branch builds on `mso-v0` with neighborhood context and an editable cost ex
 - **Police activity:** 2025 reported records by crime category with a 2024 comparison, sourced from the [City Police Data Portal](https://www.pittsburghpa.gov/Safety/Police/Police-Data-Portal) and [WPRDC](https://data.wprdc.org/dataset/monthly-criminal-activity-dashboard). This is context, never a safety score or housing-ranking input.
 - **Smell Pittsburgh:** Neighborhood totals and monthly bars for 2025 reports rated 4–5, sourced from [CMU CREATE Lab](https://smellpgh.org/data). The shipped file contains aggregates only, not report locations or text. Voluntary reports are not pollution measurements.
 - **Cost explorer:** Editable construction rate, contingency, and land cost; illustrative total, per-net-new-home cost, and ±25% sensitivity band. The default $162/sq ft comes from [NAHB's 2024 national single-family survey](https://www.nahb.org/news-and-economics/housing-economics-plus/special-studies/special-studies-pages/cost-of-constructing-a-home-in-2024) ($428,215 / 2,647 finished sq ft).
-- **Usability improvements:** Four-stage progress ribbon, Context and Costs navigation, responsive panels, and a `?demo=1` link that opens the Larimer example lot. Existing scenario scoring and stakeholder weights are unchanged.
+- **Usability improvements:** Five-stage progress ribbon, Context and Costs navigation, responsive panels, and a `?demo=1` link that opens the Larimer example lot. Existing scenario scoring and stakeholder weights are unchanged.
+
+### Local `david_1.0` preview
+
+The local `david_1.0` branch adds a ranked housing shortlist, five stakeholder-view tabs with transparent starter weights, a larger resizable map, local search suggestions, a working “start new exploration” house icon, and thirteen new uncropped AI housing-type illustrations. It does **not** add a runtime LLM. See the [branch note](docs/branch-notes/david_1.0.md) for behavior and limitations.
 
 ### Known issues and next steps
 
@@ -153,7 +157,7 @@ Headless smoke test of the demo path (County → City → Larimer → example lo
 | Open-Meteo Climate API | Climate context | CC BY 4.0, non-commercial |
 | OpenStreetMap | Building context in the original demo extract | ODbL |
 | AI tools | See [docs/ai-usage-log.md](docs/ai-usage-log.md) | — |
-| AI image generation | 13 housing-type illustrations in `src/app/assets/renderings/`, labeled in the app as "AI-generated illustration of the type, not a design for this site" | Disclosed in the AI log |
+| AI image generation | Original illustrations in `src/app/assets/renderings/`; revised generic typology illustrations in `src/app/assets/renderings-v2/`, labeled as not a design for this site | Disclosed in the AI log |
 
 ## License
 
