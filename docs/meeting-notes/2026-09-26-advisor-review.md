@@ -1,6 +1,6 @@
 # Advisor Review, Sat 2026-09-26 (morning, during the build window)
 
-**Participants:** Meltem Sahin Ozkoc, Minghao Xu, Fengrui Liu, Olaf Fu (team); Azadeh Sawyer and Vivian Loftness (advisors).
+**Participants:** Meltem Sahin Ozkoc, Minghao Xu, David Liu, Olaf Fu (team); Azadeh Sawyer and Vivian Loftness (advisors).
 **Source:** the meeting transcript, Meltem's notes, and Minghao's follow-up notes in the team chat. This is a cleaned summary, not a verbatim record.
 
 **Status:** the team treats this review as the **current source of truth for product direction**. It supersedes the parcel-first flow in [../ui-spec.md](../ui-spec.md) where they conflict.

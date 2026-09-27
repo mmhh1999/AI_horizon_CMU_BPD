@@ -107,7 +107,7 @@ Code version: eCode360 showed Pittsburgh legislation through 2026-08-05 when we 
 
 ## I. Papers and benchmarks from the team doc (to do)
 
-Fengrui collected benchmarks and papers in the shared doc. Move each item here in the table format above. Priority goes to anything that justifies transit distance thresholds, how need indicators are mapped to 0–100, and default persona weights (Olaf's question).
+David collected benchmarks and papers in the shared doc. Move each item here in the table format above. Priority goes to anything that justifies transit distance thresholds, how need indicators are mapped to 0–100, and default persona weights (Olaf's question).
 
 ## J. Hackathon materials
 

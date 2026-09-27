@@ -1,6 +1,6 @@
 # Advisor Ideation, Thu 2026-09-24 (before the event)
 
-**Participants:** Meltem Sahin Ozkoc, Minghao Xu, Fengrui Liu (team, with other lab members present); Azadeh Sawyer and Vivian Loftness (advisors).
+**Participants:** Meltem Sahin Ozkoc, Minghao Xu, David Liu (team, with other lab members present); Azadeh Sawyer and Vivian Loftness (advisors).
 **Source:** meeting transcript; a cleaned summary of the hackathon-related part only. Ideas and discussion only; no code (consistent with the rule that ideas may be brought, code may not).
 
 ## Takeaways

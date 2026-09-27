@@ -9,7 +9,7 @@ A cleaned-up transcription of the team planning doc ("AI Horizons - Hackathon") 
 - **Team sync:** Sat 09:15 ET, right after the build window opens. Everyone brings ideas. Afterward we email Azadeh and Vivian (advisors) to schedule a short call.
 - Minghao takes over the interface work from Olaf and David, and handles documentation.
 
-## Kickoff takeaways (Olaf, David, Fengrui)
+## Kickoff takeaways (Olaf, David)
 
 - The organizers covered scope and stakeholders: how the tool would affect business investment, communities, and architects or developers.
 - The Cursor training showed a simple web interface and how multiple agents can be used. Sponsor credits are announced in Slack.
@@ -68,7 +68,7 @@ Zoning is handled separately: Pittsburgh Code Ch. 903 and 911; base-use intensit
 - LEED composite scores and credit metrics as inspiration
 - Walkability metric plus transit access (Walk Score API is an option)
 - Hybrid communities
-- Olaf: we need benchmarks to set the weights and compute points. Fengrui added benchmarks and papers to the shared doc (to be moved into [references.md](../references.md#i-papers-and-benchmarks-from-the-team-doc-to-do)).
+- Olaf: we need benchmarks to set the weights and compute points. David added benchmarks and papers to the shared doc (to be moved into [references.md](../references.md#i-papers-and-benchmarks-from-the-team-doc-to-do)).
 - Meltem: aim for less generic work, meaning the right tail of the distribution.
 
 Formal citations: [references.md](../references.md). Datasets: [data-sources.md](../data-sources.md).

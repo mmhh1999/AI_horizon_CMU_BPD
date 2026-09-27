@@ -128,9 +128,8 @@ Details are in [docs/ai-design.md](docs/ai-design.md), and the tools used to bui
 | Name | Role |
 |---|---|
 | Meltem Sahin Ozkoc | Product direction after the advisor review; community-first rework on branch `mso-v0`: county data pipeline, community needs, opportunity layers, solar envelope, stakeholder priorities |
-| Fengrui Liu | TBD |
 | Olaf Fu | TBD |
-| David | Neighborhood crime and smell context, cost explorer, and interface updates on `david` |
+| David Liu (Fengrui) | Neighborhood crime and smell context, cost explorer, and interface updates on `david`; benchmarks and papers for the weights |
 | Minghao | Interface and documentation |
 
 **Advisors:** Azadeh and Vivian, for references and site-evaluation criteria.
