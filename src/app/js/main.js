@@ -4,17 +4,19 @@ import { EXAMPLES, SCENARIO_SETS, MAX_TYPES, districtRules, suggestTypes } from 
 import { makeFrame, bbox } from "./geo.js";
 import { buildScenario, effectiveRules, defaultAssumptions, applyChip, removeChange } from "./scenarios.js";
 import { createMap, setLevel, setClasses, setHood, setOpportunities, setContext, showParcel, fitTo, ringsOf, CONTEXT } from "./map.js";
-import { renderParcelCard, renderFutures, renderDetail, renderWhy, renderSetSelect, renderTypePicker, renderSources, weightsHTML, tradeSwitchHTML, scoreBreakdownHTML, prioRankHTML } from "./ui.js";
-import { PRESETS, setWeight, suggestedEmphasis, weightsFromEmphasis, evaluate } from "./priorities.js";
+import { renderParcelCard, renderFutures, renderDetail, renderWhy, renderSetSelect, renderTypePicker, renderSources, weightsHTML, tradeSwitchHTML, scoreBreakdownHTML, prioRankHTML, compareFacts } from "./ui.js";
+import { PRESETS, CRITERIA, setWeight, suggestedEmphasis, weightsFromEmphasis, evaluate } from "./priorities.js";
 import { sunAt, shadowST } from "./sun.js";
+import { explainWhyNot, explainCompare } from "./explain.js";
 import { solarDefaults, solarEnvelope, checkSolar, compactness, tod, green, goalsFor } from "./solar.js";
-import { answer } from "./answers.js";
+import { answer, COMPARE_Q } from "./answers.js";
 import { ROLES, roleWeights, roleLabel, roleHTML, planningForHTML, weightStripHTML, rankingHTML } from "./roles.js";
 import { initSearch } from "./search.js";
 import { setupSplitters, resetSplitters } from "./splitter.js";
 import { loadCounty, loadCity, loadHood, loadSmell, HOOD_INDICATORS, COUNTY_INDICATORS, TAGS, TAG_ORDER, RAMP, classify } from "./data.js";
 import { renderCountyPanel, renderCityPanel, renderNeeds, renderNeedsCompact, renderOpportunity, needsStripHTML, parcelOpportunityHTML } from "./needs.js";
 import { defaultCost, renderCost } from "./cost.js";
+import { askMira, renderMiraFab, renderMiraPanel, tradeoffCtaHTML, TRADEOFF_CTA_PROMPT } from "./mira.js";
 
 const STEPS = [
   ["community", "Community", "Community", "users"],
@@ -29,9 +31,10 @@ const $ = (s) => document.querySelector(s);
 const state = {
   level: "county", stage: "community", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
   parcelId: null, setKey: "suggested", types: SCENARIO_SETS.default.ids, selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
-  assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", exampleIdx: -1,
+  assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", answerId: 0, exampleIdx: -1,
   solar: solarDefaults(), solarShow: false, solarOpen: false, weightsOpen: false, railFocus: "why",
   weights: roleWeights("community"), preset: null, role: "community", roleModified: false, cost: defaultCost(),
+  mira: { open: false, avatar: "idle", messages: [], input: "" },
 };
 let county, city, smell, hood, area, map, byId, frame, ctx, futures = [];
 let mapReady = false, searchApi, layoutKey = "", fitPending = true;
@@ -286,8 +289,58 @@ function updateShadows() {
 
 const icons = () => { if (window.lucide) window.lucide.createIcons({ attrs: { "stroke-width": 1.9 } }); };
 
+// ------------------------------------------------------------------ Mira: global stage-aware copilot
+// Only fields that actually exist in app state are included; nothing here is invented or recomputed.
+function buildMiraContext() {
+  const c = { stage: state.stage, stageLabel: STEPS.find(([k]) => k === state.stage)?.[1] };
+  c.geography = { county: "Allegheny County" };
+  if (state.level !== "county") c.geography.city = "Pittsburgh";
+  if (hood) c.geography.neighborhood = hood.name;
+  c.persona = roleLabel(state);
+  const top = Object.entries(state.weights).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k]) => CRITERIA.find((cr) => cr.key === k)?.label || k);
+  if (top.length) c.topPriorities = top;
+  if (hood?.needs?.length) c.communityNeeds = hood.needs.map((n) => n.label);
+  const p = state.parcelId ? byId?.get(state.parcelId) : null;
+  if (p) c.selectedOpportunity = { address: p.a || p.id, zoning: p.z || "unknown" };
+  if (futures.length) {
+    const rows = evaluate(futures, state.weights);
+    c.alternatives = rows.map((r, i) => ({ rank: i + 1, name: r.f.name, status: r.f.status, fit: Math.round(r.fit * 100) }));
+    const f = futures.find((x) => x.id === state.selected);
+    if (f) c.selectedFuture = { name: f.name, status: f.status, netNewUnits: f.netUnits };
+  }
+  return c;
+}
+
+function renderMira() {
+  const el = $("#mira");
+  const context = buildMiraContext();
+  el.innerHTML = renderMiraFab(state.mira) + renderMiraPanel(state.mira, context, state.stage);
+  icons();
+}
+
+async function askMiraFlow(question) {
+  if (!question || state.mira.avatar === "thinking") return;
+  state.mira.messages.push({ role: "user", text: question });
+  state.mira.avatar = "thinking";
+  state.mira.input = "";
+  renderMira();
+  $("#miraLog").scrollTop = $("#miraLog").scrollHeight;
+  const context = buildMiraContext();
+  const history = state.mira.messages.slice(-6);
+  const text = await askMira(question, context, history);
+  if (text) {
+    state.mira.messages.push({ role: "assistant", text: text.replace(/</g, "&lt;") });
+    state.mira.avatar = "responding";
+  } else {
+    state.mira.avatar = "error";
+  }
+  renderMira();
+  $("#miraLog").scrollTop = $("#miraLog").scrollHeight;
+}
+
 // ------------------------------------------------------------------ render
 function render() {
+  renderMira();
   renderCrumbs();
   renderJourney();
   applyLayout();
@@ -345,6 +398,7 @@ function render() {
   if (showTrade) {
     if ($("#solarMore")) state.solarOpen = $("#solarMore").open;
     $("#tradeSwitch").innerHTML = tradeSwitchHTML(futures, state);
+    $("#miraCta").innerHTML = futures.length > 1 ? tradeoffCtaHTML() : "";
     renderDetail($("#detail"), f, p, ctx, state);
     renderCost($("#cost"), f, state.cost);
     $("#scoreBreakdown").innerHTML = scoreBreakdownHTML(futures, state.weights);
@@ -624,17 +678,70 @@ function bindEvents() {
     if (src) { e.stopPropagation(); renderSources($("#sources"), src.dataset.src); $("#sources").hidden = false; icons(); document.getElementById("src-" + src.dataset.src)?.scrollIntoView({ block: "center" }); return; }
     if (e.target.closest("#openSources")) { renderSources($("#sources")); $("#sources").hidden = false; icons(); }
     if (e.target.closest("#closeSources") || e.target.id === "sources") $("#sources").hidden = true;
+    const ew = e.target.closest("[data-explain-why]");
+    if (ew) { runExplain(ew, explainWhyNot(JSON.parse(ew.dataset.explainWhy)), "whyExplainOut"); return; }
+    const ec = e.target.closest("[data-explain-compare]");
+    if (ec) { runExplain(ec, explainCompare(JSON.parse(ec.dataset.explainCompare)), "rankExplainOut"); return; }
+    if (e.target.closest("#miraFab")) {
+      state.mira.open = !state.mira.open;
+      state.mira.avatar = state.mira.open ? "open" : "idle";
+      renderMira();
+      if (state.mira.open) $("#miraInput")?.focus();
+      return;
+    }
+    if (e.target.closest("#miraClose")) { state.mira.open = false; state.mira.avatar = "idle"; renderMira(); return; }
+    const chip = e.target.closest("[data-mira-q]");
+    if (chip) { askMiraFlow(chip.dataset.miraQ); return; }
+    if (e.target.closest("[data-mira-cta]")) {
+      state.mira.open = true; state.mira.avatar = "open"; renderMira();
+      askMiraFlow(TRADEOFF_CTA_PROMPT);
+      return;
+    }
+  });
+  document.addEventListener("submit", (e) => {
+    if (e.target.id === "miraForm") { e.preventDefault(); askMiraFlow($("#miraInput").value.trim()); }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && state.mira.open) { state.mira.open = false; state.mira.avatar = "idle"; renderMira(); }
   });
 }
 
-function ask(q) {
+async function runExplain(button, pending, outId) {
+  if (button.disabled) return;
+  const original = button.innerHTML;
+  button.disabled = true;
+  button.innerHTML = "Explaining…";
+  const text = await pending;
+  const out = document.getElementById(outId);
+  if (text) {
+    out.innerHTML = `<p>${text.replace(/</g, "&lt;")}</p><div class="muted small"><i data-lucide="sparkles" class="ic"></i> AI-phrased from the facts above; may be regenerated if it drifts from them.</div>`;
+    button.remove();
+  } else {
+    out.innerHTML = `<p class="muted small">AI explanation unavailable right now. The facts above still stand.</p>`;
+    button.disabled = false;
+    button.innerHTML = original;
+  }
+  icons();
+}
+
+async function ask(q) {
   if (!q || !state.parcelId) return;
+  const id = ++state.answerId;
   const f = futures.find((x) => x.id === state.selected);
   const p = byId.get(state.parcelId);
-  state.answer = `<div class="qa"><div class="qq">${q.replace(/</g, "&lt;")}</div>${answer(q, {
-    f, futures, rules: effectiveRules(p, state.assumptions),
+  const qq = q.replace(/</g, "&lt;");
+  const rows = futures.length > 1 ? evaluate(futures, state.weights) : null;
+  const templated = answer(q, {
+    f, futures, rows, rules: effectiveRules(p, state.assumptions),
     whatIf: (patch) => computeFutures({ ...state.assumptions, ...patch }),
-  })}</div>`;
+  });
+  state.answer = `<div class="qa"><div class="qq">${qq}</div>${templated}</div>`;
+  render();
+  if (!COMPARE_Q.test(q) || !rows) return;
+  const other = rows.find((r) => r.f.id === state.selected && r.f.id !== rows[0].f.id) || rows[1];
+  const text = await explainCompare(compareFacts(rows[0], other));
+  if (state.answerId !== id || !text) return;
+  state.answer = `<div class="qa"><div class="qq">${qq}</div>${templated}<p>${text.replace(/</g, "&lt;")}</p><div class="muted small"><i data-lucide="sparkles" class="ic"></i> AI-phrased from the ranking above; may be regenerated if it drifts from the numbers.</div></div>`;
   render();
 }
 

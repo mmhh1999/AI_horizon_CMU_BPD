@@ -1,6 +1,6 @@
 # Source
 
-The web app lives in [app/](app/) (prototype v0; see [app/README.md](app/README.md)). Modules below map to `app/js/*.js`; the data pipeline and the small server are still to come.
+The web app lives in [app/](app/) (see [app/README.md](app/README.md)). The data pipeline is in [pipeline/](pipeline/). The small runtime-LLM proxy (branch `ai-integration`) is in [server/](server/README.md). Modules below map to `app/js/*.js`.
 
 Proposed modules, to be confirmed at the Saturday sync:
 

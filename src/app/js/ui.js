@@ -162,7 +162,19 @@ export function prioRankHTML(futures, weights) {
       <div class="pwhy">${r.pros.map((p) => `<span class="pro">${icon("check")}${esc(p.text)}</span>`).join("")}${r.cons.map((p) => `<span class="con">${icon("minus")}${esc(p.text)}</span>`).join("")}</div>
       ${rob[r.f.id] ? `<div class="robust">${icon("dices")}Ranks first under ${pc(rob[r.f.id].near)} of priority mixes close to yours, and ${pc(rob[r.f.id].any)} of all possible mixes</div>` : ""}
     </div></li>`).join("")}</ol>
-    <p class="muted small">Fit = Σ weight × criterion value (0–1). Values come from the numbers above and from draft typology judgments; see Sources. Robustness: 1,500 random weight mixes (SMAA).</p>`;
+    <p class="muted small">Fit = Σ weight × criterion value (0–1). Values come from the numbers above and from draft typology judgments; see Sources. Robustness: 1,500 random weight mixes (SMAA).</p>
+    ${rows.length > 1 ? `<div class="explainWrap"><button class="explainBtn" data-explain-compare='${esc(JSON.stringify(compareFacts(rows[0], rows[1])))}'>${icon("sparkles")} Explain in plain language</button><div class="explainOut" id="rankExplainOut"></div></div>` : ""}`;
+}
+
+// Facts payload for the explain-proxy's A2 role: two ranked rows under the same weights.
+// Every number is already computed by evaluate(); the LLM may only rephrase it.
+export function compareFacts(rowA, rowB) {
+  const side = (r) => ({
+    name: r.f.name,
+    fit: Math.round(r.fit * 100),
+    criteria: r.parts.filter((p) => p.contrib > 0.004).map((p) => ({ label: p.label, value: Math.round(p.v * 100), text: p.text })),
+  });
+  return { a: side(rowA), b: side(rowB) };
 }
 
 // ---------- expanded view (center, below cards)
@@ -237,6 +249,7 @@ export function renderWhy(el, f, parcel, state) {
       ${changes.length ? `<div class="applied"><span class="lbl">Applied:</span>${changes.map((c) => `<span class="appl">${icon(c.icon)}${esc(c.label)}<button data-remove="${c.key}" title="Undo">${icon("x")}</button></span>`).join("")}<button class="reset" id="resetChanges">Reset</button></div>` : ""}
       ${t ? `<div class="result ${t.to}"><div class="bigtrans">${STATUS[t.from].label} ${icon("arrow-right")} <b>${STATUS[t.to].label}</b></div>${t.to === "viable" ? `<div class="unlock">${icon("house")} <b>${f.units} homes</b> unlocked on this lot</div>` : ""}</div>` : ""}
       ${changes.length ? `<p class="summary">${esc(summaryText(f, changes))}</p>` : ""}
+      ${cs.length ? `<div class="explainWrap"><button class="explainBtn" data-explain-why='${esc(JSON.stringify(whyNotFacts(f, cs, chips)))}'>${icon("sparkles")} Explain in plain language</button><div class="explainOut" id="whyExplainOut"></div></div>` : ""}
     </section>` : "";
 
   el.innerHTML = `
@@ -254,7 +267,7 @@ export function renderWhy(el, f, parcel, state) {
     ${goalsHTML(f)}
     <section class="ask">
       <h4>${icon("message-circle-question")} Ask a question</h4>
-      <div class="sugg">${["Why not 4 floors?", "What if parking minimums were dropped?", "What if climate matters more than home count?", "Which problems can policy fix?"].map((q) => `<button class="q" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
+      <div class="sugg">${["Why not 4 floors?", "What if parking minimums were dropped?", "What if climate matters more than home count?", "Which problems can policy fix?", "Why is this ranked over the next option?"].map((q) => `<button class="q" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
       <form id="askForm"><input id="askInput" placeholder="Type a question…" autocomplete="off"/><button aria-label="Ask">${icon("send")}</button></form>
       <div id="answer">${state.answer || ""}</div>
       <div class="note">Answers only use the numbers on this page.</div>
@@ -266,6 +279,17 @@ function goalsHTML(f) {
   const head = `<h4>${icon("sprout")} Community goals <span class="goal-note">not current Pittsburgh law</span></h4>`;
   if (!f.goals.length) return `<section class="goals">${head}<p class="muted small">${icon("check")} Meets the compactness, transit, green-space and optional winter-sun goals used here.</p></section>`;
   return `<section class="goals">${head}<ul class="glist">${f.goals.map((g) => `<li>${icon(g.icon)}<div><b>${esc(g.title)}</b><span>${esc(g.plain)}</span></div>${src(g.src)}</li>`).join("")}</ul></section>`;
+}
+
+// Facts payload for the explain-proxy's A4 role. Every field is text or a number
+// the constraint/chip engine already computed; the LLM may only rephrase these.
+function whyNotFacts(f, cs, chips) {
+  return {
+    typology: f.name,
+    status: f.status,
+    constraints: cs.map((c) => ({ title: c.title, plain: c.plain, current: c.current, required: c.required, severity: c.severity })),
+    unlocks: chips.map((c) => ({ label: c.label, who: c.who, type: c.type })),
+  };
 }
 
 function worksList(f, parcel) {
