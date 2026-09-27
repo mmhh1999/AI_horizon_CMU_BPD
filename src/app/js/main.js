@@ -105,7 +105,7 @@ async function goHood(slug, parcelId = null) {
   try {
     const data = await loadHood(slug);
     hood = { ...meta, smell: smell?.hoods?.[slug] }; area = data; byId = new Map(data.parcels.map((p) => [p.id, p]));
-    Object.assign(state, { level: "nbhd", stage: "community", slug, parcelId: null, needsOpen: false, layersOpen: true });
+    Object.assign(state, { level: "nbhd", stage: "community", slug, parcelId: null, needsOpen: false, layersOpen: !matchMedia("(max-width: 760px)").matches });
     if (state.setKey === "suggested") state.types = suggestTypes(meta.needs);
     setLevel(map, "nbhd");
     setHood(map, data, slug, state.opp);
@@ -343,6 +343,7 @@ function render() {
     renderFutures($("#futures"), futures, state);
   }
   if (showTrade) {
+    if ($("#solarMore")) state.solarOpen = $("#solarMore").open;
     $("#tradeSwitch").innerHTML = tradeSwitchHTML(futures, state);
     renderDetail($("#detail"), f, p, ctx, state);
     renderCost($("#cost"), f, state.cost);
@@ -363,7 +364,7 @@ function renderPerspective() {
 
 function hoodHint() {
   const text = state.stage === "community"
-    ? `Read what ${hood.name} needs on the right, then choose who you are planning for.`
+    ? `Read what ${hood.name} needs, then choose who you are planning for.`
     : state.stage === "perspective"
       ? `Pick a lens and set priorities. They carry into the ranking once you choose a lot.`
       : `Click a colored lot to see what could be built there. Colors follow the Opportunity layers.`;
