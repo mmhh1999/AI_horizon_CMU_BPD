@@ -1,5 +1,14 @@
 # Branch `mso-v1`: integration line for submission
 
+> **Status: archived 2026-09-27, renamed to `archive/mso-v1`. Superseded by `mso-v2`; do not demo, review, or merge.**
+> Why it was replaced:
+> - The stage layouts used `!important` grid templates that fought `david_1.0`'s five-track splitter grid.
+> - The map was fitted before the grid resized, so it loaded off-center.
+> - `?demo=1` auto-opened a lot, so the app appeared to start at Housing futures instead of the County map.
+> - There was no separate "Who are you planning for?" step.
+>
+> `mso-v2` rebuilt the same goals from `david_1.0`; see `docs/branch-notes/mso-v2.md` on that branch.
+
 **Owner:** Meltem Sahin Ozkoc · **Base:** `david_1.0` @ `d81d131` · **Started:** Sun 2026-09-27
 
 Convergence branch for the hackathon demo. It keeps David's cost explorer, smell/context panel, stakeholder personas, search, splitters, and ranking; restores Olaf's four-step guided journey; moves priorities under personas; shifts the chrome to Pittsburgh black/gold; and de-emphasizes the solar envelope (still available, not default).

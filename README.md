@@ -1,3 +1,6 @@
+> [!WARNING]
+> **Archived: `archive/mso-v1` is superseded by [`mso-v2`](https://github.com/mmhh1999/AI_horizon_CMU_BPD/tree/mso-v2).** It is kept as a record of the first integration attempt. Do not demo, review, or merge it. Its staged layout fought David's splitter grid, and `?demo` skipped straight to Housing futures. See [the branch note](docs/branch-notes/mso-v1.md).
+
 # Housing Futures: "Why-Not?" (working title)
 
 **AI Horizons 2026 · AI for Housing Hackathon (Pittsburgh) · Track 3: Housing Typology, Equity & Climate Matchmaker**
