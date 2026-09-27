@@ -101,6 +101,7 @@ nav.journey .journey-sep { width: 15px; height: 15px; color: var(--line-2); flex
   main.ws.layout-map .parcel-card { position: static; width: auto; max-height: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; box-shadow: none; }
 }
 @media (max-width: 760px) {
+  #journey, #sec-futures { scroll-margin-top: 64px; }
   nav.journey { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; padding: 6px 8px; }
   nav.journey .journey-sep, nav.journey .jl { display: none; }
   nav.journey .js { display: block; font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; }
