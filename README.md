@@ -29,6 +29,18 @@ One-page summary: [docs/pitch.md](docs/pitch.md).
 
 > **Decision support only.** This tool is not legal, financial, zoning, or engineering advice. The City of Pittsburgh has final say on zoning interpretation, and site safety needs survey and geotechnical work. See [docs/limitations.md](docs/limitations.md).
 
+## Active branch: `mso-v2`
+
+`mso-v2` starts from `david_1.0` and keeps its police and smell context, cost explorer, stakeholder lenses, search, ranking and splitters. It rebuilds the interface as a map-first, five-step journey that always opens on the full County map (`http://localhost:8795/`, no URL flags):
+
+1. **Community**: what the neighborhood needs; who lives here, plus police and smell context, open by default.
+2. **Who are you planning for?** Choose one of the five lenses and set the ten weights before picking a lot.
+3. **Opportunity**: where new homes could go.
+4. **Housing futures**: the lens and weights sit above the ranking.
+5. **Trade-offs**: detail, cost, score breakdown, Why / Why not.
+
+The chrome uses Pittsburgh black and gold on warm neutrals. The solar envelope is kept but de-emphasized, as an optional, collapsed "Winter sun for neighbors" test. Illustrations use the warmer original set, uncropped. There is still no runtime LLM; the chat is left to the team. See the [branch note](docs/branch-notes/mso-v2.md).
+
 ## What's new on the `david` branch
 
 This branch builds on `mso-v0` with neighborhood context and an editable cost explorer.
@@ -126,12 +138,12 @@ Details are in [docs/ai-design.md](docs/ai-design.md), and the tools used to bui
 ## How to run
 
 ```bash
-cd src/app && python3 -m http.server 8791   # then open http://localhost:8791
+python3 -m http.server 8795 --directory src/app   # then open http://localhost:8795/
 ```
 
 See [src/app/README.md](src/app/README.md) for what works and what is still a placeholder.
 
-For a direct walkthrough, open `http://localhost:8791/?demo=1`. Map tiles and external assets require an internet connection.
+The app opens on the County map. For a quick walkthrough, press **Try an example lot** (Larimer). Map tiles and external assets require an internet connection.
 
 To rebuild the data (branch `mso-v0`):
 
@@ -142,11 +154,12 @@ python3 -m venv .venv && .venv/bin/pip install -r src/pipeline/requirements.txt
 .venv/bin/python src/pipeline/check.py    # counts and privacy checks
 ```
 
-Headless smoke test of the demo path (County → City → Larimer → example lots → futures, performance, priorities, Why not), with the app served on port 8791:
+Headless tests, with the app served on port 8795 (`APP_URL` overrides the address):
 
 ```bash
 .venv/bin/pip install playwright            # dev only; uses the local Chrome
-.venv/bin/python tests/smoke_app.py
+.venv/bin/python tests/guided_flow.py       # five-step journey, desktop and mobile
+.venv/bin/python tests/smoke_app.py         # full demo path: needs, lenses, futures, solar, cost, presets
 ```
 
 ## Libraries, services, and tools

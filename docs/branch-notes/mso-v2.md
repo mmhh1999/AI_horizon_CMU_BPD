@@ -26,6 +26,12 @@ Run `python3 -m http.server 8795 --directory src/app` from the repo root and ope
 - Solar envelope kept, presented as an optional "winter sun for neighbors" goal (collapsed, mesh off by default).
 - Warmer original renders shown uncropped, with David's v2 set as fallback.
 - Panel widths reset per stage and no longer persist across reloads; `?demo` no longer auto-jumps to a lot.
+- Architect lens: winter-sun weight 15 → 5 (moved to street life and green space), so no lens gives the optional solar goal more than 5 of 100.
+- Trade-offs opens on the #1 type for the current lens (previously the first "needs changes" type).
+
+## Tests
+
+`tests/guided_flow.py` (desktop 1440 px and mobile 390 px) and `tests/smoke_app.py` both pass against `http://localhost:8795/`.
 
 ## Left for the team
 
