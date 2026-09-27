@@ -24,7 +24,7 @@ export function roleHTML(futures, state) {
     : state.role === "architect" ? `${f.stories} floors; ${Math.round(f.pervious / f.lotArea * 100)}% of lot left open`
     : "No revenue, rents, financing, or investment return is modeled";
   return `<section class="role-view" aria-label="Stakeholder perspectives">
-    <div class="role-head"><div><span class="eyebrow">Choose a perspective</span><h3>Who are you planning for?</h3></div><span class="role-note">Each tab changes draft weights, not the facts</span></div>
+    <div class="role-head"><div><span class="eyebrow">Step 2 · Who are you planning for?</span><h3>Choose a stakeholder perspective</h3></div><span class="role-note">Each tab changes draft weights, not the facts</span></div>
     <div class="role-tabs" role="tablist" aria-label="Stakeholder perspective">${Object.entries(ROLES).map(([key, r]) => `<button type="button" id="roleTab-${key}" role="tab" aria-controls="rolePanel" aria-selected="${state.role === key}" tabindex="${state.role === key ? 0 : -1}" class="${state.role === key ? "on" : ""}" data-role="${key}">${r.label}</button>`).join("")}</div>
     <div class="role-content" id="rolePanel" role="tabpanel" aria-labelledby="roleTab-${state.role}"><div><b>${esc(role.label)} lens</b><p>Focus: ${esc(role.focus)}.</p>${f ? `<p class="role-fact">Current leader: <strong>${esc(f.name)}</strong> · ${esc(fact)}.</p>` : ""}</div>
       <button type="button" class="role-jump" data-role-jump="${role.jump}">${esc(role.jumpLabel)} →</button></div>
@@ -37,7 +37,7 @@ export function rankingHTML(futures, state) {
   const rows = evaluate(futures, state.weights);
   const label = state.roleModified ? "your custom weights" : (ROLES[state.role]?.label.toLowerCase() || "your priorities");
   return `<section class="ranking" aria-labelledby="rankingTitle">
-    <div class="rank-heading"><div><span class="eyebrow">Step 2 · Clear comparison</span><h3 id="rankingTitle">Housing types ranked for ${esc(label)}</h3></div><span class="rank-count">${rows.length} types</span></div>
+    <div class="rank-heading"><div><span class="eyebrow">Step 3 · Clear comparison</span><h3 id="rankingTitle">Housing types ranked for ${esc(label)}</h3></div><span class="rank-count">${rows.length} types</span></div>
     <p class="rank-explain">Higher fit means a closer match to the <em>current weights</em>, not permission to build or a guaranteed return. Choose a row to inspect the scenario.</p>
     <ol class="ranking-list">${rows.map((r, i) => `<li><button type="button" data-rank="${r.f.id}" class="${state.selected === r.f.id ? "selected" : ""}" aria-label="Inspect rank ${i + 1}, ${esc(r.f.name)}">
       <span class="rank-position">#${i + 1}</span><span class="rank-main"><b>${esc(r.f.name)}</b><small>${esc(r.f.status === "viable" ? "Fits draft rules" : r.f.status === "conditional" ? "Needs changes" : "Not allowed under draft rules")} · ${r.f.netUnits >= 0 ? "+" : ""}${r.f.netUnits} net homes</small></span>

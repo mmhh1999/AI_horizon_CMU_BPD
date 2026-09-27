@@ -118,7 +118,7 @@ export function renderNeeds(el, hood, city) {
       <p class="muted">${p ? `${n0(p.population)} residents (2023), ${p.popChange > 0 ? "+" : ""}${pct(p.popChange)} since 2013 · ${n0(p.households)} households` : "No census profile for this neighborhood (very few residents)."}
       ${hood.acsShared ? `<br/><span class="small">Census figures cover the combined area “${esc(hood.acsArea)}”.</span>` : ""}</p>
       ${needs ? `<ul class="needs">${needs}</ul>` : `<p class="muted">No need crosses the published thresholds here. Compare the profile below with the City.</p>`}
-      <details class="profile" ${needs ? "" : "open"}><summary>Who lives here and what homes exist</summary>
+      <details class="profile" open><summary>Who lives here and what homes exist</summary>
         ${p ? `<h4>${icon("users")} Age</h4>${bars([["Under 18", p.age.under18], ["18–24", p.age["18to24"]], ["25–44", p.age["25to44"]], ["45–64", p.age["45to64"]], ["65+", p.age["65plus"]]], GRAYS)}
         <h4>${icon("wallet")} Household income</h4>${bars([["< $25k", p.income.lt25k], ["$25–50k", p.income["25to50k"]], ["$50–75k", p.income["50to75k"]], ["$75–100k", p.income["75to100k"]], ["$100–200k", p.income["100to200k"]], ["$200k+", p.income["200kplus"]]], GRAYS)}
         <h4>${icon("globe")} Race and ethnicity</h4>${bars([["White", p.race.white], ["Black", p.race.black], ["Asian", p.race.asian], ["Other", p.race.other], ["Two or more", p.race.multiracial]], GRAYS)}<p class="muted small">Hispanic or Latino (any race): ${pct(p.hispanic)}.</p>

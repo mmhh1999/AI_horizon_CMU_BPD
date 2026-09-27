@@ -17,10 +17,10 @@ import { defaultCost, renderCost } from "./cost.js";
 
 const $ = (s) => document.querySelector(s);
 const state = {
-  level: "county", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
+  level: "county", stage: "community", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
   parcelId: null, setKey: "suggested", types: SCENARIO_SETS.default.ids, selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
   assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", exampleIdx: -1,
-  solar: solarDefaults(), solarShow: true, weights: roleWeights("community"), preset: null, role: "community", roleModified: false, cost: defaultCost(),
+  solar: solarDefaults(), solarShow: false, weights: roleWeights("community"), preset: null, role: "community", roleModified: false, cost: defaultCost(),
 };
 let county, city, smell, hood, area, map, byId, frame, ctx, futures = [];
 let mapReady = false, searchApi;
@@ -69,20 +69,20 @@ function onMuni(m) {
 }
 
 function goCounty() {
-  Object.assign(state, { level: "county", slug: null, parcelId: null, exampleIdx: -1 });
+  Object.assign(state, { level: "county", stage: "community", slug: null, parcelId: null, exampleIdx: -1 });
   if (mapReady) { setLevel(map, "county"); fitTo(map, county.munis.flatMap((m) => ringsOf(m.g)), 16); }
   render();
 }
 
 function goCity() {
-  Object.assign(state, { level: "city", slug: null, parcelId: null, muni: null, exampleIdx: -1 });
+  Object.assign(state, { level: "city", stage: "community", slug: null, parcelId: null, muni: null, exampleIdx: -1 });
   if (mapReady) { setLevel(map, "city"); fitTo(map, county.munis.find((m) => m.city).g, 16); }
   render();
 }
 
 async function goHood(slug, parcelId = null) {
   if (state.slug === slug && hood && !parcelId) {
-    if (state.level === "parcel") { state.level = "nbhd"; state.parcelId = null; setLevel(map, "nbhd"); render(); }
+    if (state.level === "parcel") { state.level = "nbhd"; state.stage = "opportunity"; state.parcelId = null; setLevel(map, "nbhd"); render(); }
     return;
   }
   const meta = city.hoods.find((h) => h.slug === slug);
@@ -91,7 +91,7 @@ async function goHood(slug, parcelId = null) {
   try {
     const data = await loadHood(slug);
     hood = { ...meta, smell: smell?.hoods?.[slug] }; area = data; byId = new Map(data.parcels.map((p) => [p.id, p]));
-    Object.assign(state, { level: "nbhd", slug, parcelId: null, needsOpen: false, layersOpen: true });
+    Object.assign(state, { level: "nbhd", stage: "opportunity", slug, parcelId: null, needsOpen: false, layersOpen: true });
     if (state.setKey === "suggested") state.types = suggestTypes(meta.needs);
     setLevel(map, "nbhd");
     setHood(map, data, slug, state.opp);
@@ -106,6 +106,7 @@ function selectParcel(id, fly = true) {
   if (!p) return;
   if (state.level !== "parcel") state.layersOpen = false;
   state.level = "parcel";
+  state.stage = "futures";
   state.parcelId = id;
   state.assumptions = defaultAssumptions();
   state.transitions = {};
@@ -195,14 +196,35 @@ const icons = () => { if (window.lucide) window.lucide.createIcons({ attrs: { "s
 // ------------------------------------------------------------------ render
 function render() {
   renderCrumbs();
+  renderJourney();
   const local = state.level === "nbhd" || state.level === "parcel";
+  const tradeoffs = state.level === "parcel" && state.stage === "tradeoffs";
+  const futuresStage = state.level === "parcel" && (state.stage === "futures" || tradeoffs);
   const ws = document.querySelector(".ws");
-  const wide = state.level !== "parcel";
-  if (ws.classList.contains("wide-map") !== wide) { ws.classList.toggle("wide-map", wide); requestAnimationFrame(() => map.resize()); }
+  const layout = `stage-${state.stage}`;
+  if (!ws.classList.contains(layout)) {
+    ws.classList.remove("stage-community", "stage-opportunity", "stage-futures", "stage-tradeoffs");
+    ws.classList.add(layout);
+    if (mapReady) requestAnimationFrame(() => map?.resize());
+  }
+  $("#splitMap").hidden = state.stage === "community";
+  $("#splitWhy").hidden = !tradeoffs;
   $("#layerToggle").hidden = !local;
   $("#layerToggle").setAttribute("aria-expanded", String(state.layersOpen));
   $("#layerBar").hidden = !local || !state.layersOpen;
   $("#futuresBlock").hidden = state.level !== "parcel";
+  $("#roleView").hidden = !futuresStage;
+  $("#priorities").hidden = !futuresStage;
+  $("#ranking").hidden = !futuresStage || tradeoffs;
+  $("#reviewTradeoffs").hidden = !state.parcelId || tradeoffs;
+  $("#detail").hidden = !tradeoffs;
+  $("#cost").hidden = !tradeoffs;
+  document.querySelector('.rail [data-nav="needs"]').hidden = !local;
+  document.querySelector('.rail [data-nav="futures"]').hidden = state.level !== "parcel";
+  document.querySelector('.rail [data-nav="environment"]').hidden = !local;
+  document.querySelector('.rail [data-nav="cost"]').hidden = !tradeoffs;
+  document.querySelector('.rail [data-nav="why"]').hidden = !tradeoffs;
+  $("#why").hidden = !tradeoffs;
   renderLegend();
 
   if (state.level === "county") renderCountyPanel($("#parcelCard"), county, city, state.countyIndicator, state.muni);
@@ -232,6 +254,7 @@ function render() {
   state.lotST = ctx.lotST;
   renderSetSelect($("#setSelect"), state.setKey, hood.name);
   $("#roleView").innerHTML = roleHTML(futures, state);
+  renderPriorities($("#priorities"), futures, state, hood);
   $("#ranking").innerHTML = rankingHTML(futures, state);
   renderTypePicker($("#typePicker"), state.types, suggestTypes(hood.needs), hood.name);
   renderFutures($("#futures"), futures, state);
@@ -239,9 +262,22 @@ function render() {
   renderDetail($("#detail"), f, p, ctx, state);
   renderWhy($("#why"), f, p, state, futures);
   renderCost($("#cost"), f, state.cost);
-  renderPriorities($("#priorities"), futures, state, hood);
   $("#exampleNote").textContent = state.exampleIdx >= 0 ? EXAMPLES[state.exampleIdx].why : "";
   icons();
+}
+
+function renderJourney() {
+  const steps = [
+    ["community", "Community", "users"],
+    ["opportunity", "Opportunity", "map-pin"],
+    ["futures", "Housing futures", "layout-grid"],
+    ["tradeoffs", "Trade-offs", "scale"],
+  ];
+  $("#journey").innerHTML = steps.map(([key, label, glyph], i) => {
+    const enabled = key === "community" || (key === "opportunity" ? !!state.slug : !!state.parcelId);
+    const active = key === state.stage;
+    return `<button type="button" data-stage="${key}" ${active ? 'aria-current="step"' : ""} ${enabled ? "" : "disabled"}><i data-lucide="${glyph}" class="ic"></i><span>${label}</span></button>${i < steps.length - 1 ? '<i data-lucide="chevron-right" class="ic journey-sep"></i>' : ""}`;
+  }).join("");
 }
 
 function intro(level) {
@@ -294,16 +330,43 @@ function bindEvents() {
     setNav(k);
     if (k === "explore") $("#sec-explore").scrollIntoView({ behavior: "smooth", block: "start" });
     if (k === "needs") { if (state.level === "parcel") { state.needsOpen = true; render(); } $("#needs").scrollIntoView({ behavior: "smooth", block: "start" }); }
-    if (k === "futures") $("#futuresBlock").scrollIntoView({ behavior: "smooth", block: "start" });
-    if (k === "environment") { if (state.level === "parcel") { state.needsOpen = true; render(); } $("#environment")?.scrollIntoView({ behavior: "smooth", block: "start" }); }
-    if (k === "why") { if (state.parcelId) { state.whyOpen = true; render(); } $("#why").scrollIntoView({ behavior: "smooth", block: "start" }); }
-    if (k === "cost" && state.parcelId) $("#cost").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (k === "futures" && state.parcelId) { state.stage = "futures"; render(); $("#futuresBlock").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (k === "environment") { if (state.level === "parcel") { state.needsOpen = true; render(); } document.querySelector(".environment")?.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (k === "why" && state.parcelId) { state.stage = "tradeoffs"; state.whyOpen = true; render(); $("#why").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (k === "cost" && state.parcelId) { state.stage = "tradeoffs"; render(); $("#cost").scrollIntoView({ behavior: "smooth", block: "start" }); }
   });
   $("#homeButton").addEventListener("click", () => {
     state.role = "community"; state.roleModified = false; state.weights = roleWeights("community");
     state.preset = null; state.cost = defaultCost(); state.setKey = "suggested";
-    state.types = SCENARIO_SETS.default.ids; searchApi?.clear(); setNav("explore");
+    state.types = SCENARIO_SETS.default.ids; state.stage = "community"; searchApi?.clear(); setNav("explore");
     goCounty();
+  });
+  $("#journey").addEventListener("click", (e) => {
+    const step = e.target.closest("[data-stage]");
+    if (!step || step.disabled) return;
+    const key = step.dataset.stage;
+    if (key === "community") {
+      if (state.level === "parcel" || state.level === "nbhd") goCity();
+      else { state.stage = "community"; setNav("explore"); render(); }
+      return;
+    }
+    if (key === "opportunity") {
+      if (state.level === "parcel") { state.level = "nbhd"; state.stage = "opportunity"; state.parcelId = null; state.exampleIdx = -1; setLevel(map, "nbhd"); fitTo(map, hood.g, 20); setNav("explore"); render(); }
+      else if (state.slug) { state.stage = "opportunity"; setNav("explore"); render(); }
+      return;
+    }
+    if (state.parcelId && (key === "futures" || key === "tradeoffs")) {
+      state.stage = key;
+      setNav(key === "futures" ? "futures" : "why");
+      render();
+    }
+  });
+  $("#reviewTradeoffs").addEventListener("click", () => {
+    state.stage = "tradeoffs";
+    state.whyOpen = true;
+    setNav("why");
+    render();
+    $("#detail").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   $("#roleView").addEventListener("click", (e) => {
     const tab = e.target.closest("[data-role]");
@@ -343,7 +406,7 @@ function bindEvents() {
     if (!b) return;
     if (b.dataset.crumb === "county") goCounty();
     else if (b.dataset.crumb === "city") goCity();
-    else if (b.dataset.crumb === "hood" && state.level === "parcel") { state.level = "nbhd"; state.parcelId = null; state.exampleIdx = -1; setLevel(map, "nbhd"); fitTo(map, hood.g, 20); render(); }
+    else if (b.dataset.crumb === "hood" && state.level === "parcel") { state.level = "nbhd"; state.stage = "opportunity"; state.parcelId = null; state.exampleIdx = -1; setLevel(map, "nbhd"); fitTo(map, hood.g, 20); render(); }
   });
   document.addEventListener("change", (e) => {
     if (e.target.id === "countyInd") { state.countyIndicator = e.target.value; applyChoropleths(); render(); }
@@ -422,7 +485,7 @@ function bindEvents() {
     const card = e.target.closest(".fcard");
     if (!card) return;
     state.selected = card.dataset.id;
-    if (why) { state.whyOpen = true; setNav("why"); } else setNav("futures");
+    if (why) { state.stage = "tradeoffs"; state.whyOpen = true; setNav("why"); } else { state.stage = "futures"; setNav("futures"); }
     updateShadows();
     render();
   });
