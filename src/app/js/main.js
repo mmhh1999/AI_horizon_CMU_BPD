@@ -199,6 +199,9 @@ function render() {
   $("#layerBar").hidden = !local || !state.layersOpen;
   $("#futuresBlock").hidden = state.level !== "parcel";
   const reviewing = state.level === "parcel" && state.stage === "tradeoffs";
+  document.querySelector('.rail [data-nav="needs"]').hidden = !local;
+  document.querySelector('.rail [data-nav="futures"]').hidden = state.level !== "parcel";
+  document.querySelector('.rail [data-nav="why"]').hidden = !reviewing;
   $("#reviewTradeoffs").hidden = !state.parcelId || reviewing;
   $("#detail").hidden = !reviewing;
   $("#priorities").hidden = !reviewing;

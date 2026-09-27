@@ -79,7 +79,9 @@ em { font-style: normal; color: var(--muted); font-weight: 500; }
 
 /* workspace */
 .ws { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(300px, 24%) minmax(0, 1fr) minmax(340px, 27%); }
-.ws.stage-community, .ws.stage-opportunity { grid-template-columns: minmax(380px, 52%) minmax(0, 1fr); }
+.ws.stage-community { grid-template-columns: minmax(0, 1fr); }
+.ws.stage-community .futures-col { display: none; }
+.ws.stage-opportunity { grid-template-columns: minmax(380px, 52%) minmax(0, 1fr); }
 .ws.stage-futures { grid-template-columns: minmax(380px, 40%) minmax(0, 1fr); }
 .ws.stage-tradeoffs { grid-template-columns: minmax(320px, 30%) minmax(0, 1fr) minmax(320px, 27%); }
 .col { min-height: 0; min-width: 0; }
@@ -93,11 +95,10 @@ em { font-style: normal; color: var(--muted); font-weight: 500; }
 #overlays button:hover { border-color: var(--charcoal); }
 #overlays button.on { background: var(--charcoal); border-color: var(--charcoal); color: #fff; }
 #overlays button.on svg { color: var(--gold); }
-.legend { position: absolute; left: 10px; bottom: 34px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 7px 10px; display: flex; flex-wrap: wrap; gap: 5px 12px; max-width: 85%; font-size: 12.5px; box-shadow: var(--shadow); }
+.legend { flex: none; background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 7px 16px; display: flex; flex-wrap: wrap; gap: 5px 12px; width: 100%; font-size: 12.5px; }
 .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; border: 1px solid rgba(0,0,0,.12); }
 .example-note { position: absolute; left: 10px; bottom: 34px; max-width: 85%; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: var(--r); padding: 6px 10px; font-weight: 600; box-shadow: var(--shadow); }
 .example-note:empty { display: none; }
-.legend:not([hidden]) ~ .example-note { bottom: 76px; }
 .maplibregl-ctrl-attrib { font-size: 11px; }
 .parcel-card { border-top: 1px solid var(--line); padding: 14px 16px 16px; }
 .parcel-card .eyebrow, .why-col > .eyebrow { margin-bottom: 6px; }

@@ -27,12 +27,33 @@ with sync_playwright() as pw:
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.goto(URL)
     page.locator("#countyInd").wait_for()
+    community_widths = page.evaluate("""({
+        workspace: document.querySelector('.ws').getBoundingClientRect().width,
+        mapSection: document.querySelector('#sec-explore').getBoundingClientRect().width,
+        mapCanvas: document.querySelector('#map canvas').getBoundingClientRect().width,
+    })""")
+    assert community_widths["mapSection"] / community_widths["workspace"] >= 0.98, "Community map uses the full workspace"
+    assert abs(community_widths["mapCanvas"] - community_widths["mapSection"]) <= 2, "map canvas fills its Community container"
+    page.locator("#legend").wait_for()
+    community_boxes = page.evaluate("""({
+        map: document.querySelector('.map-wrap').getBoundingClientRect(),
+        legend: document.querySelector('#legend').getBoundingClientRect(),
+    })""")
+    assert community_boxes["legend"]["top"] >= community_boxes["map"]["bottom"] - 1, "Community legend does not cover the map"
+    assert page.locator('.rail [data-nav="explore"]').is_visible()
+    assert page.locator('.rail [data-nav="sources"]').is_visible()
+    assert not page.locator('.rail [data-nav="needs"]').is_visible(), "Needs waits for a neighborhood"
+    assert not page.locator('.rail [data-nav="futures"]').is_visible(), "Futures waits for a parcel"
+    assert not page.locator('.rail [data-nav="why"]').is_visible(), "Why not waits for trade-off review"
     assert not page.locator("#why").is_visible(), "explanation waits for a chosen lot"
 
     page.locator("#search").fill("Larimer")
     page.locator("#search").press("Enter")
     page.locator(".needs-card h2", has_text="What does Larimer need?").wait_for()
     assert page.locator('#journey [data-stage="opportunity"]').get_attribute("aria-current") == "step"
+    assert page.locator('.rail [data-nav="needs"]').is_visible()
+    assert not page.locator('.rail [data-nav="futures"]').is_visible()
+    assert not page.locator('.rail [data-nav="why"]').is_visible()
     assert not page.locator("#why").is_visible()
 
     page.locator("#tryExample").click()
@@ -41,6 +62,9 @@ with sync_playwright() as pw:
     assert page.locator(".fcard").count() == 3, "show three suggested futures by default"
     assert page.locator('#journey [data-stage="futures"]').get_attribute("aria-current") == "step"
     assert "on" in page.locator('.rail [data-nav="futures"]').get_attribute("class").split()
+    assert page.locator('.rail [data-nav="needs"]').is_visible()
+    assert page.locator('.rail [data-nav="futures"]').is_visible()
+    assert not page.locator('.rail [data-nav="why"]').is_visible()
     assert not page.locator("#detail").is_visible()
     assert not page.locator("#priorities").is_visible()
     assert not page.locator("#why").is_visible()
@@ -52,6 +76,7 @@ with sync_playwright() as pw:
     page.locator("#reviewTradeoffs").click()
     assert page.locator('#journey [data-stage="tradeoffs"]').get_attribute("aria-current") == "step"
     assert "on" in page.locator('.rail [data-nav="why"]').get_attribute("class").split()
+    assert page.locator('.rail [data-nav="why"]').is_visible()
     assert page.locator("#detail").is_visible()
     assert page.locator("#priorities").is_visible()
     assert page.locator("#why").is_visible()

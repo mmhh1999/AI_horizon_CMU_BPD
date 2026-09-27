@@ -4,7 +4,9 @@ A static page (plain HTML + ES modules, no build step). MapLibre GL JS 4.7, SunC
 
 **County → City neighborhoods → community needs → opportunity lots → parcel → three suggested housing futures → trade-offs and Why / Why not**
 
-On `olaf-ai-integration`, the guided bar follows these stages. The map stays prominent while choosing a lot or comparing futures. A selected lot starts with three needs-based types; the user can open all 13 and compare up to four. The performance metrics, individual weights, ranking sensitivity, and calculations remain available in expandable sections of the trade-offs stage. The question box uses the existing structured-answer engine; no live LLM is connected.
+On `olaf-ai-integration`, the guided bar follows these stages. The Community entry page uses a full-width map and keeps its legend below the map instead of covering it. The side rail reveals Needs after a neighborhood is selected, Futures after a parcel is selected, and Why not during trade-off review. A selected lot starts with three needs-based types; the user can open all 13 and compare up to four. The performance metrics, individual weights, ranking sensitivity, and calculations remain available in expandable sections of the trade-offs stage. The question box uses the existing structured-answer engine; no live LLM is connected.
+
+This branch is an interaction-layer contribution by Olaf Fu on top of Meltem Sahin Ozkoc's `mso-v0` foundation. Meltem's data pipeline, community-needs framework, opportunity layers, scenario engine, housing types, performance metrics, priorities, and illustrations remain the underlying product and analysis.
 
 ## Run
 

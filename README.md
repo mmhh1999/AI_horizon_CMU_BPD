@@ -87,11 +87,10 @@ Details are in [docs/ai-design.md](docs/ai-design.md), and the tools used to bui
 
 | Name | Role |
 |---|---|
-| Meltem Sahin Ozkoc | Product direction after the advisor review; community-first rework on branch `mso-v0`: county data pipeline, community needs, opportunity layers, solar envelope, stakeholder priorities |
+| Meltem Sahin Ozkoc | Product direction after the advisor review; built the `mso-v0` foundation: county and City data pipeline, community needs, opportunity layers, housing typologies, solar and performance analysis, stakeholder priorities, illustrations, and smoke tests |
 | Fengrui Liu | TBD |
-| Olaf Fu | TBD |
-| David | TBD |
-| Minghao | Interface and documentation |
+| Olaf Fu | Interaction and usability improvements on `olaf-ai-integration`, built on Meltem's `mso-v0`: four-stage guided workflow, cleaner Community entry page, progressive navigation, responsive layout refinements, and browser regression tests; no changes to the underlying data or scoring logic |
+| Minghao Xu | Interface and documentation |
 
 **Advisors:** Azadeh and Vivian, for references and site-evaluation criteria.
 
