@@ -29,6 +29,23 @@ One-page summary: [docs/pitch.md](docs/pitch.md).
 
 > **Decision support only.** This tool is not legal, financial, zoning, or engineering advice. The City of Pittsburgh has final say on zoning interpretation, and site safety needs survey and geotechnical work. See [docs/limitations.md](docs/limitations.md).
 
+## What's new on the `david` branch
+
+This branch builds on `mso-v0` with neighborhood context and an editable cost explorer.
+
+- **Police activity:** 2025 reported records by crime category with a 2024 comparison, sourced from the [City Police Data Portal](https://www.pittsburghpa.gov/Safety/Police/Police-Data-Portal) and [WPRDC](https://data.wprdc.org/dataset/monthly-criminal-activity-dashboard). This is context, never a safety score or housing-ranking input.
+- **Smell Pittsburgh:** Neighborhood totals and monthly bars for 2025 reports rated 4–5, sourced from [CMU CREATE Lab](https://smellpgh.org/data). The shipped file contains aggregates only, not report locations or text. Voluntary reports are not pollution measurements.
+- **Cost explorer:** Editable construction rate, contingency, and land cost; illustrative total, per-net-new-home cost, and ±25% sensitivity band. The default $162/sq ft comes from [NAHB's 2024 national single-family survey](https://www.nahb.org/news-and-economics/housing-economics-plus/special-studies/special-studies-pages/cost-of-constructing-a-home-in-2024) ($428,215 / 2,647 finished sq ft).
+- **Usability improvements:** Four-stage progress ribbon, Context and Costs navigation, responsive panels, and a `?demo=1` link that opens the Larimer example lot. Existing scenario scoring and stakeholder weights are unchanged.
+
+### Known issues and next steps
+
+- Zoning values and some housing-type assumptions remain draft placeholders, not permit guidance.
+- The national *finished-area* single-family rate is applied to modeled *gross* new floor area. The mismatch and use for Pittsburgh multifamily/mixed-use projects are unvalidated. Renovation, demolition, financing, utilities, unusual site work, taxes, and operations are omitted.
+- Crime records depend on reporting and enforcement; smell reports depend on participation and have privacy-shifted coordinates. Neither source should label neighborhoods as safe/unsafe or clean/polluted.
+- The Smell snapshot covers 2025 only. To refresh it, run `python3 src/pipeline/build_smell.py` with network access and update the UI year labels if the range changes.
+- Parcel-level scenarios cover Pittsburgh only. Infrastructure capacity and everyday-destination access are not modeled. See [all limitations](docs/limitations.md).
+
 ## Status
 
 | Phase | When (ET) | State |
@@ -90,7 +107,7 @@ Details are in [docs/ai-design.md](docs/ai-design.md), and the tools used to bui
 | Meltem Sahin Ozkoc | Product direction after the advisor review; community-first rework on branch `mso-v0`: county data pipeline, community needs, opportunity layers, solar envelope, stakeholder priorities |
 | Fengrui Liu | TBD |
 | Olaf Fu | TBD |
-| David | TBD |
+| David | Neighborhood crime and smell context, cost explorer, and interface updates on `david` |
 | Minghao | Interface and documentation |
 
 **Advisors:** Azadeh and Vivian, for references and site-evaluation criteria.
@@ -102,6 +119,8 @@ cd src/app && python3 -m http.server 8791   # then open http://localhost:8791
 ```
 
 See [src/app/README.md](src/app/README.md) for what works and what is still a placeholder.
+
+For a direct walkthrough, open `http://localhost:8791/?demo=1`. Map tiles and external assets require an internet connection.
 
 To rebuild the data (branch `mso-v0`):
 

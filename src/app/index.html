@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <link href="./styles.css" rel="stylesheet" />
+  <link href="./david.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -18,6 +19,8 @@
     <button class="nav on" data-nav="explore"><i data-lucide="map" class="ic"></i><span>Map</span></button>
     <button class="nav" data-nav="needs"><i data-lucide="users" class="ic"></i><span>Needs</span></button>
     <button class="nav" data-nav="futures"><i data-lucide="layout-grid" class="ic"></i><span>Futures</span></button>
+    <button class="nav" data-nav="environment"><i data-lucide="wind" class="ic"></i><span>Context</span></button>
+    <button class="nav" data-nav="cost"><i data-lucide="calculator" class="ic"></i><span>Costs</span></button>
     <button class="nav" data-nav="why"><i data-lucide="circle-help" class="ic"></i><span>Why not</span></button>
     <button class="nav" data-nav="sources"><i data-lucide="book-open" class="ic"></i><span>Sources</span></button>
     <div class="rail-foot" title="Prototype: zoning numbers are draft placeholders"><i data-lucide="flask-conical" class="ic"></i><span>Draft</span></div>
@@ -35,6 +38,13 @@
         <button id="tryExample" class="btn-primary"><i data-lucide="map-pin" class="ic"></i>Try an example lot</button>
       </div>
     </header>
+    <div class="journey" aria-label="How to use this workbench">
+      <span><b>01</b> Explore & pick a lot</span>
+      <span><b>02</b> Compare housing</span>
+      <span><b>03</b> Test cost</span>
+      <span><b>04</b> Set priorities</span>
+      <span><b>05</b> Understand why</span>
+    </div>
 
     <main class="ws">
       <section class="col map-col" id="sec-explore">
@@ -64,6 +74,7 @@
           <div id="typePicker"></div>
           <div id="futures" class="fcards"><div class="placeholder"><i data-lucide="map-pinned" class="ic xl"></i><p>Pick a neighborhood, then a lot on the map, or press <b>Try an example lot</b>.</p></div></div>
           <div id="detail" class="detail"></div>
+          <div id="cost"></div>
           <div id="priorities"></div>
         </div>
       </section>

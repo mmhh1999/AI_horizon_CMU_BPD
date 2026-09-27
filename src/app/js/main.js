@@ -8,21 +8,22 @@ import { PRESETS, setWeight, suggestedEmphasis, weightsFromEmphasis } from "./pr
 import { sunAt, shadowST } from "./sun.js";
 import { solarDefaults, solarEnvelope, checkSolar, compactness, tod, green, goalsFor } from "./solar.js";
 import { answer } from "./answers.js";
-import { loadCounty, loadCity, loadHood, HOOD_INDICATORS, COUNTY_INDICATORS, TAGS, TAG_ORDER, RAMP, classify } from "./data.js";
+import { loadCounty, loadCity, loadHood, loadSmell, HOOD_INDICATORS, COUNTY_INDICATORS, TAGS, TAG_ORDER, RAMP, classify } from "./data.js";
 import { renderCountyPanel, renderCityPanel, renderNeeds, renderNeedsCompact, parcelOpportunityHTML } from "./needs.js";
+import { defaultCost, renderCost } from "./cost.js";
 
 const $ = (s) => document.querySelector(s);
 const state = {
   level: "county", slug: null, muni: null, indicator: "needs", countyIndicator: "vacantShare", opp: new Set(["VB", "VL", "PO"]),
   parcelId: null, setKey: "suggested", types: SCENARIO_SETS.default.ids, selected: "smallmf", whyOpen: false, needsOpen: false, layersOpen: true,
   assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", exampleIdx: -1,
-  solar: solarDefaults(), solarShow: true, weights: { ...PRESETS.even.w }, preset: "even",
+  solar: solarDefaults(), solarShow: true, weights: { ...PRESETS.even.w }, preset: "even", cost: defaultCost(),
 };
-let county, city, hood, area, map, byId, frame, ctx, futures = [];
+let county, city, smell, hood, area, map, byId, frame, ctx, futures = [];
 let mapReady = false;
 
 async function init() {
-  [county, city] = await Promise.all([loadCounty(), loadCity()]);
+  [county, city, smell] = await Promise.all([loadCounty(), loadCity(), loadSmell().catch(() => null)]);
   $("#hoodList").innerHTML = city.hoods.map((h) => `<option value="${h.name}"></option>`).join("");
   renderLayerButtons();
   bindEvents();
@@ -32,6 +33,7 @@ async function init() {
       mapReady = true; applyChoropleths(); setLevel(map, state.level);
       if (state.level === "county") fitTo(map, county.munis.flatMap((m) => ringsOf(m.g)), 16);
       render();
+      if (new URLSearchParams(location.search).has("demo")) $("#tryExample").click();
     },
   });
   window.__hfMap = map;
@@ -67,7 +69,7 @@ async function goHood(slug, parcelId = null) {
   document.body.classList.add("loading");
   try {
     const data = await loadHood(slug);
-    hood = meta; area = data; byId = new Map(data.parcels.map((p) => [p.id, p]));
+    hood = { ...meta, smell: smell?.hoods?.[slug] }; area = data; byId = new Map(data.parcels.map((p) => [p.id, p]));
     Object.assign(state, { level: "nbhd", slug, parcelId: null, needsOpen: false, layersOpen: true });
     if (state.setKey === "suggested") state.types = suggestTypes(meta.needs);
     setLevel(map, "nbhd");
@@ -204,7 +206,7 @@ function render() {
   const rules0 = districtRules(p.z);
   if (!rules0) {
     $("#futures").innerHTML = `<div class="oos">Zoning <b>${p.z || "unknown"}</b> is outside this prototype's draft rule set (residential and neighborhood-commercial districts only). Try another lot.</div>`;
-    $("#detail").innerHTML = ""; $("#priorities").innerHTML = ""; renderWhy($("#why"), null); $("#exampleNote").textContent = ""; icons(); return;
+    $("#detail").innerHTML = ""; $("#cost").innerHTML = ""; $("#priorities").innerHTML = ""; renderWhy($("#why"), null); $("#exampleNote").textContent = ""; icons(); return;
   }
   state.lotST = ctx.lotST;
   renderSetSelect($("#setSelect"), state.setKey, hood.name);
@@ -213,6 +215,7 @@ function render() {
   const f = futures.find((x) => x.id === state.selected);
   renderDetail($("#detail"), f, p, ctx, state);
   renderWhy($("#why"), f, p, state, futures);
+  renderCost($("#cost"), f, state.cost);
   renderPriorities($("#priorities"), futures, state, hood);
   $("#exampleNote").textContent = state.exampleIdx >= 0 ? EXAMPLES[state.exampleIdx].why : "";
   icons();
@@ -223,9 +226,9 @@ function intro(level) {
     ? "Start with the county: how do municipalities differ in vacant land, owner-occupancy, building condition and tax delinquency? Then open the City of Pittsburgh."
     : "Each of Pittsburgh's 90 neighborhoods has a community profile, published “needs” flags, and opportunity lots. Color the map by an indicator, then click a neighborhood.";
   return `<div class="needs-card intro"><div class="eyebrow">How it works</div><h2>Community first, then the lot</h2><p>${lead}</p>
-    <ol class="flow"><li><b>Community</b> What does the neighborhood need?</li><li><b>Opportunities</b> Vacant lots and buildings, public land, deep lots, garages, transit nodes</li>
-    <li><b>Housing futures</b> What could a lot become?</li><li><b>Performance and constraints</b> Sun, compactness, transit, green space; zoning and site</li>
-    <li><b>Priorities and why not</b> What matters most, and what would have to change</li></ol></div>`;
+    <ol class="flow"><li><b>Community & context</b> Housing needs, reported incidents and odor reports</li><li><b>Opportunities</b> Vacant lots and buildings, public land, deep lots, garages, transit nodes</li>
+    <li><b>Housing futures</b> Compare up to four types, building form and site constraints</li><li><b>Cost & priorities</b> Test a transparent cost baseline and choose what matters most</li>
+    <li><b>Why / why not</b> See trade-offs and explore what would have to change</li></ol></div>`;
 }
 
 function renderCrumbs() {
@@ -269,7 +272,9 @@ function bindEvents() {
     if (k === "explore") $("#sec-explore").scrollIntoView({ behavior: "smooth", block: "start" });
     if (k === "needs") { if (state.level === "parcel") { state.needsOpen = true; render(); } $("#needs").scrollIntoView({ behavior: "smooth", block: "start" }); }
     if (k === "futures") $("#futuresBlock").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (k === "environment") { if (state.level === "parcel") { state.needsOpen = true; render(); } $("#environment")?.scrollIntoView({ behavior: "smooth", block: "start" }); }
     if (k === "why") { if (state.parcelId) { state.whyOpen = true; render(); } $("#why").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (k === "cost" && state.parcelId) $("#cost").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   $("#tryExample").addEventListener("click", () => {
     state.exampleIdx = (state.exampleIdx + 1) % EXAMPLES.length;
@@ -385,6 +390,22 @@ function bindEvents() {
     }
   });
   $("#detail").addEventListener("input", (e) => { if (e.target.id === "hour") { state.hour = +e.target.value; updateShadows(); render(); } });
+  const updateCostInput = (e) => {
+    if (!["costPerSf", "costContingency", "costLand"].includes(e.target.id)) return;
+    const key = { costPerSf: "perSf", costContingency: "contingency", costLand: "land" }[e.target.id];
+    const num = Number(e.target.value);
+    if (!Number.isFinite(num)) return;
+    const limits = { perSf: [100, 400], contingency: [0, 30], land: [0, 10000000] };
+    state.cost[key] = Math.min(limits[key][1], Math.max(limits[key][0], num));
+    const draft = document.createElement("div");
+    renderCost(draft, futures.find((x) => x.id === state.selected), state.cost);
+    $("#cost .cost-results").innerHTML = draft.querySelector(".cost-results").innerHTML;
+    $("#cost .cost-caveat").innerHTML = draft.querySelector(".cost-caveat").innerHTML;
+    $("#cost").querySelectorAll(".cost-controls label b").forEach((b, i) => { b.textContent = draft.querySelectorAll(".cost-controls label b")[i].textContent; });
+    if (e.type === "change") e.target.value = state.cost[key];
+  };
+  $("#cost").addEventListener("input", updateCostInput);
+  $("#cost").addEventListener("change", updateCostInput);
   $("#why").addEventListener("click", (e) => {
     const why = e.target.closest("[data-why]");
     const chip = e.target.closest("[data-chip]");

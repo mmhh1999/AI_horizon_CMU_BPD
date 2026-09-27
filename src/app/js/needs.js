@@ -1,5 +1,6 @@
 // Community-first panels: county overview, City overview, "What does <neighborhood> need?", parcel opportunity context.
 import { TAGS, TAG_ORDER, HOOD_INDICATORS, COUNTY_INDICATORS, pct, n0 } from "./data.js";
+import { environmentHTML } from "./environment.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const icon = (name, cls = "") => `<i data-lucide="${name}" class="ic ${cls}"></i>`;
@@ -129,7 +130,7 @@ export function renderNeeds(el, hood, city) {
         <div class="kv"><span>Homes within 500 ft of a park</span><b>${pct(s.greenNear)}</b><span>within 1,000 ft (WHO ~300 m)</span><b>${pct(s.greenWho)}</b>
         <span>Homes with frequent transit ≤ ¼ mi</span><b>${pct(s.transitFrequent)}</b><span>City</span><b>${pct(city.city.stats.transitFrequent)}</b></div>
       </details>
-      <div class="safety">${safetySentence(hood.safety, hood.name)}</div>
+      ${environmentHTML(hood)}
       <h3 class="opp-h">${icon("sparkles")} Where could new homes go? <span class="muted small">Toggle on the map</span></h3>
       <div class="opp-grid">${opp.map(({ k, n }) => `<button class="opp" data-tag="${k}" title="${esc(TAGS[k].why)}"><i style="background:${TAGS[k].color}"></i><span>${esc(TAGS[k].short)}</span><b>${n0(n)}</b></button>`).join("")}</div>
       <p class="muted small">Click a colored lot on the map to see its housing futures.</p>

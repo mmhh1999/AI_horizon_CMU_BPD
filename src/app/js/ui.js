@@ -122,7 +122,7 @@ export function renderPriorities(el, futures, state, hood) {
   const emph = suggestedEmphasis(hood?.needs);
   const label = (k) => CRITERIA.find((c) => c.key === k).label;
   el.innerHTML = `<section class="prio-card">
-    <div class="eyebrow">Step 3 · Priorities</div>
+    <div class="eyebrow">Step 4 · Priorities</div>
     <h2>What matters most?</h2>
     <p class="muted small">Move the sliders; weights always add up to 100. The order below reflects these priorities only. It is not a recommendation and there is no single right answer.</p>
     <div class="presets"><span class="lbl-sm">Starting points (each one is a value judgment)</span>
@@ -223,7 +223,7 @@ export function renderWhy(el, f, parcel, state) {
     </section>` : "";
 
   el.innerHTML = `
-    <div class="eyebrow">Step 4 · Why / why not</div>
+    <div class="eyebrow">Step 5 · Why / why not</div>
     <div class="why-head">${icon(f.icon, "tico")}<div><h2>${esc(f.name)}</h2>${statusChip(f.status, true)}</div></div>
     <section class="wsum">
       <h4>${icon("thumbs-up")} Why it can work</h4>
@@ -306,7 +306,7 @@ export function renderSources(el, focus) {
       </ul>
       <h3>What it can't tell you</h3>
       <ul>
-        <li>Construction cost, rents, or whether a project pencils out.</li>
+        <li>A reliable Pittsburgh construction quote, market rent, financing terms, or whether a project pencils out. The Cost explorer is an editable national benchmark only.</li>
         <li>Water, sewer, or power capacity.</li>
         <li>Whether a variance or rezoning would actually be approved.</li>
         <li>Anything about a pending bill beyond "if it passed as proposed".</li>

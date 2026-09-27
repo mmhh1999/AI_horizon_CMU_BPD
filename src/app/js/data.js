@@ -8,6 +8,7 @@ async function getJSON(url) {
 export const loadCounty = () => getJSON("./data/county.json");
 export const loadCity = () => getJSON("./data/city/neighborhoods.json");
 export const loadHood = (slug) => getJSON(`./data/city/nbhd/${slug}.json`);
+export const loadSmell = () => getJSON("./data/city/smell-2025.json");
 
 export const pct = (x, d = 0) => (x == null || Number.isNaN(x) ? "—" : `${(x * 100).toFixed(d)}%`);
 export const n0 = (x) => (x == null || Number.isNaN(x) ? "—" : Math.round(x).toLocaleString("en-US"));

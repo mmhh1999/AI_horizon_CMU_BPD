@@ -26,7 +26,7 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 ### Outcomes and scores
 - The six scores are **transparent heuristics**. Thresholds and 0–100 normalizations are our judgments, documented in [concept.md](concept.md) and shown in the UI.
 - **Tract-level data applied to parcels.** ACS and CHAS describe areas, not the parcel or its neighbors. Estimates carry margins of error.
-- **Market feasibility is not modeled.** We have no pro forma, construction cost, or rent prediction, and assessed values are not market values.
+- **Market feasibility is not modeled.** The `david` branch has an editable screening cost based on a 2024 national single-family average, which has not been validated for Pittsburgh or multifamily buildings. It has no pro forma, local bid, rent prediction, or financing terms; assessed values are not market values.
 - **Carbon is a proxy.** Infill, attached form, and transit proximity stand in for emissions. Embodied carbon is not calculated.
 - **Displacement risk is shown as a caution flag,** built from indicators such as renter share and rent burden. It is not a prediction, and we do not claim to measure displacement.
 
@@ -92,4 +92,4 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 
 ## What we do not claim
 
-We don't have good parcel-level data on infrastructure capacity, market rents for new product, construction cost, or approval likelihood, so **the tool doesn't claim to answer those questions.**
+We don't have good parcel-level data on infrastructure capacity, market rents for new product, local construction cost, or approval likelihood. The cost card is a sensitivity exercise, not a project estimate.
