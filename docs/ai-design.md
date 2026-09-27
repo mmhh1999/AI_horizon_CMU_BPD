@@ -8,6 +8,14 @@ Scores, zoning checks, and counterfactuals are computed by code, so anyone can r
 
 This is also why the project is not a thin wrapper. The value lives in the data pipeline, the constraint engine, the scoring, and the counterfactual math. If the LLM is switched off, the tool still works, with templated text in place of generated explanations.
 
+## What shipped (as of submission)
+
+- **Built:** A2 ("Why A over B?") and A4 ("Why not B?") as "Explain in plain language" buttons, the Horizon copilot (same server and number check, answering questions about the current dashboard), and A7 illustrations.
+- **Simplified:** A2 does not surface per-claim `DATA` / `ASSUMPTION` / `VALUE` tags; the number-grounding check is the enforced guardrail.
+- **Not built:** A1 (zoning extraction; the app's zoning values are hand-entered draft placeholders), A3 (values interview), A5 (zoning Q&A), A6 (ZBA mining).
+
+The role table below is the original design, kept for reference.
+
 ## Why this split: the evidence
 
 | Design choice | Evidence |
@@ -57,5 +65,5 @@ Codes refer to [references.md](references.md).
 
 ## Tooling
 
-- **Runtime LLM:** TBD at the Saturday sync, depending on API access and cost. It goes behind a small interface so the provider can be swapped and the template fallback always exists.
+- **Runtime LLM:** a small local server (`src/server/`) behind a provider interface: Groq (default, `openai/gpt-oss-120b`) or Claude, chosen with `LLM_PROVIDER`. It serves A2, A4 and the Horizon copilot, applies the number-grounding check, and the app falls back to template text when it is off.
 - **Development tools:** Cursor (sponsor credits are available via Slack), Claude Code, and others. Everything we use is logged in [ai-usage-log.md](ai-usage-log.md) for the submission's AI disclosure.

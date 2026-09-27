@@ -1,6 +1,6 @@
 # Limitations Statement
 
-*Draft. Update it as the build lands, so that the final version describes what we shipped and not what we planned.*
+*Describes the app as submitted on `main` (Sun 2026-09-27).*
 
 ## What this tool is and is not
 
@@ -10,25 +10,24 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 
 ### Zoning
 - We model a **simplified subset** of Chapters 903 and 911: permitted residential uses, minimum lot area, lot area per unit, approximate setbacks, and height and story limits.
-- **Not modeled:** overlay districts, parking (Ch. 914), design review, nonconforming-lot rules, conditional-use criteria, and private deed restrictions. *(Update this list with whatever we actually shipped.)*
-- Rules were extracted with AI assistance and **checked by a teammate against the code text**. Any row not yet verified is labeled "unverified" in the UI.
-- The code changes. The rules table reflects the eCode360 text retrieved on *[date]*, including the 2025 minimum-lot-size amendment (Ord. 2025-1579).
-- The "zoning stretch" shows the size of a deviation and the process that would decide it. **It does not estimate whether relief would be granted.**
-- **Reform Lens.** The `bill-2025-1545` rule-set models a **proposed** ordinance (the June 2026 draft; Council vote pending as of 2026-09-25), and `hna-soft-density` is a hypothetical based on an HNA recommendation. Neither is law. The Reform Lens shows *eligibility* under a rule-set. It does not predict construction: upzoning can raise land values without new building in the short run (Freemark 2020).
-- The sources we found disagree on whether Ord. 2025-1579 removed the minimum lot area per unit. The shipped rules table reflects the codified eCode360 text, as verified by *[name]* on *[date]*.
+- **Not modeled:** overlay districts, design review, nonconforming-lot rules, conditional-use criteria, and private deed restrictions. Parking appears only as a simple space count and the "what if parking minimums were dropped" question.
+- **The zoning values in the app are draft placeholders.** They were entered by the team and have **not** been verified against the codified Pittsburgh Code. The app says so with a "Prototype · draft rules" flag in the header, and feasibility results read "Fits draft rules" or "Not allowed under draft rules." The AI-assisted extraction of rules from the code text (A1 in [ai-design.md](ai-design.md)) was planned but not built.
+- Because the values are unverified, they may not reflect the 2025 minimum-lot-size amendment (Ord. 2025-1579) or later changes. The sources we found also disagree on whether that ordinance removed the minimum lot area per unit; this is unresolved.
+- "What would unlock it" names the kind of change and who decides it (for example, City Council or a design choice). **It does not estimate whether relief or a rule change would be granted.**
+- **Pending legislation.** Bill 2025-1545 (ADUs, parking minimums) appears only as a labeled "pending" lever in the Why Not answers. It is a proposed ordinance, not law. The planned Reform Lens, which would switch the same parcel between pre-2025, current and proposed rule-sets, was not built. Even eligibility under a rule would not predict construction: upzoning can raise land values without new building in the short run (Freemark 2020).
 
 ### Physical site
 - Lot dimensions are approximated from parcel polygons. Irregular lots and frontage are handled crudely.
 - The slope layer is a 25% threshold map, and undermining maps are historic and incomplete. These are **screening flags, not safety determinations**.
 - **Infrastructure capacity (water, sewer, power) is not assessed**; we found no public parcel-level data for it.
-- Contamination is flagged only where public records exist (if implemented).
+- Contamination is not assessed.
 
 ### Outcomes and scores
 - The six scores are **transparent heuristics**. Thresholds and 0–100 normalizations are our judgments, documented in [concept.md](concept.md) and shown in the UI.
 - **Tract-level data applied to parcels.** ACS and CHAS describe areas, not the parcel or its neighbors. Estimates carry margins of error.
 - **Market feasibility is not modeled.** The `david` branch has an editable screening cost based on a 2024 national single-family average, which has not been validated for Pittsburgh or multifamily buildings. It has no pro forma, local bid, rent prediction, or financing terms; assessed values are not market values.
 - **Carbon is a proxy.** Infill, attached form, and transit proximity stand in for emissions. Embodied carbon is not calculated.
-- **Displacement risk is shown as a caution flag,** built from indicators such as renter share and rent burden. It is not a prediction, and we do not claim to measure displacement.
+- **Displacement risk is not predicted.** The needs panel flags "deep affordability and anti-displacement" when a neighborhood's poverty rate is at least 1.25 times the City's, and the parcel check notes whether existing homes would be removed. Neither measures displacement.
 
 ### Massing and simulations
 - Massings are **zoning-envelope sketches, not designs**: rectangular footprints, prism roofs, uniform setbacks per edge, and irregular lots approximated. Contextual setbacks and corner-lot rules are not modeled unless listed in the rules table.
@@ -61,17 +60,18 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 - Several criterion values are **typology judgments** by our team (family-size homes, street presence, aging in place), and the mapping from neighborhood needs to suggested housing types and suggested emphasis is editorial. Both are shown as suggestions, never applied automatically, and should be reviewed with the advisors.
 
 ### Equity lens
-- Market clusters come from the 2021 Market Value Analysis and may be out of date.
 - The existing-occupancy check relies on assessment land-use codes and can misclassify parcels.
-- Displacement pathways follow the City's 2022 HNA. They describe neighborhood patterns, not what will happen to any household.
+- Market clusters (the 2021 Market Value Analysis) and the HNA's two displacement pathways were planned as context but are not shown in the app.
 
 ### AI components
-- AI-written explanations are generated from computed values and checked so that every number they cite matches the computed results. They can still phrase things imperfectly, and every claim links back to its source.
-- AI-proposed weights take effect only after the user confirms them.
+- **Horizon and "Explain in plain language."** These call an LLM (Groq-hosted `openai/gpt-oss-120b` by default, or Claude; set by `LLM_PROVIDER` and `LLM_MODEL`) through a small local server. They only receive numbers the app has already computed, and the server rejects any reply that cites a number not in that input, falling back to the app's template text. The check covers numbers, not wording: a reply can still frame a trade-off imperfectly, and it does not show per-claim source links or data / value tags.
+- Horizon needs the local server and an API key. Without them it says it is unavailable, and every score, ranking and explanation in the dashboard still works.
+- No AI component sets weights, scores, rankings, feasibility, or legality. The planned values interview (AI-proposed weights) and zoning Q&A were not built.
+- **AI images.** Housing-type illustrations are AI-generated examples of a type, labeled as not a design for the site.
 
 ### Coverage
 - The data pipeline ingests all of Allegheny County. Parcel-level housing futures are shown only for the City of Pittsburgh, because the zoning layer does not cover the other 129 municipalities. Outside the City, the app shows a county overview (vacancy and distress counts by municipality).
-- Demo results were precomputed for *[neighborhoods]*. Other areas may have gaps.
+- All 90 City neighborhoods load parcel-level data, and the headless test checks that every file loads. The demo walkthrough and example lots were checked most closely in Larimer; other neighborhoods have been spot-checked less.
 
 ## Who benefits, and who might be harmed
 
@@ -84,7 +84,7 @@ Housing Futures is a **decision-support** prototype for exploring which housing 
 | Affordability-need, market, or "access" layers used to target neighborhoods for speculative investment, accelerating displacement | No neighborhood "opportunity" ranking; market clusters are shown only as context next to displacement-pathway flags; the evidence panel states the tension (Chapple & Zuk 2016 on how early-warning tools get used) |
 | Demolition of existing occupied homes presented as "adding supply" | Supply is scored as **net** new units; the existing-occupancy check flags demolition |
 | "Neighborhood fit" used as a proxy for exclusion | Defined as physical scale transition only; its weight is set by the user (Einstein, Glick & Palmer 2019) |
-| Users treat a "Fits" result as legal permission | Disclaimer on every result, code citations, and a standing "confirm with City Planning / ZBA" box |
+| Users treat a "Fits" result as legal permission | Results say "draft rules," a decision-support disclaimer stays in the footer, and the Sources panel says to confirm with City Planning or the ZBA. Results do not yet cite code sections |
 | Hazard flags missed or overstated (slope, undermining) | Labeled as screening only, with pointers to survey and geotech |
 | Area statistics read as facts about the people living there | Tract-level labels; no household-level data; no PII |
 | Opportunity or ownership layers used as a target list for speculative buying | Tags framed as "where exploration may be relevant"; no owner names or addresses; ownership signal shown with its caveat; no ranking of parcels by acquisition value |

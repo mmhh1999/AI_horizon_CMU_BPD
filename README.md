@@ -39,7 +39,9 @@ One-page summary: [docs/pitch.md](docs/pitch.md).
 4. **Housing futures**: the lens and weights sit above the ranking.
 5. **Trade-offs**: detail, cost, score breakdown, Why / Why not.
 
-The chrome uses Pittsburgh black and gold on warm neutrals. The solar envelope is kept but de-emphasized, as an optional, collapsed "Winter sun for neighbors" test. Illustrations use the warmer original set, uncropped. There is still no runtime LLM; the chat is left to the team. See the [branch note](docs/branch-notes/mso-v2.md).
+The chrome uses Pittsburgh black and gold on warm neutrals. The solar envelope is kept but de-emphasized, as an optional, collapsed "Winter sun for neighbors" test. Illustrations use the warmer original set, uncropped. See the [branch note](docs/branch-notes/mso-v2.md).
+
+On `main`, the `ai-integration` work adds runtime AI on top: **Horizon**, a planning copilot available at every step, and "Explain in plain language" buttons in the ranking and Why-not views. Both call an LLM through a small local server (`src/server/`) and only explain numbers the app already computed; any reply that cites a number not in its input is rejected. The app works fully without the server. See the [branch note](docs/branch-notes/ai-integration.md).
 
 ## What's new on the `david` branch
 
@@ -59,7 +61,7 @@ Building on `david`, this branch makes housing options easier to compare and exp
 - **More usable workspace:** A wider map and two adjustable desktop panel dividers make the three-column layout easier to inspect. Local search suggests neighborhoods, open-neighborhood parcels, and page shortcuts. The house-plus button starts a fresh exploration.
 - **Improved imagery:** Thirteen new higher-resolution AI-generated housing-type illustrations are displayed without forced cropping and labeled as generic examples, not site designs.
 
-The ranking is a comparative aid, not a permit decision or investment forecast. Police and smell reports remain context only and are excluded from scores. Search and explanations remain deterministic; **no runtime LLM is integrated**. See the [branch note](docs/branch-notes/david_1.0.md) for behavior and remaining limitations.
+The ranking is a comparative aid, not a permit decision or investment forecast. Police and smell reports remain context only and are excluded from scores. Search and explanations on this branch are deterministic, with no runtime LLM (added later on `main`). See the [branch note](docs/branch-notes/david_1.0.md) for behavior and remaining limitations.
 
 ### Known issues and next steps
 
@@ -75,8 +77,8 @@ The ranking is a comparative aid, not a permit decision or investment forecast. 
 |---|---|---|
 | Ideation, data exploration, planning docs | Fri Sep 25, after kickoff | Done |
 | Advisor review; direction changed to community-first ([notes](docs/meeting-notes/2026-09-26-advisor-review.md)) | Sat Sep 26, morning | Done |
-| **Build window** | Sat Sep 26 09:00 to Sun Sep 27 23:59 | In progress, on per-member branches (see [docs/branch-notes/](docs/branch-notes/)) |
-| Submission form and 3–5 min demo video | By Sun Sep 27 23:59 | Not started |
+| **Build window** | Sat Sep 26 09:00 to Sun Sep 27 23:59 | Per-member branches merged into `main` (see [docs/branch-notes/](docs/branch-notes/)) |
+| Submission form and 3–5 min demo video | By Sun Sep 27 23:59 | In progress; script in [docs/demo-video-script.md](docs/demo-video-script.md) |
 
 Under the hackathon rules, no project code is written before Saturday 09:00 ET. Commits made before then contain planning documents only.
 
@@ -115,22 +117,23 @@ These are all public: Allegheny County parcel boundaries and property assessment
 
 ## AI use (summary)
 
-The scores, the zoning checks, and the counterfactual math are all computed by code, so they can be inspected and reproduced. AI is used only where language is the bottleneck:
+The scores, the zoning checks, the robustness analysis and the counterfactual math are all computed by code, so they can be inspected and reproduced. Inside the product, AI is used only where language is the bottleneck:
 
-1. Extracting zoning standards from the code text. Every extracted rule carries a section citation and a human check.
-2. Explaining in plain language why one scenario ranks above another. Each claim is tagged as *data* or *value judgment* and must match the computed numbers.
-3. Turning a user's own words about their priorities into proposed weights. The user confirms or edits them before they apply.
+1. **Horizon and "Explain in plain language"** put computed results into words: why one housing type ranks above another, and what stands in the way of another. An LLM (Groq by default, or Claude) runs behind a local server, sees only numbers the app already computed, and any reply that cites a number not in its input is rejected in favor of the app's template text.
+2. **Housing-type illustrations** were AI-generated at build time and are labeled in the app as examples of a type, not designs for the site.
 
-Details are in [docs/ai-design.md](docs/ai-design.md), and the tools used to build the project are logged in [docs/ai-usage-log.md](docs/ai-usage-log.md).
+AI never sets weights, scores, rankings or feasibility. Planned uses that were **not built**: extracting zoning rules from the code text (the app's zoning values are hand-entered draft placeholders) and turning a user's own words into proposed weights. Details are in [docs/ai-design.md](docs/ai-design.md).
+
+**AI tools used to build the project:** Cursor agent and Cursor image generation, Claude Code, OpenAI Codex, and OpenAI image generation. Who used what, for which part, and what a person did is logged in [docs/ai-usage-log.md](docs/ai-usage-log.md).
 
 ## Team
 
 | Name | Role |
 |---|---|
-| Meltem Sahin Ozkoc | Product direction after the advisor review; community-first rework on branch `mso-v0`: county data pipeline, community needs, opportunity layers, solar envelope, stakeholder priorities |
-| Olaf Fu | TBD |
-| David Liu (Fengrui) | Neighborhood crime and smell context, cost explorer, and interface updates on `david`; benchmarks and papers for the weights |
-| Minghao | Interface and documentation |
+| Meltem Sahin Ozkoc | Product direction after the advisor review (community-first flow). Branch `mso-v0`: Allegheny County and City data pipeline (24 public datasets, provenance, privacy checks), parcel opportunity tags and neighborhood needs profiles, County → City → neighborhood drill-down, 13 housing types with needs-based suggestions, performance metrics (solar envelope, compactness, transit, green space), stakeholder priorities with SMAA robustness, and AI housing-type illustrations. Branch `mso-v2`: integration of all branches into the five-step, map-first journey, the black/gold interface, and the headless tests. Horizon naming, limitations statement, and demo script |
+| Minghao Xu | Repository setup and planning docs (concept, references, data sources, interface spec). Merged the team's branches into `main`. Branch `ai-integration`: the runtime AI server (provider interface for Groq and Claude, number-grounding check), the "Explain in plain language" buttons, and the Horizon copilot, including its product spec and avatar states |
+| David Liu (Fengrui) | Branches `david` and `david_1.0`: police and Smell Pittsburgh context, cost explorer, five stakeholder lenses, ranked shortlist, local search, resizable layout, and revised housing-type illustrations. Benchmarks and papers for the weights |
+| Olaf Fu | Branch `olaf-ai-integration`: the staged, map-first journey (stage bar, per-stage layouts, full-width Community map, "Review trade-offs" step), ported into `mso-v2` |
 
 **Advisors:** Azadeh and Vivian, for references and site-evaluation criteria.
 
@@ -143,6 +146,13 @@ python3 -m http.server 8795 --directory src/app   # then open http://localhost:8
 See [src/app/README.md](src/app/README.md) for what works and what is still a placeholder.
 
 The app opens on the County map. For a quick walkthrough, press **Try an example lot** (Larimer). Map tiles and external assets require an internet connection.
+
+Optional, for Horizon and the "Explain in plain language" buttons (needs a Groq or Anthropic API key in `.env`; see `.env.example`):
+
+```bash
+pip install -r src/server/requirements.txt
+python3 src/server/app.py                          # local AI server on port 8799
+```
 
 To rebuild the data (branch `mso-v0`):
 
@@ -171,12 +181,17 @@ Headless tests, with the app served on port 8795 (`APP_URL` overrides the addres
 | Lucide icons | UI icons | ISC |
 | Inter (Google Fonts) | Typeface | SIL OFL |
 | Python: pandas, GeoPandas, Shapely, pyproj, pyogrio, requests, openpyxl | Data pipeline | BSD / MIT / Apache-2.0 |
-| Playwright (Python) | Headless smoke test only (`tests/smoke_app.py`), not shipped | Apache-2.0 |
+| Python: `groq`, `anthropic` SDKs | Local AI server (`src/server/`) | Apache-2.0 / MIT |
+| Groq API (default model `openai/gpt-oss-120b`) | Runtime LLM for Horizon and plain-language explanations | Groq terms; free tier |
+| Anthropic API (Claude, optional) | Alternative runtime LLM provider | Anthropic terms |
+| jsDelivr CDN | Serves MapLibre, SunCalc and Lucide to the browser | Free public CDN |
+| Playwright (Python) | Headless tests only (`tests/`), not shipped | Apache-2.0 |
 | NLR PVWatts v8 API | Specific PV yield (one cached call) | Free API key |
 | Open-Meteo Climate API | Climate context | CC BY 4.0, non-commercial |
 | OpenStreetMap | Building context in the original demo extract | ODbL |
 | AI tools | See [docs/ai-usage-log.md](docs/ai-usage-log.md) | — |
 | AI image generation | Original illustrations in `src/app/assets/renderings/`; revised generic typology illustrations in `src/app/assets/renderings-v2/`, labeled as not a design for this site | Disclosed in the AI log |
+| Public datasets | Allegheny County, City of Pittsburgh / WPRDC, Census ACS, PRT GTFS, Pittsburgh Police data, Smell Pittsburgh (CMU CREATE Lab), NAHB cost survey | Full list, stewards and terms in [docs/data-sources.md](docs/data-sources.md); citations in [docs/references.md](docs/references.md) |
 
 ## License
 

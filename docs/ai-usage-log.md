@@ -25,11 +25,13 @@ This log backs the **AI tool disclosure** on the submission form. The packet say
 
 ## Runtime AI (inside the product)
 
-See [ai-design.md](ai-design.md). Record the model and provider chosen for A1–A4 here once decided.
+See [ai-design.md](ai-design.md). Provider and model are set by `LLM_PROVIDER` and `LLM_MODEL` in `.env`; the defaults are in `src/server/providers.py`.
 
 | Component | Model / provider | Prompt location | Fallback |
 |---|---|---|---|
-| A1 zoning extraction | TBD | TBD | Manual entry |
-| A2 "Why?" explainer | Groq (`llama-3.3-70b-versatile`, default) or Claude (`claude-opus-5`), via `src/server/` — set by `LLM_PROVIDER` | `src/server/prompts.py` (`COMPARE_SYSTEM`) | Template comparison text (`answers.js`, `COMPARE_Q` branch) |
-| A3 values interview | TBD | TBD | Sliders and presets |
-| A4 "Why not?" narrator | Groq (`llama-3.3-70b-versatile`, default) or Claude (`claude-opus-5`), via `src/server/` — set by `LLM_PROVIDER` | `src/server/prompts.py` (`WHY_NOT_SYSTEM`) | The existing constraint list and unlock chips (`ui.js` `renderWhy`) |
+| A1 zoning extraction | Not built | — | Zoning values are draft placeholders entered by hand |
+| A2 "Why?" explainer | Groq (`openai/gpt-oss-120b`, default) or Claude (`claude-opus-5`), via `src/server/` | `src/server/prompts.py` (`COMPARE_SYSTEM`) | Template comparison text (`answers.js`, `COMPARE_Q` branch) |
+| A3 values interview | Not built | — | Sliders and presets |
+| A4 "Why not?" narrator | Groq (`openai/gpt-oss-120b`, default) or Claude (`claude-opus-5`), via `src/server/` | `src/server/prompts.py` (`WHY_NOT_SYSTEM`) | The existing constraint list and unlock chips (`ui.js` `renderWhy`) |
+| Horizon planning copilot | Same provider and model, via `POST /api/reason` | `src/server/prompts.py` (`REASON_SYSTEM`) | "Horizon is unavailable" message; the dashboard is unaffected |
+| A7 housing-type illustrations | Cursor image generation and OpenAI image generation, pre-generated at build time (see the log above) | — | Not applicable; images are static files |
