@@ -38,9 +38,16 @@ This branch builds on `mso-v0` with neighborhood context and an editable cost ex
 - **Cost explorer:** Editable construction rate, contingency, and land cost; illustrative total, per-net-new-home cost, and ±25% sensitivity band. The default $162/sq ft comes from [NAHB's 2024 national single-family survey](https://www.nahb.org/news-and-economics/housing-economics-plus/special-studies/special-studies-pages/cost-of-constructing-a-home-in-2024) ($428,215 / 2,647 finished sq ft).
 - **Usability improvements:** Five-stage progress ribbon, Context and Costs navigation, responsive panels, and a `?demo=1` link that opens the Larimer example lot. Existing scenario scoring and stakeholder weights are unchanged.
 
-### Local `david_1.0` preview
+### `david_1.0` feature branch
 
-The local `david_1.0` branch adds a ranked housing shortlist, five stakeholder-view tabs with transparent starter weights, a larger resizable map, local search suggestions, a working “start new exploration” house icon, and thirteen new uncropped AI housing-type illustrations. It does **not** add a runtime LLM. See the [branch note](docs/branch-notes/david_1.0.md) for behavior and limitations.
+Building on `david`, this branch makes housing options easier to compare and explore:
+
+- **Clear housing ranking:** A ranked shortlist uses the same deterministic, user-weighted scores as the scenario cards; selecting a row opens that housing type.
+- **Five stakeholder views:** Policy maker, Community, Developer, Architect, and Investor tabs show different decision prompts and transparent starter weights. Users can still edit all ten priorities.
+- **More usable workspace:** A wider map and two adjustable desktop panel dividers make the three-column layout easier to inspect. Local search suggests neighborhoods, open-neighborhood parcels, and page shortcuts. The house-plus button starts a fresh exploration.
+- **Improved imagery:** Thirteen new higher-resolution AI-generated housing-type illustrations are displayed without forced cropping and labeled as generic examples, not site designs.
+
+The ranking is a comparative aid, not a permit decision or investment forecast. Police and smell reports remain context only and are excluded from scores. Search and explanations remain deterministic; **no runtime LLM is integrated**. See the [branch note](docs/branch-notes/david_1.0.md) for behavior and remaining limitations.
 
 ### Known issues and next steps
 

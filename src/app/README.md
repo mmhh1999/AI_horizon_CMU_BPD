@@ -1,4 +1,4 @@
-# Housing Futures: web app (`david_1.0` local preview)
+# Housing Futures: web app (`david_1.0` feature branch)
 
 A static page (plain HTML + ES modules, no build step). MapLibre GL JS 4.7, SunCalc 1.9 and Lucide load from jsdelivr; the basemap is OpenFreeMap (no API key). The original design spec is in [docs/ui-spec.md](../../docs/ui-spec.md); the community-first flow is described in [docs/concept.md](../../docs/concept.md).
 
@@ -54,5 +54,5 @@ Built by `src/pipeline/build.py` from public County and City data retrieved 2026
 - The solar envelope, compactness, transit and green-space goals are community goals, not current Pittsburgh law, and never change a future's approval status.
 - Safety is context only: never scored, ranked or mapped as a choropleth.
 - The Cost explorer is an editable illustration based on a 2024 national single-family benchmark; it is not a local quote or market feasibility model. Infrastructure capacity and walkability to daily destinations remain unmodeled. See [the david branch note](../../docs/branch-notes/david.md).
-- Stakeholder tab weight mixes are editorial examples and change the ranking, not the underlying data. Investor view does not estimate revenue or returns. See [the local `david_1.0` note](../../docs/branch-notes/david_1.0.md).
+- Stakeholder tab weight mixes are editorial examples and change the ranking, not the underlying data. Investor view does not estimate revenue or returns. See [the `david_1.0` branch note](../../docs/branch-notes/david_1.0.md).
 - The Smell snapshot covers 2025 only and relies on voluntary reports with privacy-shifted locations. Police and smell cards are context, not safety or air-quality assessments.

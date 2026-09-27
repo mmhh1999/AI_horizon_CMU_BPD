@@ -1,6 +1,6 @@
-# Local branch `david_1.0`: clearer comparison and stakeholder views
+# `david_1.0` feature branch: clearer comparison and stakeholder views
 
-Built on `david`; not pushed. Run `python3 -m http.server 8791 --directory src/app` from the repo root, then open `http://localhost:8791/?demo=1`.
+Built on `david` and published as a separate feature branch for team review; it has not been merged into `main`. Run `python3 -m http.server 8791 --directory src/app` from the repo root, then open `http://localhost:8791/?demo=1`.
 
 ## What changed
 
