@@ -16,7 +16,7 @@ import { setupSplitters, resetSplitters } from "./splitter.js";
 import { loadCounty, loadCity, loadHood, loadSmell, HOOD_INDICATORS, COUNTY_INDICATORS, TAGS, TAG_ORDER, RAMP, classify } from "./data.js";
 import { renderCountyPanel, renderCityPanel, renderNeeds, renderNeedsCompact, renderOpportunity, needsStripHTML, parcelOpportunityHTML } from "./needs.js";
 import { defaultCost, renderCost } from "./cost.js";
-import { askMira, renderMiraFab, renderMiraPanel, tradeoffCtaHTML, TRADEOFF_CTA_PROMPT } from "./mira.js";
+import { askHorizon, renderHorizonFab, renderHorizonPanel, tradeoffCtaHTML, TRADEOFF_CTA_PROMPT } from "./horizon.js";
 
 const STEPS = [
   ["community", "Community", "Community", "users"],
@@ -34,7 +34,7 @@ const state = {
   assumptions: defaultAssumptions(), transitions: {}, overlay: null, shadow: false, hour: 12, answer: "", answerId: 0, exampleIdx: -1,
   solar: solarDefaults(), solarShow: false, solarOpen: false, weightsOpen: false, railFocus: "why",
   weights: roleWeights("community"), preset: null, role: "community", roleModified: false, cost: defaultCost(),
-  mira: { open: false, avatar: "idle", messages: [], input: "" },
+  horizon: { open: false, avatar: "idle", messages: [], input: "" },
 };
 let county, city, smell, hood, area, map, byId, frame, ctx, futures = [];
 let mapReady = false, searchApi, layoutKey = "", fitPending = true;
@@ -289,9 +289,9 @@ function updateShadows() {
 
 const icons = () => { if (window.lucide) window.lucide.createIcons({ attrs: { "stroke-width": 1.9 } }); };
 
-// ------------------------------------------------------------------ Mira: global stage-aware copilot
+// ------------------------------------------------------------------ Horizon: global stage-aware copilot
 // Only fields that actually exist in app state are included; nothing here is invented or recomputed.
-function buildMiraContext() {
+function buildHorizonContext() {
   const c = { stage: state.stage, stageLabel: STEPS.find(([k]) => k === state.stage)?.[1] };
   c.geography = { county: "Allegheny County" };
   if (state.level !== "county") c.geography.city = "Pittsburgh";
@@ -311,36 +311,36 @@ function buildMiraContext() {
   return c;
 }
 
-function renderMira() {
-  const el = $("#mira");
-  const context = buildMiraContext();
-  el.innerHTML = renderMiraFab(state.mira) + renderMiraPanel(state.mira, context, state.stage);
+function renderHorizon() {
+  const el = $("#horizon");
+  const context = buildHorizonContext();
+  el.innerHTML = renderHorizonFab(state.horizon) + renderHorizonPanel(state.horizon, context, state.stage);
   icons();
 }
 
-async function askMiraFlow(question) {
-  if (!question || state.mira.avatar === "thinking") return;
-  state.mira.messages.push({ role: "user", text: question });
-  state.mira.avatar = "thinking";
-  state.mira.input = "";
-  renderMira();
-  $("#miraLog").scrollTop = $("#miraLog").scrollHeight;
-  const context = buildMiraContext();
-  const history = state.mira.messages.slice(-6);
-  const text = await askMira(question, context, history);
+async function askHorizonFlow(question) {
+  if (!question || state.horizon.avatar === "thinking") return;
+  state.horizon.messages.push({ role: "user", text: question });
+  state.horizon.avatar = "thinking";
+  state.horizon.input = "";
+  renderHorizon();
+  $("#horizonLog").scrollTop = $("#horizonLog").scrollHeight;
+  const context = buildHorizonContext();
+  const history = state.horizon.messages.slice(-6);
+  const text = await askHorizon(question, context, history);
   if (text) {
-    state.mira.messages.push({ role: "assistant", text: text.replace(/</g, "&lt;") });
-    state.mira.avatar = "responding";
+    state.horizon.messages.push({ role: "assistant", text: text.replace(/</g, "&lt;") });
+    state.horizon.avatar = "responding";
   } else {
-    state.mira.avatar = "error";
+    state.horizon.avatar = "error";
   }
-  renderMira();
-  $("#miraLog").scrollTop = $("#miraLog").scrollHeight;
+  renderHorizon();
+  $("#horizonLog").scrollTop = $("#horizonLog").scrollHeight;
 }
 
 // ------------------------------------------------------------------ render
 function render() {
-  renderMira();
+  renderHorizon();
   renderCrumbs();
   renderJourney();
   applyLayout();
@@ -398,7 +398,7 @@ function render() {
   if (showTrade) {
     if ($("#solarMore")) state.solarOpen = $("#solarMore").open;
     $("#tradeSwitch").innerHTML = tradeSwitchHTML(futures, state);
-    $("#miraCta").innerHTML = futures.length > 1 ? tradeoffCtaHTML() : "";
+    $("#horizonCta").innerHTML = futures.length > 1 ? tradeoffCtaHTML() : "";
     renderDetail($("#detail"), f, p, ctx, state);
     renderCost($("#cost"), f, state.cost);
     $("#scoreBreakdown").innerHTML = scoreBreakdownHTML(futures, state.weights);
@@ -682,27 +682,27 @@ function bindEvents() {
     if (ew) { runExplain(ew, explainWhyNot(JSON.parse(ew.dataset.explainWhy)), "whyExplainOut"); return; }
     const ec = e.target.closest("[data-explain-compare]");
     if (ec) { runExplain(ec, explainCompare(JSON.parse(ec.dataset.explainCompare)), "rankExplainOut"); return; }
-    if (e.target.closest("#miraFab")) {
-      state.mira.open = !state.mira.open;
-      state.mira.avatar = state.mira.open ? "open" : "idle";
-      renderMira();
-      if (state.mira.open) $("#miraInput")?.focus();
+    if (e.target.closest("#horizonFab")) {
+      state.horizon.open = !state.horizon.open;
+      state.horizon.avatar = state.horizon.open ? "open" : "idle";
+      renderHorizon();
+      if (state.horizon.open) $("#horizonInput")?.focus();
       return;
     }
-    if (e.target.closest("#miraClose")) { state.mira.open = false; state.mira.avatar = "idle"; renderMira(); return; }
-    const chip = e.target.closest("[data-mira-q]");
-    if (chip) { askMiraFlow(chip.dataset.miraQ); return; }
-    if (e.target.closest("[data-mira-cta]")) {
-      state.mira.open = true; state.mira.avatar = "open"; renderMira();
-      askMiraFlow(TRADEOFF_CTA_PROMPT);
+    if (e.target.closest("#horizonClose")) { state.horizon.open = false; state.horizon.avatar = "idle"; renderHorizon(); return; }
+    const chip = e.target.closest("[data-horizon-q]");
+    if (chip) { askHorizonFlow(chip.dataset.horizonQ); return; }
+    if (e.target.closest("[data-horizon-cta]")) {
+      state.horizon.open = true; state.horizon.avatar = "open"; renderHorizon();
+      askHorizonFlow(TRADEOFF_CTA_PROMPT);
       return;
     }
   });
   document.addEventListener("submit", (e) => {
-    if (e.target.id === "miraForm") { e.preventDefault(); askMiraFlow($("#miraInput").value.trim()); }
+    if (e.target.id === "horizonForm") { e.preventDefault(); askHorizonFlow($("#horizonInput").value.trim()); }
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && state.mira.open) { state.mira.open = false; state.mira.avatar = "idle"; renderMira(); }
+    if (e.key === "Escape" && state.horizon.open) { state.horizon.open = false; state.horizon.avatar = "idle"; renderHorizon(); }
   });
 }
 

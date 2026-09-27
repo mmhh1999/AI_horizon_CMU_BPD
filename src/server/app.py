@@ -1,7 +1,7 @@
 """Small local proxy for the runtime LLM roles described in docs/ai-design.md:
-A2/A4 ('why A over B', 'why not B') at POST /api/explain, and Mira, the global
+A2/A4 ('why A over B', 'why not B') at POST /api/explain, and Horizon, the global
 stage-aware planning copilot, at POST /api/reason. The frontend (src/app/js/
-explain.js, src/app/js/mira.js) calls this over HTTP so the API key never
+explain.js, src/app/js/horizon.js) calls this over HTTP so the API key never
 reaches the browser; if this process is not running, or a reply fails the
 number-grounding check, the frontend falls back to template text it already
 has, per the "deterministic core, AI at the edges" principle.

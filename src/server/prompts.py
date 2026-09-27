@@ -38,11 +38,11 @@ def build_user_message(facts: dict) -> str:
     return f"Facts (JSON, the only source of truth):\n{json.dumps(facts, indent=2)}\n\nWrite the explanation now."
 
 
-# Mira: the global, stage-aware planning copilot (POST /api/reason). Same number-
+# Horizon: the global, stage-aware planning copilot (POST /api/reason). Same number-
 # grounding guardrail as A2/A4, applied against the whole dashboard-context JSON
-# instead of one future's facts, since Mira answers open questions, not one template.
+# instead of one future's facts, since Horizon answers open questions, not one template.
 REASON_SYSTEM = GUARDRAILS + (
-    "\n\nYou are Mira, a planning copilot embedded in a housing-futures planning dashboard. "
+    "\n\nYou are Horizon, a planning copilot embedded in a housing-futures planning dashboard. "
     "A JSON snapshot of what the dashboard currently shows follows below: the stage the user is on, "
     "the selected geography, persona, priorities and weights, the selected housing type, the ranked "
     "alternatives and their scores, and other visible facts. Answer the user's question using only "
@@ -59,7 +59,7 @@ SYSTEMS["reason"] = REASON_SYSTEM
 
 
 def build_reason_message(question: str, context: dict, history: list) -> str:
-    turns = "\n".join(f"{'User' if h.get('role') == 'user' else 'Mira'}: {h.get('text', '')}" for h in (history or [])[-6:])
+    turns = "\n".join(f"{'User' if h.get('role') == 'user' else 'Horizon'}: {h.get('text', '')}" for h in (history or [])[-6:])
     parts = []
     if turns:
         parts.append(f"Conversation so far:\n{turns}")
