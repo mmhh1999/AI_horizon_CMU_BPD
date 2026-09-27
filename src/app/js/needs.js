@@ -105,12 +105,15 @@ export function safetySentence(s, name) {
     <p class="muted small">Context, not a score. Reported incidents reflect reporting and enforcement as well as events, and per-resident rates overstate risk where many people visit. Built form is one part of a larger social system; the futures below show where homes could add porches, occupied ground floors and people on the street.</p>`;
 }
 
-export function renderNeeds(el, hood, city) {
+const OPP_STAT = { VL: "vacant_lot", VB: "vacant_building", PO: "public_owned", DL: "deep_lot", GA: "garage_adu", OS: "ownership_signal", TN: "transit_node" };
+const oppGrid = (s) => `<div class="opp-grid">${TAG_ORDER.map((k) => `<button class="opp" data-tag="${k}" title="${esc(TAGS[k].why)}"><i style="background:${TAGS[k].color}"></i><span>${esc(TAGS[k].short)}</span><b>${n0(s[OPP_STAT[k]])}</b></button>`).join("")}</div>`;
+
+// Step 1 (Community): needs, who lives here, and police / smell context. `next` adds the step-2 button.
+export function renderNeeds(el, hood, city, { next = false } = {}) {
   if (!hood) { el.innerHTML = ""; return; }
   const p = hood.profile, s = hood.stats, med = city.meta.diversityMedian, cp = city.city.profile;
   const needs = hood.needs.map((n) => `
     <li class="need"><span class="need-ic">${icon(n.icon)}</span><div><b>${esc(n.label)}</b><span>${esc((NEED_TEXT[n.key] || (() => ""))(n.value, n.city))}</span><em title="${esc(n.rule)}">${esc(n.src)} · rule: ${esc(n.rule)}</em></div></li>`).join("");
-  const opp = TAG_ORDER.map((k) => ({ k, n: s[{ VL: "vacant_lot", VB: "vacant_building", PO: "public_owned", DL: "deep_lot", GA: "garage_adu", OS: "ownership_signal", TN: "transit_node" }[k]] }));
   el.innerHTML = `
     <div class="needs-card">
       <div class="eyebrow">Step 1 · Community</div>
@@ -118,7 +121,7 @@ export function renderNeeds(el, hood, city) {
       <p class="muted">${p ? `${n0(p.population)} residents (2023), ${p.popChange > 0 ? "+" : ""}${pct(p.popChange)} since 2013 · ${n0(p.households)} households` : "No census profile for this neighborhood (very few residents)."}
       ${hood.acsShared ? `<br/><span class="small">Census figures cover the combined area “${esc(hood.acsArea)}”.</span>` : ""}</p>
       ${needs ? `<ul class="needs">${needs}</ul>` : `<p class="muted">No need crosses the published thresholds here. Compare the profile below with the City.</p>`}
-      <details class="profile" ${needs ? "" : "open"}><summary>Who lives here and what homes exist</summary>
+      <details class="profile" open><summary>Who lives here and what homes exist</summary>
         ${p ? `<h4>${icon("users")} Age</h4>${bars([["Under 18", p.age.under18], ["18–24", p.age["18to24"]], ["25–44", p.age["25to44"]], ["45–64", p.age["45to64"]], ["65+", p.age["65plus"]]], GRAYS)}
         <h4>${icon("wallet")} Household income</h4>${bars([["< $25k", p.income.lt25k], ["$25–50k", p.income["25to50k"]], ["$50–75k", p.income["50to75k"]], ["$75–100k", p.income["75to100k"]], ["$100–200k", p.income["100to200k"]], ["$200k+", p.income["200kplus"]]], GRAYS)}
         <h4>${icon("globe")} Race and ethnicity</h4>${bars([["White", p.race.white], ["Black", p.race.black], ["Asian", p.race.asian], ["Other", p.race.other], ["Two or more", p.race.multiracial]], GRAYS)}<p class="muted small">Hispanic or Latino (any race): ${pct(p.hispanic)}.</p>
@@ -131,17 +134,35 @@ export function renderNeeds(el, hood, city) {
         <span>Homes with frequent transit ≤ ¼ mi</span><b>${pct(s.transitFrequent)}</b><span>City</span><b>${pct(city.city.stats.transitFrequent)}</b></div>
       </details>
       ${environmentHTML(hood)}
-      <h3 class="opp-h">${icon("sparkles")} Where could new homes go? <span class="muted small">Toggle on the map</span></h3>
-      <div class="opp-grid">${opp.map(({ k, n }) => `<button class="opp" data-tag="${k}" title="${esc(TAGS[k].why)}"><i style="background:${TAGS[k].color}"></i><span>${esc(TAGS[k].short)}</span><b>${n0(n)}</b></button>`).join("")}</div>
-      <p class="muted small">Click a colored lot on the map to see its housing futures.</p>
+      ${next ? `<button class="btn-primary next-step" data-go-stage="perspective">${icon("user-check")}Next: who are you planning for?${icon("arrow-right")}</button>` : ""}
     </div>`;
+}
+
+// Step 3 (Opportunity): where new homes could go, as toggles for the map layers.
+export function renderOpportunity(el, hood, roleLabel, hasExample) {
+  el.innerHTML = `${needsStripHTML(hood, "stage")}
+    <div class="needs-card opp-card">
+      <div class="eyebrow">Step 3 · Opportunity</div>
+      <h2>Where could new homes go in ${esc(hood.name)}?</h2>
+      <p class="planning-chip">${icon("user-check")}<span>Planning for <b>${esc(roleLabel)}</b></span><button class="linkbtn" data-go-stage="perspective">Change</button></p>
+      <p class="muted">Each color is a screening rule applied to public records (assessments, City inventory, condemned list, building footprints, transit schedules). It says where to look closer, not what should be built. Hover a layer for its rule.</p>
+      <h3 class="opp-h">${icon("layers")} Opportunity layers <span class="muted small">lots in ${esc(hood.name)} · click to show or hide</span></h3>
+      ${oppGrid(hood.stats)}
+      <p class="hint">${icon("mouse-pointer-click")} Click a colored lot on the map to compare what could be built there.</p>
+      ${hasExample ? `<button class="btn-ghost wide" id="hoodExample">${icon("map-pin")} Or open an example lot in ${esc(hood.name)}</button>` : ""}
+    </div>`;
+}
+
+// `mode` "stage" links back to the Community step; "toggle" expands the full panel in place (lot view).
+export function needsStripHTML(hood, mode = "toggle") {
+  return `<div class="needs-strip"><span class="eyebrow">${esc(hood.name)} needs</span>
+    ${hood.needs.length ? hood.needs.map((n) => `<span class="nchip">${icon(n.icon)}${esc(n.label.split(":")[0])}</span>`).join("") : `<span class="muted small">No flagged needs</span>`}
+    ${mode === "stage" ? `<button class="linkbtn" data-go-stage="community">Profile & context</button>` : `<button class="linkbtn" data-needs-toggle>Details</button>`}</div>`;
 }
 
 export function renderNeedsCompact(el, hood, city, open) {
   if (open) { renderNeeds(el, hood, city); el.querySelector(".needs-card h2")?.insertAdjacentHTML("afterend", `<button class="linkbtn" data-needs-toggle>Hide</button>`); return; }
-  el.innerHTML = `<div class="needs-strip"><span class="eyebrow">${esc(hood.name)} needs</span>
-    ${hood.needs.length ? hood.needs.map((n) => `<span class="nchip">${icon(n.icon)}${esc(n.label.split(":")[0])}</span>`).join("") : `<span class="muted small">No flagged needs</span>`}
-    <button class="linkbtn" data-needs-toggle>Details</button></div>`;
+  el.innerHTML = needsStripHTML(hood);
 }
 
 // ---------------------------------------------------------------- parcel: opportunity tags + needs it could address

@@ -10,6 +10,7 @@
   <link href="./styles.css" rel="stylesheet" />
   <link href="./david.css" rel="stylesheet" />
   <link href="./david-1.css" rel="stylesheet" />
+  <link href="./stages.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -18,11 +19,12 @@
   <nav class="rail" aria-label="Main">
     <button class="rail-logo" id="homeButton" type="button" title="Start a new exploration" aria-label="Start a new exploration"><i data-lucide="house-plus" class="ic"></i></button>
     <button class="nav on" data-nav="explore"><i data-lucide="map" class="ic"></i><span>Map</span></button>
-    <button class="nav" data-nav="needs"><i data-lucide="users" class="ic"></i><span>Needs</span></button>
-    <button class="nav" data-nav="futures"><i data-lucide="layout-grid" class="ic"></i><span>Futures</span></button>
-    <button class="nav" data-nav="environment"><i data-lucide="wind" class="ic"></i><span>Context</span></button>
-    <button class="nav" data-nav="cost"><i data-lucide="calculator" class="ic"></i><span>Costs</span></button>
-    <button class="nav" data-nav="why"><i data-lucide="circle-help" class="ic"></i><span>Why not</span></button>
+    <button class="nav" data-nav="needs" hidden><i data-lucide="users" class="ic"></i><span>Needs</span></button>
+    <button class="nav" data-nav="environment" hidden><i data-lucide="wind" class="ic"></i><span>Context</span></button>
+    <button class="nav" data-nav="perspective" hidden><i data-lucide="user-check" class="ic"></i><span>Lens</span></button>
+    <button class="nav" data-nav="futures" hidden><i data-lucide="layout-grid" class="ic"></i><span>Futures</span></button>
+    <button class="nav" data-nav="cost" hidden><i data-lucide="calculator" class="ic"></i><span>Costs</span></button>
+    <button class="nav" data-nav="why" hidden><i data-lucide="circle-help" class="ic"></i><span>Why not</span></button>
     <button class="nav" data-nav="sources"><i data-lucide="book-open" class="ic"></i><span>Sources</span></button>
     <div class="rail-foot" title="Prototype: zoning numbers are draft placeholders"><i data-lucide="flask-conical" class="ic"></i><span>Draft</span></div>
   </nav>
@@ -35,19 +37,14 @@
       </div>
       <div class="search-shell"><form id="searchForm" class="search" role="search"><i data-lucide="search" class="ic"></i><input id="search" placeholder="Search neighborhood, local lot, or page…" autocomplete="off" aria-label="Search neighborhood, local lot, or page" aria-controls="searchSuggestions" aria-expanded="false" /></form><div id="searchSuggestions" class="search-suggestions" hidden></div></div>
       <div class="top-right">
-        <span class="flag" title="Zoning numbers are placeholders until checked against the Pittsburgh Code."><i data-lucide="flask-conical" class="ic"></i>Prototype · draft rules</span>        <button id="openSources" class="btn-ghost"><i data-lucide="book-open" class="ic"></i>Sources</button>
+        <span class="flag" title="Zoning numbers are placeholders until checked against the Pittsburgh Code."><i data-lucide="flask-conical" class="ic"></i>Prototype · draft rules</span>
+        <button id="openSources" class="btn-ghost"><i data-lucide="book-open" class="ic"></i>Sources</button>
         <button id="tryExample" class="btn-primary"><i data-lucide="map-pin" class="ic"></i>Try an example lot</button>
       </div>
     </header>
-    <div class="journey" aria-label="How to use this workbench">
-      <span><b>01</b> Explore & pick a lot</span>
-      <span><b>02</b> Compare housing</span>
-      <span><b>03</b> Test cost</span>
-      <span><b>04</b> Set priorities</span>
-      <span><b>05</b> Understand why</span>
-    </div>
+    <nav id="journey" class="journey" aria-label="Steps"></nav>
 
-    <main class="ws">
+    <main class="ws layout-map stage-community">
       <section class="col map-col" id="sec-explore">
         <div class="map-wrap">
           <div id="map"></div>
@@ -59,31 +56,36 @@
               <div class="lgroup"><span class="lg-title">Context</span><div id="overlays"></div></div>
             </div>
           </div>
-          <div id="legend" class="legend" hidden></div>
           <div id="exampleNote" class="example-note"></div>
         </div>
+        <div id="legend" class="legend docked" hidden></div>
         <div id="parcelCard" class="parcel-card"></div>
       </section>
-      <div class="splitter" id="splitMap" role="separator" aria-label="Resize map and comparison panels" aria-orientation="vertical" tabindex="0" title="Drag to resize · double-click to reset"></div>
+      <div class="splitter" id="splitMap" role="separator" aria-label="Resize map and side panels" aria-orientation="vertical" tabindex="0" title="Drag to resize · double-click to reset"></div>
 
       <section class="col futures-col" id="sec-futures">
         <div id="needs"></div>
-        <div id="futuresBlock">
+        <div id="perspective"></div>
+        <div id="futuresBlock" hidden>
+          <div id="planningFor"></div>
           <div class="col-head">
-            <div><div class="eyebrow">Step 2 · Housing futures</div><h2>What could go here?</h2></div>
+            <div><div class="eyebrow">Step 4 · Housing futures</div><h2>What could go here?</h2></div>
             <select id="setSelect" title="Which building types to compare" aria-label="Building types to compare"></select>
           </div>
-          <div id="roleView"></div>
           <div id="ranking"></div>
-          <div id="typePicker"></div>
-          <div id="futures" class="fcards"><div class="placeholder"><i data-lucide="map-pinned" class="ic xl"></i><p>Pick a neighborhood, then a lot on the map, or press <b>Try an example lot</b>.</p></div></div>
+          <div id="futures" class="fcards"></div>
+          <details id="typeOptions" class="type-options"><summary>Compare other housing types (all 13)</summary><div id="typePicker"></div></details>
+          <button id="reviewTradeoffs" class="btn-primary next-step"><i data-lucide="scale" class="ic"></i>Next: review trade-offs<i data-lucide="arrow-right" class="ic"></i></button>
+        </div>
+        <div id="tradeoffsBlock" hidden>
+          <div id="tradeSwitch"></div>
           <div id="detail" class="detail"></div>
           <div id="cost"></div>
-          <div id="priorities"></div>
+          <div id="scoreBreakdown"></div>
         </div>
       </section>
 
-      <div class="splitter" id="splitWhy" role="separator" aria-label="Resize comparison and explanation panels" aria-orientation="vertical" tabindex="0" title="Drag to resize · double-click to reset"></div>
+      <div class="splitter" id="splitWhy" role="separator" aria-label="Resize trade-off and explanation panels" aria-orientation="vertical" tabindex="0" title="Drag to resize · double-click to reset"></div>
       <aside class="col why-col" id="why"></aside>
     </main>
 

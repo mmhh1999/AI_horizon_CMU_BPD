@@ -18,12 +18,6 @@ body { grid-template-columns: 82px minmax(0,1fr); }
 .search { border-radius: 11px; padding: 10px 12px; background: #f7faf7; }
 .btn-primary { border-color: #bfd24e; border-radius: 10px; padding: 10px 15px; }
 .btn-ghost, .flag { border-radius: 10px; }
-.journey { display: flex; align-items: center; justify-content: center; gap: 0; background: #e6efe5; border-bottom: 1px solid var(--line); min-height: 40px; color: #49645c; font-size: 12px; font-weight: 700; letter-spacing: .01em; }
-.journey span { padding: 8px 20px; white-space: nowrap; }
-.journey span + span { border-left: 1px solid #cbdcd2; }
-.journey b { display: inline-grid; place-items: center; width: 21px; height: 21px; margin-right: 5px; border-radius: 50%; background: #c9dfd1; color: #234f43; font-size: 10px; }
-.ws { grid-template-columns: minmax(310px, 26%) minmax(0,1fr) minmax(310px, 25%); }
-.ws.wide-map { grid-template-columns: minmax(390px, 40%) minmax(0,1fr) minmax(290px, 22%); }
 .map-col { background: #f9fbf8; }
 .parcel-card { max-height: 43vh; overflow-y: auto; }
 .futures-col { padding: 20px 22px 36px; }
@@ -81,5 +75,5 @@ body { grid-template-columns: 82px minmax(0,1fr); }
 .cost-caveat { margin: 14px 0 0; color: #546b5e; font-size: 11.5px; line-height: 1.5; }.cost-caveat a { color: #285c44; font-weight: 750; }
 
 @media (max-width: 1400px) { .env-grid,.cost-layout { grid-template-columns: 1fr; } }
-@media (max-width: 1200px) { .ws,.ws.wide-map { grid-template-columns: minmax(0,1fr); }.env-grid,.cost-layout { grid-template-columns: repeat(2,minmax(0,1fr)); }.parcel-card { max-height: none; }.journey { justify-content: flex-start; overflow-x: auto; } }
-@media (max-width: 760px) { body { grid-template-columns: minmax(0,1fr); }.rail { flex-direction: row; overflow-x: auto; justify-content: flex-start; gap: 2px; padding: 4px; }.nav { flex: 0 0 59px; width: 59px; font-size: 10px; }.nav.on::before { left: 12px; right: 12px; top: auto; bottom: -4px; width: auto; height: 3px; }.top { padding: 13px; }.journey span { padding: 8px 12px; }.env-grid,.cost-layout { grid-template-columns: 1fr; }.env-pill,.cost-year { font-size: 10px; }.futures-col { padding: 14px; } }
+@media (max-width: 1200px) { .env-grid,.cost-layout { grid-template-columns: repeat(2,minmax(0,1fr)); }.parcel-card { max-height: none; } }
+@media (max-width: 760px) { body { grid-template-columns: minmax(0,1fr); }.rail { flex-direction: row; overflow-x: auto; justify-content: flex-start; gap: 2px; padding: 4px; }.nav { flex: 0 0 59px; width: 59px; font-size: 10px; }.nav.on::before { left: 12px; right: 12px; top: auto; bottom: -4px; width: auto; height: 3px; }.top { padding: 13px; }.env-grid,.cost-layout { grid-template-columns: 1fr; }.env-pill,.cost-year { font-size: 10px; }.futures-col { padding: 14px; } }

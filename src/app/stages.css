@@ -1,0 +1,99 @@
+/* mso-v2: one grid per step. main.js swaps layout-map / layout-panel / layout-trio and refits the map after each change.
+   Hidden columns use display:none so they take no grid track; splitters write --map-w / --why-w inline. */
+
+/* ---------- step layouts */
+main.ws.layout-map { grid-template-columns: minmax(0, 1fr); }
+main.ws.layout-map > .splitter, main.ws.layout-map > .futures-col, main.ws.layout-map > .why-col { display: none; }
+main.ws.layout-map .map-col { position: relative; }
+main.ws.layout-map .parcel-card {
+  position: absolute; z-index: 3; top: 14px; right: 56px; width: min(390px, 40%); max-height: calc(100% - 28px); overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-2); padding: 16px 18px;
+}
+main.ws.layout-map .legend.docked { margin-right: 0; }
+
+main.ws.layout-panel { --map-w: 56%; grid-template-columns: minmax(340px, var(--map-w)) 8px minmax(400px, 1fr); }
+main.ws.layout-panel.stage-futures { --map-w: 40%; }
+main.ws.layout-panel > #splitWhy, main.ws.layout-panel > .why-col { display: none; }
+
+main.ws.layout-trio { --map-w: 28%; --why-w: 26%; grid-template-columns: minmax(300px, var(--map-w)) 8px minmax(420px, 1fr) 8px minmax(290px, var(--why-w)); }
+
+.legend.docked { position: static; max-width: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; box-shadow: none; padding: 8px 14px; background: var(--subtle); }
+.legend.docked:not([hidden]) ~ .example-note, .map-wrap .example-note { bottom: 34px; }
+
+/* ---------- journey */
+nav.journey { display: flex; align-items: center; justify-content: flex-start; gap: 4px; min-height: 48px; padding: 6px 20px; background: var(--surface); border-bottom: 1px solid var(--line); color: var(--ink-2); font-size: 13px; overflow-x: auto; }
+nav.journey button { display: inline-flex; align-items: center; gap: 8px; flex: none; border: 1px solid transparent; background: none; border-radius: 999px; padding: 5px 12px 5px 5px; font-weight: 650; color: var(--ink-2); white-space: nowrap; transition: background .12s, border-color .12s; }
+nav.journey button:hover:not(:disabled) { background: var(--subtle); border-color: var(--line); }
+nav.journey button:disabled { cursor: not-allowed; color: #A3A09A; }
+nav.journey .jn { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--subtle); border: 1px solid var(--line-2); font-size: 12px; font-weight: 800; color: var(--ink-2); }
+nav.journey .jn svg { width: 14px; height: 14px; }
+nav.journey button:disabled .jn { background: transparent; border-style: dashed; color: #A3A09A; }
+nav.journey button.done .jn { background: var(--gold-soft); border-color: var(--gold-deep); color: var(--gold-deep); }
+nav.journey button[aria-current="step"] { background: var(--charcoal); border-color: var(--charcoal); color: #fff; }
+nav.journey button[aria-current="step"] .jn { background: var(--gold); border-color: var(--gold); color: var(--charcoal); }
+nav.journey .js { display: none; }
+nav.journey .journey-sep { width: 15px; height: 15px; color: var(--line-2); flex: none; }
+
+/* ---------- step components */
+.next-step { width: 100%; justify-content: center; margin: 16px 0 4px; padding: 11px 16px; font-size: 14.5px; }
+#futuresBlock .next-step { margin-top: 18px; }
+.planning-chip { display: flex; align-items: center; gap: 8px; margin: 10px 0; padding: 8px 11px; border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: var(--r); background: var(--subtle); font-size: 13.5px; }
+.planning-chip svg { width: 16px; height: 16px; color: var(--gold-deep); }
+.planning-chip .linkbtn { margin-left: auto; }
+.opp-card .opp-grid { margin-bottom: 12px; }
+.opp-card .hint { margin: 10px 0 4px; font-size: 13.5px; }
+
+.weights-card { margin-top: 16px; }
+.weights-card h2 { font-size: 19px; margin-bottom: 10px; }
+.weights .presets { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0 10px; }
+.weights .presets .lbl-sm { flex-basis: 100%; margin: 4px 0 0; }
+
+.wstrip { display: flex; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); background: var(--subtle); margin: 10px 0 6px; }
+.wstrip i { display: block; min-width: 2px; }
+.wtop { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 12.5px; color: var(--muted); }
+.wtop span { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-2); }
+.wtop i { width: 10px; height: 10px; border-radius: 2px; }
+
+.planning-for { margin-bottom: 16px; border: 1px solid var(--line); border-top: 3px solid var(--gold); border-radius: 14px; padding: 14px 16px; background: var(--surface); box-shadow: var(--shadow); }
+.pf-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+#sec-futures .role-tabs { flex-wrap: wrap; overflow: visible; }
+.planning-for .role-tabs { margin: 10px 0 8px; }
+.pf-focus { margin: 4px 0 0; font-size: 13px; line-height: 1.45; color: var(--ink-2); }
+.weight-edit { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; }
+.weight-edit > summary { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; font-weight: 700; font-size: 13.5px; list-style: none; }
+.weight-edit > summary::-webkit-details-marker { display: none; }
+.weight-edit > summary svg { width: 16px; height: 16px; color: var(--gold-deep); }
+.weight-edit[open] > summary { margin-bottom: 8px; }
+
+.type-options { margin-top: 14px; border: 1px solid var(--line); border-radius: var(--r); padding: 8px 12px; background: var(--surface); }
+.type-options > summary { cursor: pointer; font-weight: 700; font-size: 13.5px; }
+
+.trade-switch { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.trade-switch .back { display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; padding: 0; text-decoration: none; font-weight: 700; }
+.trade-switch .back svg { width: 15px; height: 15px; }
+.ts-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.ts { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--surface); padding: 5px 11px; font-size: 12.5px; font-weight: 650; color: var(--ink-2); }
+.ts > span { color: var(--muted); font-weight: 800; }
+.ts svg { width: 15px; height: 15px; }
+.ts:hover { border-color: var(--charcoal); }
+.ts.on { background: var(--charcoal); border-color: var(--charcoal); color: #fff; }
+.ts.on > span, .ts.on svg { color: var(--gold); }
+.st-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.st-dot.viable { background: var(--ok); }
+.st-dot.conditional { background: var(--warn); }
+.st-dot.constrained { background: var(--no); }
+#tradeoffsBlock > #cost, #tradeoffsBlock > #scoreBreakdown { margin-top: 18px; }
+
+/* ---------- tablet / mobile: every layout stacks into one column */
+@media (max-width: 1200px) {
+  main.ws.layout-map, main.ws.layout-panel, main.ws.layout-trio { grid-template-columns: minmax(0, 1fr); }
+  main.ws > .splitter { display: none; }
+  main.ws.layout-map .parcel-card { position: static; width: auto; max-height: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; box-shadow: none; }
+}
+@media (max-width: 760px) {
+  nav.journey { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; padding: 6px 8px; }
+  nav.journey .journey-sep, nav.journey .jl { display: none; }
+  nav.journey .js { display: block; font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; }
+  nav.journey button { flex-direction: column; gap: 3px; padding: 4px 2px; border-radius: 10px; min-width: 0; }
+  .planning-chip { flex-wrap: wrap; }
+}

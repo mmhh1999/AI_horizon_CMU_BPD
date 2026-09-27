@@ -119,21 +119,29 @@ function performance(f, parcel, ctx, state) {
   </div>`;
 }
 
-// ---------- priorities (center, after the detail view)
-export function renderPriorities(el, futures, state, hood) {
-  if (!futures.length) { el.innerHTML = ""; return; }
+// ---------- priorities: presets, needs emphasis and the ten sliders (step 2, and the editor in step 4)
+export function weightsHTML(state, hood) {
   const emph = suggestedEmphasis(hood?.needs);
   const label = (k) => CRITERIA.find((c) => c.key === k).label;
-  el.innerHTML = `<section class="prio-card">
-    <div class="eyebrow">Step 4 · Priorities</div>
-    <h2>What matters most?</h2>
-    <p class="muted small">Move the sliders; weights always add up to 100. The order below reflects these priorities only. It is not a recommendation and there is no single right answer.</p>
-    <div class="presets"><span class="lbl-sm">Starting points (each one is a value judgment)</span>
+  return `<div class="weights">
+    <p class="muted small">Move the sliders; weights always add up to 100. They only change the order of housing types, never the facts. There is no single right answer.</p>
+    <div class="presets"><span class="lbl-sm">Other starting points (each one is a value judgment)</span>
       ${Object.entries(PRESETS).map(([k, p]) => `<button data-preset="${k}" class="${state.preset === k ? "on" : ""}">${esc(p.label)}</button>`).join("")}</div>
     ${emph.length ? `<div class="emph">${icon("sparkles")}<span><b>${esc(hood.name)}'s needs</b> suggest more weight on ${emph.map((k) => `<em>${esc(label(k).toLowerCase())}</em>`).join(", ")}.</span><button data-emph class="${state.preset === "needs" ? "on" : ""}">Use as a starting point</button></div>` : ""}
     <div class="sliders">${CRITERIA.map((c) => `<label class="sl">${icon(c.icon)}<span>${esc(c.label)}</span><output data-out="${c.key}">${state.weights[c.key]}</output><input type="range" min="0" max="100" step="1" data-w="${c.key}" value="${state.weights[c.key]}" aria-label="${esc(c.label)} weight"/></label>`).join("")}</div>
-    <div id="prioRank">${prioRankHTML(futures, state.weights)}</div>
-  </section>`;
+  </div>`;
+}
+
+// ---------- step 5: switch between compared types without leaving Trade-offs
+export function tradeSwitchHTML(futures, state) {
+  const rows = evaluate(futures, state.weights);
+  return `<div class="trade-switch"><button class="linkbtn back" data-go-stage="futures">${icon("arrow-left")}All futures</button>
+    <div class="ts-row" role="group" aria-label="Housing type under review">${rows.map((r, i) => `<button type="button" class="ts ${state.selected === r.f.id ? "on" : ""}" data-rank="${r.f.id}" aria-pressed="${state.selected === r.f.id}"><span>#${i + 1}</span>${icon(r.f.icon)}${esc(r.f.name)}<i class="st-dot ${r.f.status}" title="${STATUS[r.f.status].label}"></i></button>`).join("")}</div></div>`;
+}
+
+export function scoreBreakdownHTML(futures, weights) {
+  if (!futures.length) return "";
+  return `<section class="prio-card"><div class="eyebrow">Step 5 · Score breakdown</div><h2>Why this order?</h2><div id="prioRank">${prioRankHTML(futures, weights)}</div></section>`;
 }
 
 export function prioRankHTML(futures, weights) {

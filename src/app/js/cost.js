@@ -20,7 +20,7 @@ export function renderCost(el, f, inputs) {
   const high = c.area * inputs.perSf * 1.25 * (1 + inputs.contingency / 100) + inputs.land;
   el.innerHTML = `
     <section class="cost-card" aria-labelledby="costTitle">
-      <div class="cost-intro"><div><div class="eyebrow">Step 3 · Cost explorer</div><h2 id="costTitle">What might it cost?</h2>
+      <div class="cost-intro"><div><div class="eyebrow">Step 5 · Cost explorer</div><h2 id="costTitle">What might it cost?</h2>
         <p>Move the assumptions to compare the same building on different budgets.</p></div>
         <span class="cost-year">2024 $ benchmark</span></div>
       <div class="cost-layout">
