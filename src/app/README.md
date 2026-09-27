@@ -1,18 +1,20 @@
-# Housing Futures: web app (`david_1.0` feature branch)
+# Housing Futures: web app (branch `mso-v1`)
 
-A static page (plain HTML + ES modules, no build step). MapLibre GL JS 4.7, SunCalc 1.9 and Lucide load from jsdelivr; the basemap is OpenFreeMap (no API key). The original design spec is in [docs/ui-spec.md](../../docs/ui-spec.md); the community-first flow is described in [docs/concept.md](../../docs/concept.md).
+A static page (plain HTML + ES modules, no build step). MapLibre GL JS 4.7, SunCalc 1.9 and Lucide load from jsdelivr; the basemap is OpenFreeMap (no API key). Integration branch built from `david_1.0` with Olaf's guided journey — see [docs/branch-notes/mso-v1.md](../../docs/branch-notes/mso-v1.md).
 
-**County → City neighborhoods → "What does this neighborhood need?" → opportunity lots → parcel → housing futures → performance and constraints → priorities → Why / Why not**
+**Community → Opportunity → Housing futures (personas + priorities + compare) → Trade-offs (detail, cost, Why / Why not)**
 
 ## Run
 
 ```bash
 cd src/app
 python3 -m http.server 8791
-# open http://localhost:8791 and click "Try an example lot" (Larimer demo path)
+# open http://localhost:8791/?demo=1
 ```
 
-ES modules and `fetch` do not work from `file://`, so the page must be served over HTTP. Smoke test: `python tests/smoke_app.py` from the repo root (see the root README).
+ES modules and `fetch` do not work from `file://`, so the page must be served over HTTP.
+
+Tests from the repo root: `python tests/guided_flow.py`, `python tests/smoke_app.py` (needs Playwright + local Chrome).
 
 ## Files
 
@@ -51,7 +53,7 @@ Built by `src/pipeline/build.py` from public County and City data retrieved 2026
 
 - **All zoning numbers are draft placeholders** until verified against the codified Pittsburgh Code. A header flag says so.
 - Typology dimensions and the needs-to-type and priority value mappings are draft editorial judgments.
-- The solar envelope, compactness, transit and green-space goals are community goals, not current Pittsburgh law, and never change a future's approval status.
+- The solar envelope is off by default; compactness, transit and green-space lead the Performance section. Solar access is a hypothetical community goal (Boulder precedent), not current Pittsburgh law.
 - Safety is context only: never scored, ranked or mapped as a choropleth.
 - The Cost explorer is an editable illustration based on a 2024 national single-family benchmark; it is not a local quote or market feasibility model. Infrastructure capacity and walkability to daily destinations remain unmodeled. See [the david branch note](../../docs/branch-notes/david.md).
 - Stakeholder tab weight mixes are editorial examples and change the ranking, not the underlying data. Investor view does not estimate revenue or returns. See [the `david_1.0` branch note](../../docs/branch-notes/david_1.0.md).
