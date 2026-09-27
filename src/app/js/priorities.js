@@ -23,7 +23,7 @@ export const CRITERIA = [
     why: (f, v) => v >= 0.8 ? "one-level living or a unit for a relative or caregiver" : "stairs to most homes" },
   { key: "climate", label: "Climate and energy", icon: "leaf", v: (f) => 0.7 * clamp((1.0 - f.perf.compact.sv) / 0.7) + 0.3 * clamp(f.pvPerUnit / 4000),
     why: (f, v) => v >= 0.6 ? `compact (S/V ${f.perf.compact.sv.toFixed(2)}) with good rooftop solar` : `more outside wall per home (S/V ${f.perf.compact.sv.toFixed(2)})` },
-  { key: "sun", label: "Solar access for neighbors", icon: "sun-medium", v: (f) => (f.perf.solar.fits ? 1 : clamp(1 - f.perf.solar.share * Math.min(1, f.perf.solar.maxOver / 20))),
+  { key: "sun", label: "Winter sun for neighbors (optional)", icon: "sun-medium", v: (f) => (f.perf.solar.fits ? 1 : clamp(1 - f.perf.solar.share * Math.min(1, f.perf.solar.maxOver / 20))),
     why: (f, v) => f.perf.solar.fits ? "stays inside the solar envelope" : `up to ${Math.round(f.perf.solar.maxOver)} ft over the solar envelope` },
   { key: "transit", label: "Transit and car-free living", icon: "bus", v: (f) => { const w = f.perf.tod.walk; return 0.7 * (w <= 5 ? 1 : w <= 10 ? 0.6 : 0.2) + 0.3 * clamp(1 - f.parking.sf / Math.max(1, f.lotArea * 0.5)); },
     why: (f, v) => `${Math.max(1, Math.round(f.perf.tod.walk))}-min walk to the bus${f.parking.sf > 0 ? `, ${f.parking.spaces} parking spaces` : ", no parking lot"}` },

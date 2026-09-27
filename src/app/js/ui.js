@@ -106,16 +106,23 @@ function performance(f, parcel, ctx, state) {
   const s = P.solar, env = ctx.solarEnv, t = P.tod, g = P.green, c = P.compact;
   const opt = (id, obj, cur) => `<select id="${id}" class="mini">${Object.entries(obj).map(([k, v]) => `<option value="${k}" ${String(k) === String(cur) ? "selected" : ""}>${esc(v.label || v)}</option>`).join("")}</select>`;
   const tile = (ic, head, big, cls, body) => `<div class="ptile ${cls}"><div class="pt-head">${icon(ic)}<span>${head}</span></div><b>${big}</b><p>${body}</p></div>`;
-  return `<div class="sect perf"><h4>Performance ${src("SOLARENV")}<span class="goal-note">community goals, not current Pittsburgh law</span></h4>
+  return `<div class="sect perf"><h4>Performance ${src("TYPOLOGY")}<span class="goal-note">community goals, not current Pittsburgh law</span></h4>
     <div class="ptiles">
-      ${tile("sun-medium", "Solar envelope", s.fits ? "Fits" : `+${Math.round(s.maxOver)} ft over`, s.fits ? "ok" : "warn",
-        `${s.fits ? "Keeps winter sun on neighbors' lots" : `Over the envelope on ${Math.round(s.share * 100)}% of the footprint`}: Dec 21, ${esc(SOLAR_WINDOWS[env.opts.window].short)}, above a ${env.opts.fence} ft solar fence. Sun peaks at ${Math.round(env.altNoonDeg)}°.`)}
       ${tile("box", "Compactness", c.sv.toFixed(2) + "<small> m²/m³</small>", c.label === "Spread out" ? "warn" : c.label === "Compact" ? "ok" : "", `${c.label}. ${n0(c.perUnit)} sq ft of outside surface per home. Lower means less heat loss.`)}
       ${tile("bus", "Transit (TOD)", `${Math.max(1, Math.round(t.walk))} min walk`, t.walk <= 5 ? "ok" : t.walk > 10 ? "warn" : "",
         `${n0(t.trips)} weekday trips within ¼ mile${t.rapid ? " · rapid (T / busway) stop" : ""}. ${t.avoided ? `${t.avoided} parking space${t.avoided === 1 ? "" : "s"} avoided (≈${n0(t.sfAvoided)} sq ft).` : t.required ? `Dropping the parking minimum would avoid ${t.required} space${t.required === 1 ? "" : "s"}.` : "No parking required."}`)}
       ${tile("trees", "Green space", g.d == null ? "—" : `${n0(g.d)} ft`, g.band === "near" ? "ok" : g.band === "far" ? "warn" : "", `${esc(g.label)}. ${Math.round(g.open * 100)}% of the lot stays open or green.`)}
     </div>
-    <div class="solar-opts">${icon("sliders-horizontal")} Solar access window ${opt("solarWindow", SOLAR_WINDOWS, env.opts.window)} ${opt("solarFence", SOLAR_FENCES, env.opts.fence)}</div>
+    <details class="solar-more" id="solarMore" ${state.solarOpen ? "open" : ""}>
+      <summary>${icon("sun-medium")}<span><b>Winter sun for neighbors</b> · optional community goal</span><span class="solar-badge ${s.fits ? "ok" : "warn"}">${s.fits ? "Passes" : `${Math.round(s.maxOver)} ft over`}</span></summary>
+      <p class="solar-q">Would this building shade neighboring lots at midday on Dec 21 more than a ${env.opts.fence}-ft fence on the lot line would?</p>
+      <p class="solar-a">${s.fits
+        ? `No. It stays inside the solar envelope, so neighbors keep their winter sun (${esc(SOLAR_WINDOWS[env.opts.window].short)}; sun peaks at ${Math.round(env.altNoonDeg)}°).`
+        : `Yes, on ${Math.round(s.share * 100)}% of its footprint, by up to ${Math.round(s.maxOver)} ft. Stepping back the top ${s.floorsOver === 1 ? "floor" : `${s.floorsOver} floors`} on the north side would pass.`}</p>
+      <div class="solar-opts">${icon("sliders-horizontal")} Test window ${opt("solarWindow", SOLAR_WINDOWS, env.opts.window)} ${opt("solarFence", SOLAR_FENCES, env.opts.fence)}
+        <label class="toggle"><input type="checkbox" id="solarToggle" ${state.solarShow ? "checked" : ""}/> Show on 3D view</label></div>
+      <p class="muted small">Modeled on Boulder, Colorado's solar access ordinance; Pittsburgh has no solar-access rule. Flat ground, no terrain or trees. It does not change whether a type is allowed. ${src("SOLARENV")}</p>
+    </details>
   </div>`;
 }
 
@@ -172,7 +179,6 @@ export function renderDetail(el, f, parcel, ctx, state) {
       <h2>${icon(f.icon)} ${esc(f.name)} on this lot</h2>${statusChip(f.status)}
       <label class="toggle">${icon("sun")}<input type="checkbox" id="shadowToggle" ${state.shadow ? "checked" : ""}/> Winter shadow</label>
       ${state.shadow ? `<input type="range" id="hour" min="9" max="15" step="1" value="${state.hour}"/><span class="muted">${state.hour}:00</span>` : ""}
-      <label class="toggle">${icon("sun-medium")}<input type="checkbox" id="solarToggle" ${state.solarShow ? "checked" : ""}/> Solar envelope</label>
     </div>
     <div class="axo-big">${renderAxo({ width: 640, height: 280, lotRing: ctx.lotST, neighborLots: ctx.nbLotsST, neighbors: ctx.nbST, envelope: f.envelope, volumes: f.volumes, shadows: state.shadow ? ctx.shadows : [], dashed: f.status === "constrained", pad: 14, solar: state.solarShow ? ctx.solarEnv : null })}
       <div class="axo-legend"><span><i class="lg-lot"></i>This lot</span><span><i class="lg-mass"></i>New building</span>${f.volumes.some((v) => v.existing) ? `<span><i class="lg-kept"></i>Existing house (kept)</span>` : ""}<span><i class="lg-env"></i>Zoning envelope</span>${state.solarShow ? `<span><i class="lg-solar"></i>Solar envelope</span>` : ""}<span><i class="lg-nb"></i>Neighbors</span></div>
@@ -184,7 +190,7 @@ export function renderDetail(el, f, parcel, ctx, state) {
       <div>${icon("bus")}<b>${wm} min</b><span>to the bus</span></div>
       <div>${icon("trees")}<b>${Math.round((f.pervious / f.lotArea) * 100)}%</b><span>open space</span></div>
     </div>
-    <figure class="rendering"><img src="assets/renderings-v2/${f.id}.png" alt="AI-generated illustration of ${esc(f.name)} housing type, not this lot" loading="lazy" onerror="this.closest('figure').remove()"/>
+    <figure class="rendering"><img src="assets/renderings/${f.id}.jpg" alt="AI-generated illustration of ${esc(f.name)} housing type, not this lot" loading="lazy" onerror="if (this.dataset.fallback) this.closest('figure').remove(); else { this.dataset.fallback = 1; this.src = 'assets/renderings-v2/${f.id}.png'; }"/>
       <figcaption>${icon("sparkles")}<span><b>AI-generated illustration of the type, not a design for this site.</b> ${esc(f.name)}: what this type can feel like on a Pittsburgh street. Size, materials and details are not proposals. ${src("RENDER")}</span></figcaption></figure>
     <div class="sect"><h4>How the lot is used ${src("ZONING")}</h4>${lotBudget(f)}</div>
     <div class="sect"><h4>What it means</h4><ul class="means">${meaning.map(([i, t]) => `<li>${icon(i)}<span>${esc(t)}</span></li>`).join("")}</ul></div>
@@ -258,7 +264,7 @@ export function renderWhy(el, f, parcel, state) {
 function goalsHTML(f) {
   if (!f.goals) return "";
   const head = `<h4>${icon("sprout")} Community goals <span class="goal-note">not current Pittsburgh law</span></h4>`;
-  if (!f.goals.length) return `<section class="goals">${head}<p class="muted small">${icon("check")} Meets the solar-access, compactness, transit and green-space goals used here.</p></section>`;
+  if (!f.goals.length) return `<section class="goals">${head}<p class="muted small">${icon("check")} Meets the compactness, transit, green-space and optional winter-sun goals used here.</p></section>`;
   return `<section class="goals">${head}<ul class="glist">${f.goals.map((g) => `<li>${icon(g.icon)}<div><b>${esc(g.title)}</b><span>${esc(g.plain)}</span></div>${src(g.src)}</li>`).join("")}</ul></section>`;
 }
 

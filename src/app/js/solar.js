@@ -140,9 +140,9 @@ export function green(parcel, f) {
 export function goalsFor(f, perf) {
   const out = [];
   const s = perf.solar;
-  if (s && !s.fits) out.push({ key: "solar", icon: "sun", title: "Shades neighbors' winter sun", plain: `Rises up to ${Math.round(s.maxOver)} ft above the solar envelope over ${Math.round(s.share * 100)}% of its footprint. Stepping back the top ${s.floorsOver === 1 ? "floor" : `${s.floorsOver} floors`} on the north side would fit it.`, src: "SOLARENV" });
   if (perf.compact.sv > 0.75) out.push({ key: "compact", icon: "box", title: "Lots of outside wall per home", plain: `Surface-to-volume ratio ${perf.compact.sv.toFixed(2)} per m; attached or stacked homes lose less heat.`, src: "TYPOLOGY" });
   if (perf.green.band === "far") out.push({ key: "green", icon: "trees", title: "No park within a quarter mile", plain: `Nearest park or greenway is about ${Math.round(perf.green.d).toLocaleString("en-US")} ft away; plan shared green space on site.`, src: "GREEN" });
   if (perf.tod.walk > 10) out.push({ key: "tod", icon: "bus", title: "Car-light living is harder here", plain: `About ${Math.round(perf.tod.walk)} minutes' walk to the nearest stop.`, src: "TRANSIT" });
+  if (s && !s.fits) out.push({ key: "solar", icon: "sun", title: "Optional: shades neighbors' winter sun (Boulder-style test)", plain: `Rises up to ${Math.round(s.maxOver)} ft above the solar envelope over ${Math.round(s.share * 100)}% of its footprint. Stepping back the top ${s.floorsOver === 1 ? "floor" : `${s.floorsOver} floors`} on the north side would pass.`, src: "SOLARENV" });
   return out;
 }

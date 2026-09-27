@@ -10,7 +10,7 @@ export const ROLES = {
   policy: { label: "Policy maker", icon: "landmark", focus: "Housing supply, displacement, and draft approval barriers", jump: "why", jumpLabel: "Review barriers", w: weights([25,5,15,5,5,10,5,10,5,15]) },
   community: { label: "Community", icon: "users", focus: "Keeping existing homes, family needs, and neighborhood life", jump: "environment", jumpLabel: "See local context", w: weights([10,10,25,15,10,5,5,10,5,5]) },
   developer: { label: "Developer", icon: "hard-hat", focus: "What can fit, likely barriers, and screening-level costs", jump: "cost", jumpLabel: "Open cost explorer", w: weights([20,5,5,5,0,5,0,15,5,40]) },
-  architect: { label: "Architect", icon: "ruler", focus: "Building form, street life, open space, and winter sun for neighbors", jump: "detail", jumpLabel: "Inspect the design", w: weights([10,10,5,15,5,20,15,5,10,5]) },
+  architect: { label: "Architect", icon: "ruler", focus: "Building form, street life, open space, and winter sun for neighbors", jump: "detail", jumpLabel: "Inspect the design", w: weights([10,10,5,20,5,20,5,5,15,5]) },
   investor: { label: "Investor", icon: "chart-no-axes-combined", focus: "Buildability and access; the cost card is separate, not a return forecast", jump: "cost", jumpLabel: "Test cost assumptions", w: weights([15,5,10,5,0,10,0,15,5,35]) },
 };
 export const roleWeights = (key) => ({ ...ROLES[key].w });
