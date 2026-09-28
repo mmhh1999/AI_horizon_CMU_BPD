@@ -14,6 +14,7 @@ body { grid-template-columns: 82px minmax(0,1fr); }
 .nav svg { width: 19px; height: 19px; }
 .top { padding: 15px 24px; gap: 22px; border-bottom: 0; }
 .title h1 { font-size: 23px; letter-spacing: -.04em; }
+.team-tag { display: inline-block; margin: 5px 0 3px; padding: 3px 8px; border-radius: 99px; background: var(--gold-soft); color: var(--charcoal); font-size: 11px; font-weight: 700; line-height: 1.4; }
 .title p { font-size: 12.5px; max-width: 400px; line-height: 1.4; }
 .search { border-radius: 11px; padding: 10px 12px; background: var(--subtle); }
 .btn-primary { border-color: var(--gold-deep); border-radius: 10px; padding: 10px 15px; }
