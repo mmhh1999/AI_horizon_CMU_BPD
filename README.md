@@ -1,198 +1,372 @@
-# Housing Futures: "Why-Not?" (working title)
+# Housing Futures: “Why-Not?”
 
 **AI Horizons 2026 · AI for Housing Hackathon (Pittsburgh) · Track 3: Housing Typology, Equity & Climate Matchmaker**
 
-This is a decision-support tool that starts from **what a neighborhood needs**. It then shows **where intervention is plausible**: vacant lots and buildings, public land, deep lots and garages, and transit nodes. For a real Pittsburgh parcel, it shows which housing types could plausibly go there, at what scale and in what configuration, what each one gives up, and what would have to change for a different choice to rank higher.
+**Housing Futures** is a decision-support tool for exploring what kinds of housing could make sense in a real Pittsburgh neighborhood and on a real parcel.
 
-**County → Neighborhood → Community needs → Development opportunities → Parcel → Housing futures → Performance + constraints → Stakeholder priorities → Why / Why not** (see [docs/concept.md § v3](docs/concept.md)).
+Instead of starting with “How much density can we fit?”, the tool starts with a more useful question:
 
-> It is not about adding density. It is about which housing type, at what scale, in what configuration, makes sense in this place.
+> **What does this neighborhood need, where could intervention happen, and which housing futures make sense here?**
 
-It does not name one "best" housing type. Instead it keeps apart three things that usually get blurred together:
+The workflow moves from the regional scale down to an individual site:
 
-| Layer | Question | Nature |
+**County → Neighborhood → Community needs → Development opportunities → Parcel → Housing futures → Performance + constraints → Stakeholder priorities → Why / Why not**
+
+For a selected parcel, Housing Futures compares multiple housing types and shows:
+
+- what can plausibly fit;
+- what each option contributes to housing supply, affordability needs, access, environmental performance, and neighborhood fit;
+- where zoning, site conditions, or other constraints become binding;
+- how different stakeholder priorities change the ranking;
+- and what would have to change for another housing future to become more viable.
+
+The goal is not to identify one universal “best” answer. It is to make the trade-offs visible.
+
+---
+
+## What the tool does
+
+Housing Futures combines public data, parcel-level analysis, transparent scoring, and AI-assisted explanation into one interactive workflow.
+
+### 1. Understand the community
+
+The experience begins at the neighborhood scale rather than immediately asking the user to choose a parcel.
+
+It brings together demographic, housing, transit, environmental, vacancy, and development-opportunity context to help users understand:
+
+- who lives in the neighborhood;
+- what housing pressures or needs may exist;
+- where vacant or underused land may create opportunities;
+- and which local conditions should be considered before proposing new housing.
+
+### 2. Find development opportunities
+
+Users can explore potential intervention sites such as:
+
+- vacant lots and buildings;
+- publicly owned land;
+- deep lots and garages;
+- transit-oriented locations;
+- and other parcels where additional housing may be plausible.
+
+The map supports a County → City → neighborhood → parcel workflow so users can move between broader community context and site-specific decisions.
+
+### 3. Compare housing futures
+
+For a real parcel, the tool compares a range of housing types, including:
+
+- detached homes;
+- accessory dwelling units;
+- duplexes and triplexes;
+- townhouses;
+- fourplexes;
+- cottage courts;
+- small multifamily buildings;
+- and other missing-middle configurations.
+
+Each option is evaluated using a combination of site conditions, housing outcomes, planning context, and user-defined priorities.
+
+Housing illustrations are intentionally generic examples of each housing type rather than site-specific architectural proposals.
+
+### 4. Make trade-offs explicit
+
+Housing Futures separates three things that are often mixed together:
+
+| Layer | Question | What it represents |
 |---|---|---|
-| 1. **Constraints** | Can this typology physically and legally fit here? | Data and zoning code, with section citations |
-| 2. **Outcomes** | What does it plausibly do for supply, affordability need, access, land and climate, and neighborhood fit? | Measured indicators plus transparent heuristics |
-| 3. **Values** | How much does *this* user care about each outcome? | User-set weights, always visible and editable |
+| **Constraints** | Can this housing type plausibly fit here? | Site conditions, parcel geometry, and zoning assumptions |
+| **Outcomes** | What could this option contribute? | Housing supply, affordability need, access, environmental performance, neighborhood fit, and related indicators |
+| **Values** | What matters most to this user? | Editable stakeholder priorities and weights |
 
-This split matches the Track 3 success criterion: users can *"compare at least two housing scenarios for a real place, see why the tool ranked them differently, change normative weights, and understand which conclusions are data-driven versus value judgments."*
+This separation helps users distinguish between a conclusion driven by data and one driven by a particular set of priorities.
 
-On top of those three layers:
+---
 
-- **Robustness.** For each typology, the share of all possible priority mixes under which it comes out on top (SMAA). A choice that wins almost everywhere is data-driven; one that wins only under narrow weights is a value judgment.
-- **"Why not B?" with three levers.** What would have to change in your **values** (tipping point), the **rules** (binding code section, zoning stretch), or the **site** (hazards)?
-- **Reform Lens.** The same parcel checked under the pre-2025 code, the current code (Ord. 2025-1579), and the pending ADU and parking bill (2025-1545, labeled "proposed").
-- **Equity lens.** Supply is scored as net new units, with an existing-occupancy check, market context, and the two displacement pathways identified in the City's 2022 Housing Needs Assessment.
+## Stakeholder perspectives
 
-One-page summary: [docs/pitch.md](docs/pitch.md).
+Different users can approach the same parcel differently.
 
-> **Decision support only.** This tool is not legal, financial, zoning, or engineering advice. The City of Pittsburgh has final say on zoning interpretation, and site safety needs survey and geotechnical work. See [docs/limitations.md](docs/limitations.md).
+Housing Futures includes perspectives for:
 
-## Active branch: `mso-v2`
+- policy makers;
+- community organizations;
+- developers;
+- architects and designers;
+- and investors.
 
-`mso-v2` starts from `david_1.0` and keeps its police and smell context, cost explorer, stakeholder lenses, search, ranking and splitters. It rebuilds the interface as a map-first, five-step journey that always opens on the full County map (`http://localhost:8795/`, no URL flags):
+Each perspective begins with a different set of priorities, but all weights remain visible and editable.
 
-1. **Community**: what the neighborhood needs; who lives here, plus police and smell context, open by default.
-2. **Who are you planning for?** Choose one of the five lenses and set the ten weights before picking a lot.
-3. **Opportunity**: where new homes could go.
-4. **Housing futures**: the lens and weights sit above the ranking.
-5. **Trade-offs**: detail, cost, score breakdown, Why / Why not.
+The ranking therefore reflects the user's stated priorities rather than a hidden definition of what is “best.”
 
-The chrome uses Pittsburgh black and gold on warm neutrals. The solar envelope is kept but de-emphasized, as an optional, collapsed "Winter sun for neighbors" test. Illustrations use the warmer original set, uncropped. See the [branch note](docs/branch-notes/mso-v2.md).
+---
 
-On `main`, the `ai-integration` work adds runtime AI on top: **Horizon**, a planning copilot available at every step, and "Explain in plain language" buttons in the ranking and Why-not views. Both call an LLM through a small local server (`src/server/`) and only explain numbers the app already computed; any reply that cites a number not in its input is rejected. The app works fully without the server. See the [branch note](docs/branch-notes/ai-integration.md).
+## “Why?” and “Why not?”
 
-## What's new on the `david` branch
+A core feature of the project is explaining decisions rather than simply showing a ranking.
 
-This branch builds on `mso-v0` with neighborhood context and an editable cost explorer.
+For any housing option, the interface can help answer questions such as:
 
-- **Police activity:** 2025 reported records by crime category with a 2024 comparison, sourced from the [City Police Data Portal](https://www.pittsburghpa.gov/Safety/Police/Police-Data-Portal) and [WPRDC](https://data.wprdc.org/dataset/monthly-criminal-activity-dashboard). This is context, never a safety score or housing-ranking input.
-- **Smell Pittsburgh:** Neighborhood totals and monthly bars for 2025 reports rated 4–5, sourced from [CMU CREATE Lab](https://smellpgh.org/data). The shipped file contains aggregates only, not report locations or text. Voluntary reports are not pollution measurements.
-- **Cost explorer:** Editable construction rate, contingency, and land cost; illustrative total, per-net-new-home cost, and ±25% sensitivity band. The default $162/sq ft comes from [NAHB's 2024 national single-family survey](https://www.nahb.org/news-and-economics/housing-economics-plus/special-studies/special-studies-pages/cost-of-constructing-a-home-in-2024) ($428,215 / 2,647 finished sq ft).
-- **Usability improvements:** Five-stage progress ribbon, Context and Costs navigation, responsive panels, and a `?demo=1` link that opens the Larimer example lot. Existing scenario scoring and stakeholder weights are unchanged.
+- Why does this option rank above another?
+- Why does a fourplex not fit here?
+- Which constraint matters most?
+- Would another stakeholder prioritize this differently?
+- What would need to change for another option to become competitive?
 
-### `david_1.0` feature branch
+The tool frames these explanations through three types of change:
 
-Building on `david`, this branch makes housing options easier to compare and explore:
+**Values** — how the user's priorities would need to change.
 
-- **Clear housing ranking:** A ranked shortlist uses the same deterministic, user-weighted scores as the scenario cards; selecting a row opens that housing type.
-- **Five stakeholder views:** Policy maker, Community, Developer, Architect, and Investor tabs show different decision prompts and transparent starter weights. Users can still edit all ten priorities.
-- **More usable workspace:** A wider map and two adjustable desktop panel dividers make the three-column layout easier to inspect. Local search suggests neighborhoods, open-neighborhood parcels, and page shortcuts. The house-plus button starts a fresh exploration.
-- **Improved imagery:** Thirteen new higher-resolution AI-generated housing-type illustrations are displayed without forced cropping and labeled as generic examples, not site designs.
+**Rules** — whether zoning or another regulatory constraint is binding.
 
-The ranking is a comparative aid, not a permit decision or investment forecast. Police and smell reports remain context only and are excluded from scores. Search and explanations on this branch are deterministic, with no runtime LLM (added later on `main`). See the [branch note](docs/branch-notes/david_1.0.md) for behavior and remaining limitations.
+**Site** — whether parcel geometry, slope, hazard conditions, or other physical facts limit the option.
 
-### Known issues and next steps
+This “Why-Not?” framing is intended to turn the ranking into a conversation about alternatives rather than a black-box recommendation.
 
-- Zoning values and some housing-type assumptions remain draft placeholders, not permit guidance.
-- The national *finished-area* single-family rate is applied to modeled *gross* new floor area. The mismatch and use for Pittsburgh multifamily/mixed-use projects are unvalidated. Renovation, demolition, financing, utilities, unusual site work, taxes, and operations are omitted.
-- Crime records depend on reporting and enforcement; smell reports depend on participation and have privacy-shifted coordinates. Neither source should label neighborhoods as safe/unsafe or clean/polluted.
-- The Smell snapshot covers 2025 only. To refresh it, run `python3 src/pipeline/build_smell.py` with network access and update the UI year labels if the range changes.
-- Parcel-level scenarios cover Pittsburgh only. Infrastructure capacity and everyday-destination access are not modeled. See [all limitations](docs/limitations.md).
+---
 
-## Status
+## Horizon: the planning copilot
 
-| Phase | When (ET) | State |
-|---|---|---|
-| Ideation, data exploration, planning docs | Fri Sep 25, after kickoff | Done |
-| Advisor review; direction changed to community-first ([notes](docs/meeting-notes/2026-09-26-advisor-review.md)) | Sat Sep 26, morning | Done |
-| **Build window** | Sat Sep 26 09:00 to Sun Sep 27 23:59 | Per-member branches merged into `main` (see [docs/branch-notes/](docs/branch-notes/)) |
-| Submission form and 3–5 min demo video | By Sun Sep 27 23:59 | In progress; script in [docs/demo-video-script.md](docs/demo-video-script.md) |
+**Horizon** is the project's AI planning copilot.
 
-Under the hackathon rules, no project code is written before Saturday 09:00 ET. Commits made before then contain planning documents only.
+It is available throughout the workflow and can explain the information already present in the application in plain language.
 
-## Repository layout
+For example, users can ask Horizon to:
 
-```
-.
-├── README.md
-├── docs/
-│   ├── pitch.md             one-page summary of the idea
-│   ├── track3-brief.md      official brief and judging rubric, and how we address each point
-│   ├── concept.md           layers, scores, robustness, Reform Lens, equity lens, math, user flow, priorities
-│   ├── ui-spec.md           interface layout, components, visual rules, build order
-│   ├── design/wireframe.svg static wireframe (placeholder values)
-│   ├── massing-and-metrics.md  zoning-envelope massing generator; solar, energy, shadow, water, hazard metrics
-│   ├── ai-design.md         where AI is used, where it is deliberately not used, guardrails
-│   ├── references.md        conceptual and legal references (verified) and what each one grounds
-│   ├── data-sources.md      datasets, stewards, join keys, caveats, licensing
-│   ├── limitations.md       limitations statement (required deliverable)
-│   ├── ai-usage-log.md      running disclosure of AI tools used to build this project
-│   ├── build-plan.md        weekend plan, advisor questions, submission and video checklist
-│   ├── branch-notes/        per-branch feature manifests for selective merging
-│   └── meeting-notes/       team and advisor meeting notes
-├── data/                    see data/README.md (raw/ and interim/ are git-ignored)
-├── tests/                   headless smoke test of the demo path
-└── src/                     application code, written during the build window (see src/README.md)
-    ├── app/                 static web app (no build step)
-    └── pipeline/            data download and processing (Python)
-```
+- summarize what stands out about a neighborhood;
+- explain why particular sites appear as opportunities;
+- interpret differences between housing types;
+- explain a ranking;
+- or clarify what is preventing another option from ranking higher.
 
-## Data sources (summary)
+Horizon does **not** generate the underlying scores or decide which housing type is best.
 
-The branch `mso-v0` pipeline (`src/pipeline/`) pulls full Allegheny County parcels, assessments, building footprints, parcel geographic identifiers, municipal boundaries, tax delinquency, foreclosures, and parks. It also pulls City of Pittsburgh neighborhoods, zoning, hazards, City-owned properties, condemned and dead-end properties, PLI violations, parks and greenways, police monthly criminal activity, neighborhood ACS 2019–23 (UCSUR), sidewalk ratios, and PRT GTFS. Provenance for every file is in `data/reference/retrievals.json`.
+The application's calculations remain deterministic and inspectable. The language model receives structured results that the application has already computed and translates them into explanations.
 
-These are all public: Allegheny County parcel boundaries and property assessments, City of Pittsburgh zoning districts and Zoning Code Chapters 903 and 911 (with the 2025 amendment and pending Bill 2025-1545), Pittsburgh 25%+ slope, undermined areas, and landslide-prone areas, the Pittsburgh Regional Transit GTFS feed, ACS 2020–2024 5-year estimates, the URA/County Market Value Analysis 2021, EIA RECS 2020, and Missing Middle Housing type specifications. Local policy grounding comes from the City's 2022 Housing Needs Assessment. Full citations, join keys, caveats, and candidate additions are in [docs/data-sources.md](docs/data-sources.md).
+For numerical explanations, the server checks that numbers mentioned by the model were present in the supplied application context. If the response is not sufficiently grounded, the interface falls back to deterministic template text.
 
-## AI use (summary)
+The dashboard itself continues to work without the AI server.
 
-The scores, the zoning checks, the robustness analysis and the counterfactual math are all computed by code, so they can be inspected and reproduced. Inside the product, AI is used only where language is the bottleneck:
+---
 
-1. **Horizon and "Explain in plain language"** put computed results into words: why one housing type ranks above another, and what stands in the way of another. An LLM (Groq by default, or Claude) runs behind a local server, sees only numbers the app already computed, and any reply that cites a number not in its input is rejected in favor of the app's template text.
-2. **Housing-type illustrations** were AI-generated at build time and are labeled in the app as examples of a type, not designs for the site.
+## Data and analysis
 
-AI never sets weights, scores, rankings or feasibility. Planned uses that were **not built**: extracting zoning rules from the code text (the app's zoning values are hand-entered draft placeholders) and turning a user's own words into proposed weights. Details are in [docs/ai-design.md](docs/ai-design.md).
+Housing Futures uses public data from the City of Pittsburgh, Allegheny County, regional agencies, and national sources.
 
-**AI tools used to build the project:** Cursor agent and Cursor image generation, Claude Code, OpenAI Codex, and OpenAI image generation. Who used what, for which part, and what a person did is logged in [docs/ai-usage-log.md](docs/ai-usage-log.md).
+Examples include:
 
-## Team
+- Allegheny County parcels and property assessments;
+- City of Pittsburgh zoning and property datasets;
+- vacant, condemned, publicly owned, and other opportunity-site datasets;
+- Pittsburgh slope, undermining, and landslide information;
+- Pittsburgh Regional Transit GTFS data;
+- Census ACS demographic and housing indicators;
+- parks and green-space data;
+- Pittsburgh Police public records;
+- Smell Pittsburgh data from the CMU CREATE Lab;
+- housing-cost and building-type references;
+- and local policy documents such as the Pittsburgh Housing Needs Assessment.
 
-| Name | Role |
-|---|---|
-| Meltem Sahin Ozkoc | Product direction after the advisor review (community-first flow). Branch `mso-v0`: Allegheny County and City data pipeline (24 public datasets, provenance, privacy checks), parcel opportunity tags and neighborhood needs profiles, County → City → neighborhood drill-down, 13 housing types with needs-based suggestions, performance metrics (solar envelope, compactness, transit, green space), stakeholder priorities with SMAA robustness, and AI housing-type illustrations. Branch `mso-v2`: integration of all branches into the five-step, map-first journey, the black/gold interface, and the headless tests. Horizon naming, limitations statement, and demo script |
-| Minghao Xu | Repository setup and planning docs (concept, references, data sources, interface spec). Merged the team's branches into `main`. Branch `ai-integration`: the runtime AI server (provider interface for Groq and Claude, number-grounding check), the "Explain in plain language" buttons, and the Horizon copilot, including its product spec and avatar states |
-| David Liu (Fengrui) | Branches `david` and `david_1.0`: police and Smell Pittsburgh context, cost explorer, five stakeholder lenses, ranked shortlist, local search, resizable layout, and revised housing-type illustrations. Benchmarks and papers for the weights |
-| Olaf Fu | Branch `olaf-ai-integration`: the staged, map-first journey (stage bar, per-stage layouts, full-width Community map, "Review trade-offs" step), ported into `mso-v2` |
+The data pipeline records source provenance and includes privacy checks intended to keep owner names and mailing addresses out of exported application data.
 
-**Advisors:** Azadeh and Vivian, for references and site-evaluation criteria.
+See:
 
-## How to run
+- [`docs/data-sources.md`](docs/data-sources.md) for the full data inventory and caveats;
+- [`docs/references.md`](docs/references.md) for research and policy references;
+- [`docs/limitations.md`](docs/limitations.md) for known limitations.
+
+---
+
+## Equity and community context
+
+Housing Futures treats equity as context for decision-making rather than as an “investment opportunity” score.
+
+The tool considers issues such as:
+
+- existing housing on the parcel;
+- whether new development creates net-new units;
+- neighborhood housing need;
+- vacancy and disinvestment;
+- affordability pressure;
+- access to transit and green space;
+- and possible displacement concerns.
+
+Police and Smell Pittsburgh data are presented only as contextual information. They are not converted into neighborhood “safety,” “quality,” or desirability scores and do not determine the housing ranking.
+
+---
+
+## Environmental and site considerations
+
+The tool includes several environmental and physical-planning indicators, such as:
+
+- parcel geometry;
+- compactness;
+- transit proximity;
+- green-space access;
+- slope and landslide conditions;
+- undermining;
+- and an optional solar-envelope / winter-sun analysis.
+
+These indicators are intended to support early-stage comparison, not replace architectural, engineering, survey, geotechnical, or permitting work.
+
+---
+
+## Running the project
+
+### Basic application
+
+The core application is a static web app and can be run with:
 
 ```bash
-python3 -m http.server 8795 --directory src/app   # then open http://localhost:8795/
+python3 -m http.server 8795 --directory src/app
 ```
 
-See [src/app/README.md](src/app/README.md) for what works and what is still a placeholder.
+Then open:
 
-The app opens on the County map. For a quick walkthrough, press **Try an example lot** (Larimer). Map tiles and external assets require an internet connection.
+```text
+http://localhost:8795/
+```
 
-Optional, for Horizon and the "Explain in plain language" buttons (needs a Groq or Anthropic API key in `.env`; see `.env.example`):
+The application opens on the County map.
+
+For a quick walkthrough, choose **Try an example lot** to open the Larimer demonstration site.
+
+Map tiles and some external assets require an internet connection.
+
+---
+
+## Optional AI server
+
+Horizon and the “Explain in plain language” features use a small local Python server.
+
+Install the dependencies:
 
 ```bash
 pip install -r src/server/requirements.txt
-python3 src/server/app.py                          # local AI server on port 8799
 ```
 
-To rebuild the data (branch `mso-v0`):
+Add a supported API key to `.env`, following `.env.example`, then run:
 
 ```bash
-python3 -m venv .venv && .venv/bin/pip install -r src/pipeline/requirements.txt
-.venv/bin/python src/pipeline/fetch.py    # ~1.2 GB of public data into data/raw/ (git-ignored)
-.venv/bin/python src/pipeline/build.py    # derived fields and the app's data files
-.venv/bin/python src/pipeline/check.py    # counts and privacy checks
+python3 src/server/app.py
 ```
 
-Headless tests, with the app served on port 8795 (`APP_URL` overrides the address):
+The default configuration uses Groq, with Claude available as an alternative provider.
+
+The AI service is optional. Without it, the core application and deterministic analyses still work.
+
+---
+
+## Rebuilding the data
+
+To rebuild the public-data pipeline:
 
 ```bash
-.venv/bin/pip install playwright            # dev only; uses the local Chrome
-.venv/bin/python tests/guided_flow.py       # five-step journey, desktop and mobile
-.venv/bin/python tests/smoke_app.py         # full demo path: needs, lenses, futures, solar, cost, presets
+python3 -m venv .venv
+.venv/bin/pip install -r src/pipeline/requirements.txt
+
+.venv/bin/python src/pipeline/fetch.py
+.venv/bin/python src/pipeline/build.py
+.venv/bin/python src/pipeline/check.py
 ```
 
-## Libraries, services, and tools
+The fetch step downloads the source datasets into git-ignored directories.
 
-| Item | Use | License / terms |
-|---|---|---|
-| MapLibre GL JS 4.7 | Map rendering | BSD-3-Clause |
-| OpenFreeMap (positron style) | Basemap tiles | Free, OSM/OpenMapTiles attribution |
-| SunCalc 1.9 | Sun positions for shadows and the solar envelope | BSD-2-Clause |
-| Lucide icons | UI icons | ISC |
-| Inter (Google Fonts) | Typeface | SIL OFL |
-| Python: pandas, GeoPandas, Shapely, pyproj, pyogrio, requests, openpyxl | Data pipeline | BSD / MIT / Apache-2.0 |
-| Python: `groq`, `anthropic` SDKs | Local AI server (`src/server/`) | Apache-2.0 / MIT |
-| Groq API (default model `openai/gpt-oss-120b`) | Runtime LLM for Horizon and plain-language explanations | Groq terms; free tier |
-| Anthropic API (Claude, optional) | Alternative runtime LLM provider | Anthropic terms |
-| jsDelivr CDN | Serves MapLibre, SunCalc and Lucide to the browser | Free public CDN |
-| Playwright (Python) | Headless tests only (`tests/`), not shipped | Apache-2.0 |
-| NLR PVWatts v8 API | Specific PV yield (one cached call) | Free API key |
-| Open-Meteo Climate API | Climate context | CC BY 4.0, non-commercial |
-| OpenStreetMap | Building context in the original demo extract | ODbL |
-| AI tools | See [docs/ai-usage-log.md](docs/ai-usage-log.md) | — |
-| AI image generation | Original illustrations in `src/app/assets/renderings/`; revised generic typology illustrations in `src/app/assets/renderings-v2/`, labeled as not a design for this site | Disclosed in the AI log |
-| Public datasets | Allegheny County, City of Pittsburgh / WPRDC, Census ACS, PRT GTFS, Pittsburgh Police data, Smell Pittsburgh (CMU CREATE Lab), NAHB cost survey | Full list, stewards and terms in [docs/data-sources.md](docs/data-sources.md); citations in [docs/references.md](docs/references.md) |
+The build step creates the derived application data.
 
-## License
+The check step validates coverage, schema, file sizes, and privacy requirements.
 
-TBD. The repository must be public at submission and must stay public afterward to remain prize-eligible.
+---
+
+## Repository structure
+
+```text
+.
+├── README.md
+├── docs/
+│   ├── pitch.md
+│   ├── concept.md
+│   ├── ai-design.md
+│   ├── data-sources.md
+│   ├── references.md
+│   ├── limitations.md
+│   ├── ai-usage-log.md
+│   └── meeting-notes/
+├── data/
+│   └── reference/
+├── src/
+│   ├── app/
+│   ├── pipeline/
+│   └── server/
+└── tests/
+```
+
+---
+
+## AI use and disclosure
+
+AI is used in two distinct ways in this project:
+
+### Runtime AI
+
+Horizon and the plain-language explanation features translate existing application results into conversational explanations.
+
+AI does not determine feasibility, set stakeholder weights, calculate scores, or produce the underlying rankings.
+
+### Development tools
+
+The team used AI-assisted development tools including Claude Code, Cursor, OpenAI Codex, Cursor image generation, and OpenAI image generation.
+
+The project's AI usage is documented in:
+
+[`docs/ai-usage-log.md`](docs/ai-usage-log.md)
+
+Additional design principles and guardrails are documented in:
+
+[`docs/ai-design.md`](docs/ai-design.md)
+
+---
+
+## Team
+
+**Minghao Xu**  
+Project concept and planning documentation; repository integration; runtime AI architecture; Horizon planning copilot; AI explanation and grounding system.
+
+**Meltem Sahin Ozkoc**  
+Community-first product direction; data pipeline and neighborhood-needs framework; opportunity-site analysis; housing typologies and performance metrics; interface integration and demo narrative.
+
+**David Liu (Fengrui)**  
+Neighborhood context; cost explorer; stakeholder perspectives; ranked shortlist; search and interaction improvements; housing-type visual assets.
+
+**Olaf Fu**  
+Staged, map-first user journey and interface workflow.
+
+**Advisors:** Azadeh and Vivian, providing references and site-evaluation criteria.
+
+---
+
+## Important limitations
+
+Housing Futures is an exploratory planning and decision-support prototype.
+
+It is **not**:
+
+- legal or zoning advice;
+- a permit determination;
+- an engineering or geotechnical assessment;
+- a financial feasibility study;
+- an investment recommendation;
+- or a prediction of development approval.
+
+Some zoning values and housing-type assumptions remain prototype-level inputs and require professional verification.
+
+Any real project should confirm zoning interpretations with the City of Pittsburgh and use appropriate site survey, architectural, engineering, financial, and geotechnical analysis.
+
+See [`docs/limitations.md`](docs/limitations.md) for the full limitations statement.
+
+---
+
+## Core idea
+
+> **Housing Futures is not trying to tell Pittsburgh what to build.**
+
+It is designed to help planners, communities, designers, developers, and other stakeholders understand the housing futures a place could hold — and make the trade-offs behind those choices visible.
